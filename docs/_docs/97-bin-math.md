@@ -883,7 +883,7 @@ Ipotizzando di utilizzare un segnale Ctl come segnale di controllo, si può nota
 
 Rimane l'ultimo passaggio, cioè *aggiungere 1*. Il primo Adder di un Multiple Bit Adder è dotato di un segnale Carry In che, come notato nella sezione [Ripple Carry Adder](#ripple-carry-adder), è normalmente a 0; impostando il Carry In ad 1, otteniamo il risultato desiderato.
 
-Dunque, per negare un numero binario trasformandolo nel proprio complemento a due, possiamo utilizzare delle porte XOR per invertire tutti i bit di ingresso e il segnale di Carry In del primo Adder per aggiungere 1: Ben Eater lo illustra molto chiaramente nel video <a href="https://www.youtube.com/watch?v=mOVOS9AjgFs" target="_blank">ALU Design</a> per il SAP-1 computer.
+Dunque, per negare un numero binario trasformandolo nel proprio complemento a due, possiamo utilizzare delle porte XOR per invertire tutti i bit di ingresso e sfruttare il segnale di Carry In del primo Adder per aggiungere 1: Ben Eater lo illustra molto chiaramente nel video <a href="https://www.youtube.com/watch?v=mOVOS9AjgFs" target="_blank">ALU Design</a> per il SAP-1 computer.
 
 ![Dettaglio degli input del Multiple Bit Adder del SAP-1 Computer di Ben Eater](../../assets/math/adder-input-xor.png){:width="80%"}
 
