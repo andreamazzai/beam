@@ -93,7 +93,7 @@ Tra le cose apprese:
 6. utilizzo di Visual Studio Code
 7. il linguaggio Markdown
 8. utilizzo di GitHub e GitHub Pages
-9. disegno degli schemi con KiCad
+9. disegno degli <a href="https://github.com/andreamazzai/beam/raw/refs/heads/master/schematics/KiCad_BEAM_schematics.zip" target="_blank">schemi con KiCad</a>
 
 ### Note
 
@@ -103,7 +103,7 @@ Tra le cose apprese:
 ## Crediti e ringraziamenti
 
 - Ben Eater per la sua grande capacità di creazione di <a href="https://www.youtube.com/@BenEater/playlists/" target="_blank">contenuti così interessanti</a> e in particolar modo per la playlist <a href="https://www.youtube.com/playlist?list=PLowKtXNTBypGqImE405J2565dvjafglHU" target="_blank">Building an 8-bit breadboard computer!</a>;
-- Tom Nisbet per l'<a href="https://tomnisbet.github.io/nqsap/" target="_blank">NQSAP</a> e l'<a href="https://tomnisbet.github.io/nqsap-pcb/" target="_blank">NQSAP-PCB</a> espandendo e migliorando in maniera sostanziale il progetto di Ben Eater;
+- Tom Nisbet per l'<a href="https://tomnisbet.github.io/nqsap/" target="_blank">NQSAP</a> e l'<a href="https://tomnisbet.github.io/nqsap-pcb/" target="_blank">NQSAP-PCB</a>, che espandono e migliorano in maniera sostanziale il progetto di Ben Eater;
 - il subreddit <a href="https://www.reddit.com/r/beneater/" target="_blank">r/beneater</a> - in particolar modo The8BitEnthusiast - grazie!
 - Ken Shirrif per alcuni <a href="https://www.righto.com/" target="_blank">interessantissimi articoli</a> su Overflow, 6502 e 74181 (e molto altro!);
 - l'esplosivo Dr. Brock LaMeres dell'università del Montana per l'eccellente playlist <a href="https://www.youtube.com/playlist?list=PL643xA3Ie_Et2uM4xu1yFk-A5ZQQ8gQ5e" target="_blank">Intro to Logic Circuits</a> su YouTube; un <a href="https://www.montana.edu/blameres/book_content_vhdl.html" target="_blank">indice più leggibile</a> dello stesso materiale è disponibile presso il sito ufficiale dell'Università del Montana;

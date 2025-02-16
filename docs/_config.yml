@@ -358,3 +358,10 @@ compress_html:
   clippings: all
   ignore:
     envs: development
+
+# # Polyglot
+# languages: ["en", "it"]
+# default_lang: "it"
+# exclude_from_localization: ["javascript", "images", "css", "public", "sitemap"]
+# parallel_localization: false # per Windows mettere false
+# # url: https://polyglot.untra.io # già definito all'inizio del _config.yml
