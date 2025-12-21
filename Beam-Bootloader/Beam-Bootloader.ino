@@ -17,6 +17,7 @@ const int sequence = 27; // array for KITT supercar LEDs effect
 const int LEDs = 8;
 
 #include <math.h>
+#include <Arduino.h>
 
 #define DELAY 1 // ritardo nelle scritture di MAR e RAM
 
@@ -534,34 +535,64 @@ void loop()
 {
   
   // set_for_programming();
-  // writeProgram(TestProgram1, sizeof(TestProgram1));
+  // writeProgram(CounterUpDown, sizeof(CounterUpDown));
   // writeKitt();
   // post_programming();
-  // delay(60000);
+  // delay(120000);
 
   set_for_programming();
-  writeProgram(CounterUpDown, sizeof(CounterUpDown));
+  writeProgram(TestProgram1, sizeof(TestProgram1));
   writeKitt();
   post_programming();
-  delay(6000000);
+  delay(120000);
 
-  // set_for_programming();
-  // writeProgram(Fibonacci, sizeof(Fibonacci));
-  // writeKitt();
-  // post_programming();
-  // delay(30000);
-  
-  // set_for_programming();
-  // writeProgram(TestProgram1, sizeof(TestProgram1));
-  // writeKitt();
-  // post_programming();
-  // delay(60000);
-  
+  set_for_programming();
+  writeProgram(Fibonacci, sizeof(Fibonacci));
+  writeKitt();
+  post_programming();
+  delay(120000);
+
   set_for_programming();
   writeProgram(DownCounter, sizeof(DownCounter));
   writeKitt();
   post_programming();
-  delay(10000);
+  delay(120000);
+
+  // set_for_programming();
+  // writeProgram(PROGRAM_SHIFT, sizeof(PROGRAM_SHIFT));
+  // writeKitt();
+  // post_programming();
+  // delay(60000);
+
+  // set_for_programming();
+  // writeProgram(PROGRAM_STACK, sizeof(PROGRAM_STACK));
+  // writeKitt();
+  // post_programming();
+  // delay(1000000);
+
+  // set_for_programming();
+  // writeProgram(PROGRAM_4, sizeof(PROGRAM_4));
+  // writeKitt();
+  // post_programming();
+  // delay(1000000);
+
+  // set_for_programming();
+  // writeProgram(PROGRAM_plp, sizeof(PROGRAM_plp));
+  // writeKitt();
+  // post_programming();
+  // delay(1000000);
+  
+  // set_for_programming();
+  // writeProgram(PROGRAM_20, sizeof(PROGRAM_20));
+  // writeKitt();
+  // post_programming();
+  // delay(1000000);
+  
+  set_for_programming();
+  writeProgram(PROGRAM_STACK, sizeof(PROGRAM_STACK));
+  writeKitt();
+  post_programming();
+  delay(40000);
 
   // for (int i = 1; i <= 2; i++)
   // {

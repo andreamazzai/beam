@@ -1,0 +1,7 @@
+{
+    "port": "COM4",
+    "board": "arduino:avr:nano",
+    "sketch": "Beam-Bootloader\\Beam-Bootloader.ino",
+    "programmer": "avrisp",
+    "configuration": "cpu=atmega328"
+}
