@@ -303,7 +303,7 @@ Prima di continuare, è interessante esaminare gli step di questa istruzione e r
 
 Dopo questa breve digressione, ritorniamo al discorso principale.
 
-Tutti questi segnali spuri generalmente non sono un problema per il SAP, perché le microistruzioni scrivono su registri tipo D <a href="https://www.ti.com/lit/ds/sdls067a/sdls067a.pdf" target="_blank">74LS173</a> attivati al Rising Edge del clock, cioè quando i segnali di controllo sono stabili. Ad esempio, il glitching di MI al momento 7 non è fonte di problemi, perché il '173 del MAR memorizza nuovi valori solo col segnale di Enable attivo ***e*** il Rising Edge del clock: in quel momento, il segnali MI si trova in uno stato stabile e non c'è rischio di caricare dati non corretti.
+Tutti questi segnali spuri generalmente non sono un problema per il SAP, perché le microistruzioni scrivono su registri tipo D <a href="https://www.ti.com/lit/ds/sdls067a/sdls067a.pdf" target="_blank">74LS173</a> attivati al Rising Edge del clock, cioè quando i segnali di controllo sono stabili. Ad esempio, il glitching di MI al momento 7 non è fonte di problemi, perché il '173 del MAR memorizza nuovi valori solo col segnale di Enable attivo ***e*** il Rising Edge del clock: in quel momento, il segnale MI si trova in uno stato stabile e non c'è rischio di caricare dati non corretti.
 
 Vi è un'eccezione durante il caricamento dei Flag: poiché questi sono mappati direttamente sugli ingressi delle EEPROM, ogni variazione di C o F provoca glitching a ogni Rising Edge che li modifica. Per semplicità, il grafico precedente non include la rappresentazione di questo momento di instabilità.
 
