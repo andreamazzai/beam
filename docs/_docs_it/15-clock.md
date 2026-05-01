@@ -1,6 +1,6 @@
 ---
 title: "Clock"
-permalink: /docs/clock/
+permalink: /docs/it/clock/
 excerpt: "Modulo di clock del computer BEAM"
 ---
 <small>[Il Loader e il Clock](#il-loader-e-il-clock) - [Schema](#schema) - [L'istruzione HLT](#listruzione-hlt) - [Link utili](#link-utili)</small>

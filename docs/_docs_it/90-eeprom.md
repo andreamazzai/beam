@@ -1,6 +1,6 @@
 ---
 title: "EEPROM Programmer"
-permalink: /docs/eeprom-programmer/
+permalink: /docs/it/eeprom-programmer/
 excerpt: "EEPROM Programmer"
 ---
 <small>[Il programmatore di EEPROM](#il-programmatore-di-eeprom) - [Schema](#schema) - [Spiegazione del codice](#spiegazione-del-codice) - [Le EEPROM e il loro contenuto](#le-eeprom-e-il-loro-contenuto) - [Calcolo del CRC pre-programmazione](#calcolo-del-crc-pre-programmazione) - [Sblocco e blocco della EEPROM](#sblocco-e-blocco-della-eeprom) - [Cancellazione della EEPROM](#cancellazione-della-eeprom) - [Programmazione della EEPROM](#programmazione-della-eeprom) - [Verifica del CRC post-programmazione](#verifica-del-crc-post-programmazione) - [Note](#note) - [Link utili](#link-utili)</small>

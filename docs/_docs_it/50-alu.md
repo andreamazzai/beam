@@ -1,6 +1,6 @@
 ---
 title: "ALU"
-permalink: /docs/alu/
+permalink: /docs/it/alu/
 excerpt: "Unità Aritmetica e Logica del computer BEAM"
 ---
 <small>[Il 74LS181](#il-74ls181) - [Il registro A](#il-registro-a) - [L’ALU dell’NQSAP](#lalu-dellnqsap) - [Il registro H](#il-registro-h) - [Funzioni logiche e operazioni aritmetiche](#funzioni-logiche-e-operazioni-aritmetiche) - [Relazione diretta (hardwired) tra Instruction Register e ALU](#relazione-diretta-hardwired-tra-instruction-register-e-alu) - [Indirizzamenti](#indirizzamenti) - [Istruzioni di comparazione](#istruzioni-di-comparazione) - [Le istruzioni di comparazione e i Flag](#le-istruzioni-di-comparazione-e-i-flag) - [Riepilogo: sottrazioni, comparazioni e indirizzamenti](#riepilogo-sottrazioni-comparazioni-e-indirizzamenti) - [Carry, addizioni e sottrazioni](#carry-addizioni-e-sottrazioni) - [Schema](#schema) - [Differenze tra Moduli ALU dell’NQSAP e del BEAM](#differenze-tra-moduli-alu-dellnqsap-e-del-beam) - [Link Utili](#link-utili)</small>

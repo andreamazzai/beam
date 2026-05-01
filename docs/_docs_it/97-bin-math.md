@@ -1,6 +1,6 @@
 ---
 title: "Aritmetica binaria"
-permalink: /docs/math/
+permalink: /docs/it/math/
 excerpt: "Aritmetica binaria"
 ---
 <small>[Concetti importanti](#concetti-importanti) - [Fonti](#fonti) - [Numeri Unsigned e numeri Signed](#numeri-unsigned-e-numeri-signed) - [Approfondimento Overflow](#approfondimento-overflow) - [L'Overflow e l'hardware](#loverflow-e-lhardware) - [Metodi di identificazione dell'Overflow](#metodi-di-identificazione-delloverflow) - [Semplificazione con 74LS151](#semplificazione-con-74ls151) - [Verifica addizioni e sottrazioni con 74LS151](#verifica-addizioni-e-sottrazioni-con-74ls151) - [Gli Adder](#gli-adder) - [Le somme con gli Adder](#le-somme-con-gli-adder) - [Multiple Bit Adder](#multiple-bit-adder) - [Ripple Carry Adder](#ripple-carry-adder) - [Carry Look Ahead Adder](#carry-look-ahead-adder) - [Implementazione nel 74LS181](#implementazione-nel-74ls181) - [Le sottrazioni con gli Adder](#le-sottrazioni-con-gli-adder) - [Link utili](#link-utili)</small>

@@ -1,6 +1,6 @@
 ---
 title: "Control Logic"
-permalink: /docs/control/
+permalink: /docs/it/control/
 excerpt: "Control Logic del computer BEAM"
 ---
 <small>[Instruction Register e Istruzioni](#instruction-register-e-istruzioni) - [Ring Counter e Microistruzioni](#ring-counter-e-microistruzioni) - [Fasi](#fasi) - [Clock, "glitching" delle EEPROM e Instruction Register (parte 2)](#clock-glitching-delle-eeprom-e-instruction-register-parte-2) - [Lunghezza delle istruzioni](#lunghezza-delle-istruzioni) - [I 74LS138 per la gestione dei segnali](#i-74ls138-per-la-gestione-dei-segnali) - [Caricamento di un programma dal Loader](#caricamento-di-un-programma-dal-loader) - [Riepilogo segnali dell’NQSAP e del BEAM](#riepilogo-segnali-dellnqsap-e-del-beam) - [Segnali di controllo](#segnali-di-controllo) - [Bus e altri segnali](#bus-e-altri-segnali) - [Microcode](#microcode) - [Differenze rispetto all’Instruction Set del 6502](#differenze-rispetto-allinstruction-set-del-6502) - [Schema](#schema) - [Differenze tra Control Logic dell’NQSAP e del BEAM](#differenze-tra-control-logic-dellnqsap-e-del-beam) - [Note](#note) - [Link Utili](#link-utili) - [Riflessione sul microcode](#riflessione-sul-microcode)</small>
