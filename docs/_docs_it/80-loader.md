@@ -77,7 +77,7 @@ void writeRAM(byte data)
 
 Alla fine del processo di scrittura, il '165 viene utilizzato per leggere il contenuto dell'ultima locazione di memoria del computer e memorizzarlo temporaneamente sul Loader, permettendo l'esecuzione di un gioco di luci sui LED che visualizzano il contenuto della RAM. Il gioco consiste nello scorrimento dei LED per simulare l'effetto dell'iconico scanner dell'auto <a href="https://www.youtube.com/watch?v=bMVbaCiy_XE" target="_blank">KITT</a> dalla serie televisiva Supercar. Per eseguire questo effetto, si esegue il caricamento del pattern di scorrimento nella locazione citata e, per questo, è necessario ripristinarla alla fine della routine.
 
-<video src="../../assets/loader/KITT.mp4" controls title="Title" width="45%"></video>
+<video src="../../../assets/loader/KITT.mp4" controls title="Title" width="45%"></video>
 
 Dopo il gioco di luci, il contenuto dell'ultima locazione di memoria viene ripristinato e il controllo passa al programma caricato: i '595 vengono disabilitati, le ROM riattivate, il Reset disattivato e il clock riabilitato.
 
