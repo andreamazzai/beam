@@ -2,9 +2,7 @@
 title: "RAM e MAR"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
-permalink: /en/docsram/
+permalink: /docs/en/ram/
 excerpt: "Modulo di memoria del computer BEAM"
 ---
 <small>[Primi studi](#primi-studi) - [Memorie con IO separati o IO comuni?](#memorie-con-io-separati-o-io-comuni) - [MUX, Program Mode e Run Mode](#mux-program-mode-e-run-mode) - [Gestione della RAM](#gestione-della-ram) - [Design dei moduli MAR e RAM](#design-dei-moduli-mar-e-ram) - [Schema](#schema) - [Note](#note) - [Link utili](#link-utili)</small>

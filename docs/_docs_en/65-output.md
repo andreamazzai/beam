@@ -2,8 +2,6 @@
 title: "Output"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
 permalink: /docs/en/output/
 excerpt: "Output Register del computer BEAM"
 ---

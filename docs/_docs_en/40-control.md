@@ -2,8 +2,6 @@
 title: "Control Logic"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
 permalink: /docs/en/control/
 excerpt: "Control Logic del computer BEAM"
 ---

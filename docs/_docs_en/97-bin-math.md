@@ -2,8 +2,6 @@
 title: "Aritmetica binaria"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
 permalink: /docs/en/math/
 excerpt: "Aritmetica binaria"
 ---

@@ -2,9 +2,7 @@
 title: "BEAM"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
-permalink: /
+permalink: /docs/en/home/
 excerpt: "My 8-bit TTL breadboard computer based on Ben Eater's design and Tom Nisbet's improvements."
 header:
 #   image: /assets/home/beam.png

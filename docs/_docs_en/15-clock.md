@@ -2,8 +2,6 @@
 title: "Clock"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
 permalink: /docs/en/clock/
 excerpt: "Clock Module of the BEAM computer"
 ---

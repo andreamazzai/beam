@@ -223,7 +223,12 @@ kramdown:
 collections:
   docs_it:
     output: true
-    permalink: /:collection/:path/
+    # permalink: /:collection/:path/ # era quello precedente di default
+    permalink: /docs/it/:path/
+  docs_en:
+    output: true
+    # permalink: /:collection/:path/ # era quello precedente di default
+    permalink: /docs/en/:path/
 
 
 # Defaults
@@ -259,6 +264,18 @@ defaults:
       comments: false
       sidebar:
         nav: "docs_it"
+  - scope:
+      path: ""
+      type: docs_en
+    values:
+      layout: single
+      classes: wide
+      read_time: false
+      author_profile: false
+      share: false
+      comments: false
+      sidebar:
+        nav: "docs_en"
 
 # Sass/SCSS
 sass:

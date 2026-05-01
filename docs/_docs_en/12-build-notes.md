@@ -2,10 +2,8 @@
 title: "Building notes"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
-permalink: /docs/en/buildnotes/
-excerpt: "Building notes"
+permalink: /docs/en/build-notes/
+excerpt: "Build notes"
 ---
 <small>[Components](#components) - [LED](#led) - [Miscellaneous](#miscellaneous) - [Breadboard and Wires](#breadboard-and-wires) - [Power Supply](#power-supply) - [Test Circuit](#test-circuit)</small>
 

@@ -2,9 +2,7 @@
 title: "D, X e Y"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
-permalink: /docsen/dxy/
+permalink: /docs/en/dxy/
 excerpt: "Registri indice del computer BEAM"
 ---
 <small>[Il registro D](#il-registro-d) - [Utilizzo con le modalità di indirizzamento indicizzate](#utilizzo-con-le-modalità-di-indirizzamento-indicizzate) - [Utilizzo per i salti condizionali](#utilizzo-per-i-salti-condizionali) - [Schema](#schema) - [Differenze tra Registri indice dell’NQSAP e del BEAM](#differenze-tra-registri-indice-dellnqsap-e-del-beam) - [Link utili](#link-utili)</small>

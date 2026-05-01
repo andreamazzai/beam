@@ -2,8 +2,6 @@
 title: "Program Counter"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
 permalink: /docs/en/programcounter/
 excerpt: "Program Counter del computer BEAM"
 ---

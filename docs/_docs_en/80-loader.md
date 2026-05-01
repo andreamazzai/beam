@@ -2,8 +2,6 @@
 title: "Arduino Loader"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
 permalink: /docs/en/loader/
 excerpt: "Loader of the BEAM computer"
 ---

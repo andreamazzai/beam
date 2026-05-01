@@ -2,8 +2,6 @@
 title: "ALU"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
 permalink: /docs/en/alu/
 excerpt: "Unità Aritmetica e Logica del computer BEAM"
 ---

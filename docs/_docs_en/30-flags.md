@@ -2,8 +2,6 @@
 title: "Flag"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
 permalink: /docs/en/flags/
 excerpt: "Modulo dei Flag del computer BEAM"
 ---

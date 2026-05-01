@@ -2,8 +2,6 @@
 title: "EEPROM Programmer"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
 permalink: /docs/en/eeprom-programmer/
 excerpt: "EEPROM Programmer"
 ---

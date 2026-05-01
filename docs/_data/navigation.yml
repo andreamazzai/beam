@@ -76,3 +76,69 @@
         url: ""
       - title: <a href = "https://tomnisbet.github.io/nqsap-pcb/" target = "_blank">> NQSAP-PCB di Tom Nisbet</a>
         url: ""
+
+  docs_en:
+  - title: "OVERVIEW"
+    children:
+      - title: "> The BEAM computer"
+        url: /docs/en/home/
+      - title: "> Build notes"
+        url: /docs/en/build-notes/
+      # - title: "Why?"
+      #   url: /docs/why/
+  - title: "MODULES"
+    children:
+      - title: "> Clock"
+        url: /docs/en/clock/
+      - title: "> RAM and MAR"
+        url: /docs/en/ram/
+      - title: "> Flags"
+        url: /docs/en/flags/
+      - title: "> Program Counter"
+        url: /docs/en/programcounter/
+      - title: "> Control Logic"
+        url: /docs/en/control/
+      - title: "> ALU"
+        url: /docs/en/alu/
+      - title: "> DXY Registers"
+        url: /docs/en/dxy/
+      - title: "> Output"
+        url: /docs/en/output/
+      - title: "> Stack Pointer"
+        url: /docs/en/stack/
+      - title: "> Arduino Loader"
+        url: /docs/en/loader/
+      - title: "> EEPROM Programmer"
+        url: /docs/en/eeprom-programmer/
+  # - title: "Wrap-up"
+  #   children:
+  #     - title: "Tips"
+  #       url: /docs/tips/
+  #     - title: "Build History"
+  #       url: /docs/build-history/
+  - title: "DEEP DIVES"
+    children:
+      - title: "> Binary Arithmetic"
+        url: /docs/en/math/
+      # - title: "> Instruction Summary"
+      #   url: /docs/in-summary/
+  #     - title: "Opcode Table"
+  #       url: /docs/in-by-opcode/
+  #     - title: "Mode Group Table"
+  #       url: /docs/in-by-mode-group/
+  # - title: "References"
+  #   children:
+  #     - title: "74181 ALU Notes"
+  #       url: /docs/74181-alu-notes/
+  #     - title: "Further Reading"
+  #       url: /docs/further-reading/
+  - title: " REFERENCES"
+    children:
+      - title: "> BEAM on GitHub"
+        url: "https://github.com/andreamazzai/beam"
+      - title: <a href = "https://eater.net/8bit/" target = "_blank">> SAP-1 di Ben Eater</a>
+        url: ""
+      - title: <a href = "https://github.com/TomNisbet/nqsap" target = "_blank">> Tom Nisbet's NQSAP</a>
+        url: ""
+      - title: <a href = "https://tomnisbet.github.io/nqsap-pcb/" target = "_blank">> Tom Nisbet's NQSAP-PCB</a>
+        url: ""

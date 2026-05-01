@@ -2,8 +2,6 @@
 title: "Stack Pointer"
 lang: en
 locale: en-US
-sidebar:
-    nav: "docs-en"
 permalink: /docs/en/stack/
 excerpt: "Stack Pointer del computer BEAM"
 ---
