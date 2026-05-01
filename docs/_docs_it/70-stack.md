@@ -9,7 +9,7 @@ excerpt: "Stack Pointer del computer BEAM"
 
 L'implementazione dello stack nel 6502 prevede l'utilizzo di un'area di memoria dedicata alla memorizzazione e al ripristino di informazioni secondo una logica LIFO (Last-In, First-Out, dove l'ultimo elemento inserito è il primo a essere letto), gestita da un puntatore a 8 bit (Stack Pointer, SP) che tiene traccia dell'indirizzo della prossima locazione disponibile.
 
-Due usi comuni dello stack sono il salvataggio dello stato attuale dei Flag prima di eseguire una routine che li modifica, così da poterli ripristinare al termine della routine, e la memorizzazione dell'indirizzo di ritorno di una subroutine invocata dall'istruzione JSR.
+Due usi comuni dello stack sono il salvataggio dello stato attuale dei Flag o dei registri A, X e Y prima di eseguire una routine che li modifica, così da poterli ripristinare al termine della routine, e la memorizzazione dell'indirizzo di ritorno di una subroutine invocata dall'istruzione JSR.
 
 Il bus degli indirizzi del 6502 ha un'ampiezza di 16 bit e può indirizzare 2^16 = 64K di memoria. Lo stack occupa la seconda pagina di memoria indirizzabile dalla CPU, che corrisponde agli indirizzi compresi tra 0x0100 e 0x01FF. Prima dell'utilizzo, lo Stack Pointer viene solitamente inizializzato a 0xFF, puntando così alla locazione 0x1FF. Quando si effettua un'operazione di scrittura nello stack ("Push"), il valore viene prima salvato nella posizione indicata dal puntatore, dopodiché lo SP viene decrementato per puntare alla successiva locazione libera. Al contrario, durante un'operazione di lettura dallo stack ("Pull"), il valore viene prima letto dalla posizione indicata dal puntatore, che viene poi incrementato per indirizzare la prossima posizione disponibile.
 

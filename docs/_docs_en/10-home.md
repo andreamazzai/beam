@@ -27,19 +27,17 @@ Toward the end of the year, I accidentally came across <a href="https://eater.ne
 
 In the early months of 2022, after completing the basic modules of the 6502 computer, I followed the **SAP-1** (Simple As Possible) 8-bit TTL logic computer <a href="https://www.youtube.com/playlist?list=PLowKtXNTBypGqImE405J2565dvjafglHU" target="_blank">playlist</a> which I became even more passionate about. During the build, I learned a great deal — both thanks to Ben’s excellent presentation style and the significant effort I put into deepening my understanding through other websites and books.
 
-[![My Implementation of the SAP-1 Computer.](../assets/home/sap.png "My Implementation of the SAP-1 Computer."){:width="66%"}](../assets/home/sap.png)
+[![My Implementation of the SAP-1 Computer.](assets/home/sap.png "My Implementation of the SAP-1 Computer."){:width="66%"}](assets/home/sap.png)
 
 *My Implementation of the SAP-1 Computer.*
 
 ### Evolution of the 8-Bit Computer: BEAM
 
-I completed the SAP-1 computer in September, but even earlier, I had started studying the improvements and expansions made by other followers of Ben, particularly regarding the possibility of automating the program loading process with a bootloader, as well as the need to increase the RAM beyond 16 bytes. During the summer of that year, I discovered the fantastic <a href="https://tomnisbet.github.io/nqsap/" target="_blank">NQSAP</a> project by **Tom Nisbet**: an 8-bit computer based on Ben Eater’s design but engineered to emulate the 6502 instructions. I quickly realized it would be my next project because it brought together many aspects I found very interesting:
+I completed the SAP-1 computer in September, but before that, I had started studying the improvements and expansions made by other members of Ben's community, particularly regarding the possibility of automating the program loading process with a bootloader, as well as the need to increase the RAM beyond 16 bytes. During the summer of that year, I discovered the fantastic <a href="https://tomnisbet.github.io/nqsap/" target="_blank">NQSAP</a> project by **Tom Nisbet**: an 8-bit computer based on Ben Eater’s design but engineered to emulate the 6502 instructions. I immediately knew this would be my next project because it brought together many aspects I found very interesting:
 
 1. Evolution of Ben Eater’s Computer, with which I had started to regain confidence in digital electronics.
-2. Emulation of the processor from my first computer, complete with index registers, addressing modes, and Stack Pointer.  
-
-3. In Ben Eater’s original design, the computer had only 16 bytes of RAM. This amount was enough to program a minimal Fibonacci sequence, but it was absolutely inadequate for creating more complex programs. Expanding the RAM, therefore, became essential.  
-
+2. Emulation of the processor from my first computer, complete with index registers, addressing modes, and Stack Pointer.
+3. In Ben Eater’s original design, the computer had only 16 bytes of RAM. This amount was enough to program a minimal Fibonacci sequence, but it was absolutely inadequate for creating more complex programs. Expanding the RAM, therefore, became essential.
 4. The need to learn at least the basics of C, which was used to create the [EEPROM programmer](docs/eeprom-programmer/) and the Arduino-based [Loader](docs/loader/).
 
 ### BEAM?
@@ -92,7 +90,7 @@ Among the things I learned:
 
 1. The flags (of the 6502), their role, and their interactions within a computer  
 2. The role of an ALU and the representation of Signed numbers  
-3 Creation of a very fast EEPROM programmer  
+3. Creation of a very fast EEPROM programmer  
 4. Basics of the C language  
 5. Basics of Arduino  
 6. Use of Visual Studio Code  

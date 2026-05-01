@@ -7,13 +7,13 @@ excerpt: "Stack Pointer del computer BEAM"
 ---
 <small>[Implementazione del microcode dello Stack Pointer](#implementazione-del-microcode-dello-stack-pointer) - [Lo Stack Pointer dell’NQSAP / NQSAP-PCB](#lo-stack-pointer-dellnqsap--nqsap-pcb) - [Schema](#schema) - [Link utili](#link-utili)</small>
 
-[![Stack Pointer del computer BEAM](../../assets/sp/70-beam-sp.png "Stack Pointer del computer BEAM"){:width="100%"}](../../assets/sp/70-beam-sp.png)
+[![Stack Pointer del computer BEAM](../../../assets/sp/70-beam-sp.png "Stack Pointer del computer BEAM"){:width="100%"}](../../../assets/sp/70-beam-sp.png)
 
 L'implementazione dello stack nel 6502 prevede l'utilizzo di un'area di memoria dedicata alla memorizzazione e al ripristino di informazioni secondo una logica LIFO (Last-In, First-Out, dove l'ultimo elemento inserito è il primo a essere letto), gestita da un puntatore a 8 bit (Stack Pointer, SP) che tiene traccia dell'indirizzo della prossima locazione disponibile.
 
-Due usi comuni dello stack sono il salvataggio dello stato attuale dei Flag prima di eseguire una routine che li modifica, così da poterli ripristinare al termine della routine, e la memorizzazione dell'indirizzo di ritorno di una subroutine invocata dall'istruzione JSR.
+Two common use cases for the stack are saving the current state of the Flags and/or A, X, Y registers before executing a routine that modifies them, so that they can be restored at the end of the routine, and storing the return address of a subrouting called by a JSR instruction. 
 
-Il bus degli indirizzi del 6502 ha un'ampiezza di 16 bit e può indirizzare 2^16 = 64K di memoria. Lo stack occupa la seconda pagina di memoria indirizzabile dalla CPU, che corrisponde agli indirizzi compresi tra 0x0100 e 0x01FF. Prima dell'utilizzo, lo Stack Pointer viene solitamente inizializzato a 0xFF, puntando così alla locazione 0x1FF. Quando si effettua un'operazione di scrittura nello stack ("Push"), il valore viene prima salvato nella posizione indicata dal puntatore, dopodiché lo SP viene decrementato per puntare alla successiva locazione libera. Al contrario, durante un'operazione di lettura dallo stack ("Pull"), il valore viene prima letto dalla posizione indicata dal puntatore, che viene poi incrementato per indirizzare la prossima posizione disponibile.
+The 6502's address bus is 16 bits wide and can address 2^16 = 64K of memory. The stack occupies the second memory page addressable by the CPU, corresponding to address ranging from 0x100 to 0x01FF. Before use, the Stack Pointer is tipically set to 0xFF, thus pointing to location 0x1FF. When a write operation to the stack ("Push") is performed, the value is first saved at the position indicated by the pointer, after which the SP is decremented to point to the next free location. Conversely, during a read operation from the stack ("Pull"), the value is first read from the position indicated by the pointer, which is then incremented to address the next available position.
 
 Lo Stack Pointer del 6502 è un registro, denominato S, la cui implementazione nel BEAM consta di due 4-bit Synchronous Binary Up-Down Counter <a href="https://www.ti.com/lit/ds/symlink/sn74ls157.pdf" target="_blank">74LS169</a> in grado di indirizzare i 256 byte del computer. In definitiva, si tratta di un normale registro che, oltre a poter memorizzare un valore specifico, ha la peculiarità di poter contare sia verso l'alto, sia verso il basso.
 
@@ -119,7 +119,7 @@ Nella documentazione dell'NQSAP, Tom segnala di aver inizialmente previsto l'uti
 
 Poiché Tom non aveva pubblicato lo schema dello Stack Pointer dell'NQSAP, lo sostituiamo con quello dell'NQSAP-PCB.
 
-[![Schema dello Stack Register del computer NQSAP-PCB](../../assets/sp/70-stack-nqsap-pcb.png "Schema dello Stack Register del computer NQSAP-PCB"){:width="66%"}](../../assets/sp/70-stack-nqsap-pcb.png)
+[![Schema dello Stack Register del computer NQSAP-PCB](../../../assets/sp/70-stack-nqsap-pcb.png "Schema dello Stack Register del computer NQSAP-PCB"){:width="66%"}](../../../assets/sp/70-stack-nqsap-pcb.png)
 
 *Schema dello Stack Register del computer NQSAP-PCB.*
 
@@ -129,7 +129,7 @@ L'SP dell'NQSAP-PCB è governato dai segnali SE (Stack Enable) e C0/C1, che dete
 
 ## Schema
 
-[![Schema dello Stack Register del computer BEAM](../../assets/sp/70-stack-pointer-schema.png "Schema dello Stack Register del computer BEAM"){:width="100%"}](../../assets/sp/70-stack-pointer-schema.png)
+[![Schema dello Stack Register del computer BEAM](../../../assets/sp/70-stack-pointer-schema.png "Schema dello Stack Register del computer BEAM"){:width="100%"}](../../../assets/sp/70-stack-pointer-schema.png)
 
 *Schema dello Stack Register del computer BEAM.*
 

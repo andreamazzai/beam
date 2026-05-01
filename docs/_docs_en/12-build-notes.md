@@ -1,5 +1,5 @@
 ---
-title: "Building notes"
+title: "Build notes"
 lang: en
 locale: en-US
 permalink: /docs/en/build-notes/
@@ -7,17 +7,17 @@ excerpt: "Build notes"
 ---
 <small>[Components](#components) - [LED](#led) - [Miscellaneous](#miscellaneous) - [Breadboard and Wires](#breadboard-and-wires) - [Power Supply](#power-supply) - [Test Circuit](#test-circuit)</small>
 
-[![Note costruttive](../../../assets/varie/cassetti.png "Note costruttive"){:width="100%"}](../../../assets/varie/cassetti.png)
+[![Build notes](../../../assets/varie/cassetti.png "Build notes"){:width="100%"}](../../../assets/varie/cassetti.png)
 
 Some general notes on the construction of the BEAM computer.
 
 ## Components
 
-Almost all the components used in this project were purchased from <a href="https://www.mouser.com" target="_blank">Mouser.com</a>. The costs are in line with other platforms, but shipping and customs duties are covered by Mouser for orders over €100. Shipping from the United States to Italy is very fast; I received all orders within two business days.
+Almost all the components used in this project were purchased from <a href="https://www.mouser.com" target="_blank">Mouser.com</a>. The costs were in line with other platforms, but shipping and customs duties were covered by Mouser for orders over €100. Shipping from the United States to Italy was very fast; I received all orders within two business days.
 
 ### LED
 
-For convenience, the single red, yellow, and green LEDs used in the BEAM computer come with an internal resistor that allows for direct connection to 5V and, thus, directly to TTL logic outputs. They are <a href="https://www.mouser.it/c/optoelectronics/led-lighting/leds-light-emitting-diodes/single-color-leds/?m=Kingbright&mounting%20style=Through%20Hole&package%20%2F%20case=T-1%203%2F4%20%285%20mm%29&vf%20-%20forward%20voltage=5%20V" target="_blank">available at Mouser</a> for about 20/25 cents each for quantities of 10 or more.
+For convenience, the single red, yellow, and green LEDs used in the BEAM computer come with an internal resistor that allows for direct connection to 5V and, thus, directly to TTL logic outputs. They were <a href="https://www.mouser.it/c/optoelectronics/led-lighting/leds-light-emitting-diodes/single-color-leds/?m=Kingbright&mounting%20style=Through%20Hole&package%20%2F%20case=T-1%203%2F4%20%285%20mm%29&vf%20-%20forward%20voltage=5%20V" target="_blank">available at Mouser</a> for about 20/25 cents each for quantities of 10 or more.
 
 For space reasons, the single LEDs were not included in the Kicad schematics.
 
@@ -41,7 +41,7 @@ The breadboards used are the <a href="https://eu.mouser.com/ProductDetail/BusBoa
 
 For the wires, I also relied on the excellent <a href="https://www.jameco.com/z/JMS9313-01G-22-AWG-6-Color-Solid-Tinned-Copper-Hook-Up-Wire-Assortment-25-Feet_2153705.html" target="_blank">AWG22</a> that I discovered with Ben Eater's kits for the <a href="https://eater.net/8bit" target="_blank">8-bit SAP computer</a> and the <a href="https://eater.net/6502" target="_blank">6502 computer</a>.
 
-The advantage of these wires over other AWG22 ones I found (and tried) is the thinner insulation, which allows for greater wiring density. Unfortunately, I couldn't find them in Europe or on Mouser, so I had to order them from Jameco, bearing the additional cost of shipping and customs. On the other hand, the AWG22 wires sold by Amazon, although listed in Ben Eater's parts list, have thicker insulation which, in my preference, is less suitable.
+The advantage of these wires over other AWG22 ones I found (and tried) is the thinner insulation, which allows for greater wiring density. Unfortunately, I couldn't find them in Europe or on Mouser, so I had to order them from Jameco, bearing the additional cost of shipping and customs. On the other hand, the AWG22 wires sold by Amazon, although listed in Ben Eater's parts list, have thicker insulation which, in my opinion, is less suitable.
 
 ## Power Supply
 
