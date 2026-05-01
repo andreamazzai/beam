@@ -5,9 +5,9 @@ excerpt: "Loader del computer BEAM"
 ---
 <small>[Caricamento di un programma](#caricamento-di-un-programma) - [Schema](#schema) - [Link utili](#link-utili)</small>
 
-[![Loader del computer BEAM](../../assets/loader/80-beam-loader.png "Loader del computer BEAM"){:width="100%"}](../../assets/loader/80-beam-loader.png)
+[![Loader del computer BEAM](../../../assets/loader/80-beam-loader.png "Loader del computer BEAM"){:width="100%"}](../../../assets/loader/80-beam-loader.png)
 
-Dopo aver completato il [computer SAP-1 a 8-bit](../../#computer-a-8-bit-in-logica-ttl-sap), cercavo un modo per automatizzare il caricamento dei programmi in memoria, poiché farlo manualmente a ogni riaccensione utilizzando i dip-switch risultava piuttosto noioso. Avevo anche intenzione di incorniciarlo e appenderlo come un quadro per mostrarlo ai visitatori. Prendendo confidenza con Arduino, avevo realizzato che avrei potuto collegare le sue uscite a MAR, RAM e al pulsante di Write per gestire automaticamente la programmazione del computer, simulando esattamente le sequenze manuali.
+Dopo aver completato il [computer SAP-1 a 8-bit](../#computer-a-8-bit-in-logica-ttl-sap), cercavo un modo per automatizzare il caricamento dei programmi in memoria, poiché farlo manualmente a ogni riaccensione utilizzando i dip-switch risultava piuttosto noioso. Avevo anche intenzione di incorniciarlo e appenderlo come un quadro per mostrarlo ai visitatori. Prendendo confidenza con Arduino, avevo realizzato che avrei potuto collegare le sue uscite a MAR, RAM e al pulsante di Write per gestire automaticamente la programmazione del computer, simulando esattamente le sequenze manuali.
 
 Ero partito da un progetto di <a href="https://github.com/dmytrostriletskyi/8-bit-computer-memory-init" target="_blank">Dmytro Striletskyi</a> modificandolo in modo da caricare ed eseguire automaticamente due programmi, 'Fibonacci' e 'Counter', ciascuno con una durata di esecuzione specifica. Alla fine di ogni ciclo di esecuzione, Arduino ferma il clock, carica in memoria il programma successivo, riattiva il clock e resetta il computer.
 
@@ -85,7 +85,7 @@ Il Loader include anche un tasto Reset manuale.
 
 ## Schema
 
-[![Schema del Loader del computer BEAM](../../assets/loader/80-loader-schema.png "Schema del Loader del computer BEAM")](../../assets/loader/80-loader-schema.png)
+[![Schema del Loader del computer BEAM](../../../assets/loader/80-loader-schema.png "Schema del Loader del computer BEAM")](../../../assets/loader/80-loader-schema.png)
 
 *Schema del Loader del computer BEAM.*
 

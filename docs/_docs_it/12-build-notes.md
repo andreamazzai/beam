@@ -5,7 +5,7 @@ excerpt: "Note costruttive"
 ---
 <small>[Componenti](#componenti) - [LED](#led) - [Varie](#varie) - [Breadboard e cavi](#breadboard-e-cavi) - [Alimentazione](#alimentazione) - [Circuito di test](#circuito-di-test)</small>
 
-[![Note costruttive](../../assets/varie/cassetti.png "Note costruttive"){:width="100%"}](../../assets/varie/cassetti.png)
+[![Note costruttive](../../../assets/varie/cassetti.png "Note costruttive"){:width="100%"}](../../../assets/varie/cassetti.png)
 
 Alcune note generali sulla costruzione del computer BEAM.
 
@@ -21,7 +21,7 @@ Per motivi di spazio, i LED singoli non sono stati inclusi negli schemi Kicad.
 
 Infine, poiché i simboli Kicad includono solo LED BAR a 10 LED, nelle situazioni dove non sono necessari tutti i 10 LED, alcuni di questi appaiono disconnessi.
 
-![LED BAR con 2 LED non connessi](../../assets/varie/ledbar.png "LED BAR con 2 LED non connessi"){:width="50%"}
+![LED BAR con 2 LED non connessi](../../../assets/varie/ledbar.png "LED BAR con 2 LED non connessi"){:width="50%"}
 
 *LED BAR con 2 LED non connessi.*
 
@@ -29,7 +29,7 @@ Infine, poiché i simboli Kicad includono solo LED BAR a 10 LED, nelle situazion
 
 Invece dei più comuni dip-switch, nei moduli MAR e RAM ho utilizzato dei comodissimi Rocker Switch ("a bilanciere") come quelli in figura; si trovano facilmente presso i distributori di <a href="https://us.rs-online.com/product/te-connectivity/5435640-5/70156004/" target="_blank">materiale elettronico</a>. Notare che i pin originali sono piuttosto corti e non fissano correttamente lo switch alla breadboard, pertanto ho aggiunto uno zoccolo per circuiti integrati.
 
-[![Rocker Switch](../../assets/ram/20-ram-rocker.png "Rocker Switch"){:width="33%"}](../../assets/ram/20-ram-rocker.png)
+[![Rocker Switch](../../../assets/ram/20-ram-rocker.png "Rocker Switch"){:width="33%"}](../../../assets/ram/20-ram-rocker.png)
 
 *Rocker Switch.*
 
@@ -44,7 +44,7 @@ Il vantaggio di questi cavi rispetto agli altri AWG22 che ho trovato (e provato)
 
 Leggendo le esperienze degli altri utenti su <a href="https://www.reddit.com/r/beneater/" target="_blank">reddit</a>, sembra che quello dell'alimentazione sia un problema abbastanza diffuso. Le FAQ ed altri documenti <a href="https://www.reddit.com/r/beneater/wiki/tips/" target="_blank">scritti da altri utenti</a> offrono ottimi suggerimenti e aiutano indirizzare le questioni di distribuzione dell'elettricità. Per quanto mi riguarda, dopo essere partito con una semplice distribuzione laterale come avevo fatto nel SAP-1, ho aggiunto una linea di alimentazione al centro del computer inserendo una ulteriore fila di sezioni laterali ritagliate dalle breadboard.
 
-[![Bus alimentazione](../../assets/varie/power-bus.png "Bus alimentazione"){:width="40%"}](../../assets/varie/power-bus.png)
+[![Bus alimentazione](../../../assets/varie/power-bus.png "Bus alimentazione"){:width="40%"}](../../../assets/varie/power-bus.png)
 
 Come si potrà notare nelle foto, non ho utilizzato condensatori nel BEAM, così come non li avevo utilizzati nemmeno nel SAP-1: confidavo nella frequenza estremamente bassa di utilizzo del computer e devo dire che entrambi i sistemi sono stabili.
 
@@ -54,12 +54,12 @@ Infine, nelle mie realizzazioni ho notato che i chip TTL sembrano tollerare tens
 
 Anziché utilizzare jumper e LED temporanei per settare e visualizzare input ed output sul bus e sui moduli in costruzione, ho costruito un semplice circuito di prova, che si è dimostrato particolarmente comodo per accelerare test ed eventuali fasi di troubleshooting.
 
-[![Modulo di test in lettura dal bus](../../assets/varie/test-board.png "Modulo di test in lettura dal bus"){:width="100%"}](../../assets/varie/test-board.png)
+[![Modulo di test in lettura dal bus](../../../assets/varie/test-board.png "Modulo di test in lettura dal bus"){:width="100%"}](../../../assets/varie/test-board.png)
 
 *Modulo di test in lettura dal bus.*
 
 Con il pulsante premuto, viene emesso un output corrispondente ai bit impostati sullo switch a bilanciere, mentre il pulsante rilasciato permette di visualizzare sulla LED bar i segnali presenti in input. I primi due LED di sinistra rappresentano rispettivamente l'impostazione del circuito in output o in input.
 
-[![Schema del modulo di test](../../assets/varie/test-schema.png "Schema del modulo di test"){:width="100%"}](../../assets/varie/test-schema.png)
+[![Schema del modulo di test](../../../assets/varie/test-schema.png "Schema del modulo di test"){:width="100%"}](../../../assets/varie/test-schema.png)
 
 *Schema del modulo di test.*

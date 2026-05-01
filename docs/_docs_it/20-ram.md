@@ -5,7 +5,7 @@ excerpt: "Modulo di memoria del computer BEAM"
 ---
 <small>[Primi studi](#primi-studi) - [Memorie con IO separati o IO comuni?](#memorie-con-io-separati-o-io-comuni) - [MUX, Program Mode e Run Mode](#mux-program-mode-e-run-mode) - [Gestione della RAM](#gestione-della-ram) - [Design dei moduli MAR e RAM](#design-dei-moduli-mar-e-ram) - [Schema](#schema) - [Note](#note) - [Link utili](#link-utili)</small>
 
-[![Modulo di memoria del computer BEAM](../../assets/ram/20-ram-beam.png "Modulo di memoria del computer BEAM"){:width="100%"}](../../assets/ram/20-ram-beam.png)
+[![Modulo di memoria del computer BEAM](../../../assets/ram/20-ram-beam.png "Modulo di memoria del computer BEAM"){:width="100%"}](../../../assets/ram/20-ram-beam.png)
 
 Il limite principale del computer SAP-1 di Ben Eater era sicuramente la modesta quantità di RAM indirizzabile, pari a 16 byte; era possibile caricare un semplice contatore da 0 a 255 e viceversa, oppure un piccolo algoritmo di Fibonacci, ma nulla di più. Questo è stato lo stimolo primario per la realizzazione di un computer più potente.
 
@@ -58,7 +58,7 @@ L'utente segnala che ci sono due modalità di scrittura; quella evidenziata da l
 
 Un altro aspetto che avevo notato immediatamente, ipotizzando l'uso del 62256, era l'impossibilità di mantenere la visibilità del contenuto della cella di RAM indirizzata dal MAR utilizzando i LED (o almeno così credevo): se con i '189 le porte di output erano sempre attive e potevo vedere in ogni momento il valore contenuto della cella di memoria correntemente indirizzata dal MAR, con il 62256 avrei avuto visibilità del contenuto della cella solo nel momento in cui la RAM veniva letta - e dunque non costantemente.
 
-[![Schema del modulo RAM di Ben Eater basato su 74189: le porte nativamente designate per l'Output consentono la visualizzazione ininterrotta del contenuto della locazione RAM indirizzata dal MAR](../../assets/ram/20-be-ram-detail.png "Schema del modulo RAM basato su 74189: le porte nativamente designate per l'Output consentono la visualizzazione continua del contenuto della locazione RAM indirizzata dal MAR"){:width="66%"}](../../assets/ram/20-be-ram-full.png)
+[![Schema del modulo RAM di Ben Eater basato su 74189: le porte nativamente designate per l'Output consentono la visualizzazione ininterrotta del contenuto della locazione RAM indirizzata dal MAR](../../../assets/ram/20-be-ram-detail.png "Schema del modulo RAM basato su 74189: le porte nativamente designate per l'Output consentono la visualizzazione continua del contenuto della locazione RAM indirizzata dal MAR"){:width="66%"}](../../../assets/ram/20-be-ram-full.png)
 
 *Schema del modulo RAM di Ben Eater: si notano i 74189 con le porte di Input dedicate D1-D4 e le porte di Output dedicate O1-O4.*
 
@@ -66,7 +66,7 @@ Quello che iniziavo a capire era che per utilizzare una RAM con Common IO dovevo
 
 In <a href="https://www.reddit.com/r/beneater/comments/uot8pk/ram_module_using_65256/" target="_blank">questo post</a> un utente esponeva un disegno che credevo potesse andare bene, ma <a href="https://imgur.com/upvYjUX" target="_blank">nel suo schema</a> le uscite dei multiplexer (MUX) sono sempre attive (i <a href="https://www.ti.com/lit/ds/symlink/sn74ls157.pdf" target="_blank">multiplexer 74LS157</a> non sono tri-state) e potrebbero creare contenzioso con le uscite della RAM quando questa è attiva in output; la soluzione poteva essere quella di aggiungere un altro <a href="https://www.mouser.com/datasheet/2/308/74LS245-1190460.pdf" target="_blank">bus transceiver 74LS245</a>, oppure di utilizzare dei <a href="https://www.ti.com/lit/ds/symlink/sn54ls257b.pdf" target="_blank">MUX tri-state 74LS257</a>; intuivo qualcosa relativamente alla necessità di gestire i segnali di controllo della RAM in maniera più ampia e controllare le interazioni con i MUX e con il/i transceiver di interfacciamento verso il bus del computer.
 
-[![Disegno su carta del modulo RAM e MAR per capire la migliore disposizione dei chip in base ai collegamenti necessari](../../assets/ram/20-ram-mar-drawing.png "Disegno su carta del modulo RAM e MAR per capire la migliore disposizione dei chip in base ai collegamenti necessari"){:width="66%"}](../../assets/ram/20-ram-mar-drawing.png)
+[![Disegno su carta del modulo RAM e MAR per capire la migliore disposizione dei chip in base ai collegamenti necessari](../../../assets/ram/20-ram-mar-drawing.png "Disegno su carta del modulo RAM e MAR per capire la migliore disposizione dei chip in base ai collegamenti necessari"){:width="66%"}](../../../assets/ram/20-ram-mar-drawing.png)
 
 *Disegno su carta del modulo RAM e MAR per capire la migliore disposizione dei chip in base ai collegamenti necessari.*
 
@@ -84,7 +84,7 @@ Ad esempio, nello schema del SAP-1 visibile più in alto in questa pagina, i mul
 
 Riprendevo il tema del "doppio passaggio" (o meglio "doppio bus", come capirò in seguito), che da quanto iniziavo a comprendere poteva rendere possibile la visualizzazione persistente del contenuto della RAM. A pagina 17 e 18 del "Building the SAP-3 rev 3.3.pdf" presente nel repository GitHub di <a href="https://github.com/rolf-electronics/The-8-bit-SAP-3" target="_blank">rolf-electronics</a>, altro utente del canale Reddit, avevo notato che era stato inserito un secondo transceiver '245.
 
-[![Modulo RAM di rolf electronics](../../assets/ram/20-rolf-ram.png "Modulo RAM di rolf electronics"){:width="50%"}](../../assets/ram/20-rolf-ram.png)
+[![Modulo RAM di rolf electronics](../../../assets/ram/20-rolf-ram.png "Modulo RAM di rolf electronics"){:width="50%"}](../../../assets/ram/20-rolf-ram.png)
 
 Il funzionamento e la necessità dei transceiver mi erano chiarissimi, in quanto ampiamente utilizzati nel SAP-1 computer per poter attivare i vari moduli del computer solo nel momento in cui fosse necessario farlo: tipicamente ogni modulo ha bisogno di un unico transceiver di interconnessione verso il bus.
 
@@ -97,7 +97,7 @@ Un latch per memorizzare lo stato dei LED, come erroneamente ipotizzavo inizialm
 
 Proseguendo nello studio, avevo trovato <a href="https://imgur.com/a/ruclh" target="_blank">questo schema</a> dell'utente jaxey1631, che aveva lasciato un commento nel video di Ben Eater <a href="https://www.youtube.com/watch?v=JUVt_KYAp-I&lc=UgjusLoROw6az3gCoAEC" target="_blank">Reprogramming CPU microcode with an Arduino</a>:
 
-[![RAM e MAR con doppio bus](../../assets/ram/20-ram-ruclh.png "RAM e MAR con doppio bus"){:width="100%"}](../../assets/ram/20-ram-ruclh.png)
+[![RAM e MAR con doppio bus](../../../assets/ram/20-ram-ruclh.png "RAM e MAR con doppio bus"){:width="100%"}](../../../assets/ram/20-ram-ruclh.png)
 
 *Schema di RAM e MAR con bus interno.*
 
@@ -115,7 +115,7 @@ In questo schema troviamo:
 
 - Un secondo transceiver '245 che si attiva nel momento in cui si deve leggere *dalla* RAM e trasferirne l'output verso il bus dati (anche in questo caso il pin DIR del '245 settato a LO configura i pin A1-A8 come ingressi e i pin B1-B8 come uscite); notare il suo ingresso OE connesso al segnale RO (RAM Output) del computer.
 
-[![Write cicle del 62256](../../assets/ram/20-ram-write-cycle.png "Write cicle del 62256"){:width="50%"}](../../assets/ram/20-ram-write-cycle.png)
+[![Write cicle del 62256](../../../assets/ram/20-ram-write-cycle.png "Write cicle del 62256"){:width="50%"}](../../../assets/ram/20-ram-write-cycle.png)
 
 *Write Cycle "WE Controlled" del 62256.*
 
@@ -135,7 +135,7 @@ Un aspetto collaterale (ma importantissimo) dell'aumento del numero di istruzion
 
 Tra i post più utili relativi alla comprensione dei segnali di gestione di RAM e MAR per il modulo di memoria con IO comuni, c'è certamente il <a href="https://www.reddit.com/r/beneater/comments/ut1oud/8bit_question_about_ram_replacement/" target="_blank">Question about RAM replacement</a>, nel quale il moderatore The8BitEnthusiast invita a consultare la sua (*eccellente*, aggiungo io) realizzazione, che ho preso ad esempio e ispirazione.
 
-[![Modulo RAM dell'utente Reddit The8BitEnthusiast](../../assets/ram/20-ram-the8bit_enthusiast.png "Modulo RAM dell'utente Reddit The8BitEnthusiast"){:width="100%"}](../../assets/ram/20-ram-the8bit_enthusiast.png)
+[![Modulo RAM dell'utente Reddit The8BitEnthusiast](../../../assets/ram/20-ram-the8bit_enthusiast.png "Modulo RAM dell'utente Reddit The8BitEnthusiast"){:width="100%"}](../../../assets/ram/20-ram-the8bit_enthusiast.png)
 
 *Modulo RAM dell'utente e moderatore Reddit The8BitEnthusiast.*
 
@@ -143,15 +143,15 @@ Da un lato, lo schema appariva semplificato rispetto a quelli che avevo visto in
 
 - Scrittura sulla RAM in Run Mode
 
-[![Scrittura sulla RAM in Run Mode](../../assets/ram/20-ram-run-mode-write-t8be.png "Scrittura sulla RAM in Run Mode"){:width="40%"}](../../assets/ram/20-ram-run-mode-write-t8be.png)
+[![Scrittura sulla RAM in Run Mode](../../../assets/ram/20-ram-run-mode-write-t8be.png "Scrittura sulla RAM in Run Mode"){:width="40%"}](../../../assets/ram/20-ram-run-mode-write-t8be.png)
 
 - Lettura dalla RAM in Run Mode
 
-[![Lettura dalla RAM in Run Mode](../../assets/ram/20-ram-run-mode-read-t8be.png "Lettura dalla RAM in Run Mode"){:width="40%"}](../../assets/ram/20-ram-run-mode-read-t8be.png)
+[![Lettura dalla RAM in Run Mode](../../../assets/ram/20-ram-run-mode-read-t8be.png "Lettura dalla RAM in Run Mode"){:width="40%"}](../../../assets/ram/20-ram-run-mode-read-t8be.png)
 
 - Scrittura sulla RAM in Program Mode
 
-[![Scrittura sulla RAM in Program Mode](../../assets/ram/20-ram-program-mode-write-t8be.png "Scrittura sulla RAM in Program Mode"){:width="40%"}](../../assets/ram/20-ram-program-mode-write-t8be.png)
+[![Scrittura sulla RAM in Program Mode](../../../assets/ram/20-ram-program-mode-write-t8be.png "Scrittura sulla RAM in Program Mode"){:width="40%"}](../../../assets/ram/20-ram-program-mode-write-t8be.png)
 
 The8BitEnthusiast segnalava di *aver sfruttato il ritardo di propagazione dei '245 per gestire i requisiti di temporizzazione*, al che avevo provato a chiedergli se fosse necessario gestire le temporizzazioni in maniera così precisa perché il suo progetto lavorava in modalità "just in time" ogni volta che sopraggiungeva un impulso di clock.
 
@@ -185,7 +185,7 @@ Legenda:
 - **/** significa NOT
 - **\*** significa AND
 
-[![Scrittura sulla RAM in Run Mode](../../assets/ram/20-ram-run-mode-write-large-t8be.png "Scrittura sulla RAM in Run Mode"){:width="100%"}](../../assets/ram/20-ram-run-mode-write-large-t8be.png)
+[![Scrittura sulla RAM in Run Mode](../../../assets/ram/20-ram-run-mode-write-large-t8be.png "Scrittura sulla RAM in Run Mode"){:width="100%"}](../../../assets/ram/20-ram-run-mode-write-large-t8be.png)
 
 *Scrittura sulla RAM in Run Mode.*
 
@@ -195,13 +195,13 @@ The8BitEnthusiast aveva gentilmente risposto al mio quesito:
 
 > Dovevo assicurarmi che i ‘245 non consegnassero dati alla RAM quando questa non era ancora pronta per accettare dati in Input perché le sue uscite erano ancora attive in output\*\*. Il datasheet segnala che la RAM disabilita l’output ed è pronta per l’input 20 nanosecondi dopo che WE viene portato allo stato LO.
 
-[![Timing RAM 62256](../../assets/ram/20-ram-62256-timing.png "Timing RAM 62256"){:width="66%"}](../../assets/ram/20-ram-62256-timing.png)
+[![Timing RAM 62256](../../../assets/ram/20-ram-62256-timing.png "Timing RAM 62256"){:width="66%"}](../../../assets/ram/20-ram-62256-timing.png)
 
 \*\* Nello schema del modulo RAM di The8BitEnthusiast si nota che il segnale OE della RAM è connesso a ground, che significa che i pin dati sono sempre attivi in output, *tranne* quando si deve effettuare una scrittura. Quando si attiva il segnale di write WE, vi è un tempo tWHZ durante il quale la RAM è ancora attiva in output; trascorso questo tempo, è possibile mettere dei dati in input sulla RAM.
 
 In altre parole, la RAM è normalmente attiva in output; per scrivere su di essa, la si deve attivare in input col segnale WE. Poiché la RAM impiega 20 nanosecondi per commutare i pin dati da output a input, prima di applicarle dei segnali in input è necessario attendere almeno 20 nanosecondi dal momento in cui si attiva WE (altrimenti si potrebbero provocare dei cortocircuiti: ad esempio avere un pin di output sulla RAM HI e il corrispondente pin di input sul transceiver LO significherebbe portare l'output della RAM direttamente a ground, cortocircuitandola).
 
-[![Write Cycle](../../assets/ram/20-ram-write-cycle-twhz.png "Write Cycle"){:width="50%"}](../../assets/ram/20-ram-write-cycle-twhz.png)
+[![Write Cycle](../../../assets/ram/20-ram-write-cycle-twhz.png "Write Cycle"){:width="50%"}](../../../assets/ram/20-ram-write-cycle-twhz.png)
 
 The8BitEnthusiast continuava:
 
@@ -219,7 +219,7 @@ Parallelamente agli studi dei lavori di altri utenti, avevo iniziato a lavorare 
 
 Il MAR era progettato a 8 bit per pilotare 256 indirizzi di memoria. Inizialmente avevo utilizzato due FF '173 a 4 bit, sostituiti in seguito da un unico FF '273 a 8 bit (sprovvisto di controllo dell'attivazione dell'output, che però non è necessario). Infine ho utilizzato un registro a 8 bit '377, altrettanto adatto al nostro scopo.
 
-[![Memory Address Register](../../assets/ram/20-mar-beam.png "Memory Address Register"){:width="100%"}](../../assets/ram/20-mar-beam.png)
+[![Memory Address Register](../../../assets/ram/20-mar-beam.png "Memory Address Register"){:width="100%"}](../../../assets/ram/20-mar-beam.png)
 
 *Memory Address Register (MAR) del BEAM.*
 
@@ -242,7 +242,7 @@ Come già detto, per quanto riguarda la realizzazione del modulo RAM avevo decis
   - Chip Enable /CE *pulsato* LO ("↘↗");
   - /WE ↘↗ (che deve essere "contenuto" all'interno del ciclo ↘↗ di /CE).
 
-[![Prima versione del modulo RAM](../../assets/ram/20-ram-1st.png "Prima versione del modulo RAM"){:width="100%"}](../../assets/ram/20-ram-1st.png)
+[![Prima versione del modulo RAM](../../../assets/ram/20-ram-1st.png "Prima versione del modulo RAM"){:width="100%"}](../../../assets/ram/20-ram-1st.png)
 
 *Prima versione del Modulo di memoria (RAM) del BEAM.*
 
@@ -280,7 +280,7 @@ Una analisi successiva di questo schema, che "all'occhio" era molto bello, mi ev
 
 Stabilito che una soluzione just-in-time sarebbe stata prematura per le mie competenze, avevo dunque provato a ridisegnare lo schema con un solo transceiver mantenendo i MUX per gestire l'input della RAM, facendolo provenire dal bus o dal dip-switch a seconda della modalità Program o Run-Mode.
 
-[![Seconda versione del modulo RAM](../../assets/ram/20-ram-2nd.png "Seconda versione del modulo RAM"){:width="100%"}](../../assets/ram/20-ram-2nd.png)
+[![Seconda versione del modulo RAM](../../../assets/ram/20-ram-2nd.png "Seconda versione del modulo RAM"){:width="100%"}](../../../assets/ram/20-ram-2nd.png)
 
 *Seconda versione del Modulo di memoria (RAM) del BEAM.*
 
@@ -292,13 +292,13 @@ Avevo provato a chiedere un <a href="https://www.reddit.com/r/beneater/comments/
 
 Per analizzare tutti gli stati logici possibili avevo preparato una tabella di riepilogo con la quale verificare se il comportamento del modulo fosse in linea con le aspettative; la tabella mostrata in seguito è solo una parte di quella completa.
 
-![Tabella analisi modulo RAM](../../assets/ram/20-ram-2nd-table.png "Tabella analisi modulo RAM"){:width="100%"}
+![Tabella analisi modulo RAM](../../../assets/ram/20-ram-2nd-table.png "Tabella analisi modulo RAM"){:width="100%"}
 
 *Tabella riepilogativa analisi stati logici seconda versione modulo RAM.*
 
 A un certo punto ho capito che nello schema c'era un problema piuttosto importante: i due MUX 157 proiettavano in continuazione i loro input verso il bus interno, causando un possibile short con la RAM quando questa si trovava in output mode. Ho dunque pensato di sostituire i 2x '157 con i '257, che sono tri-state.
 
-![Tabella analisi rivista modulo RAM](../../assets/ram/20-ram-2nd-table2.png){:width="100%"}
+![Tabella analisi rivista modulo RAM](../../../assets/ram/20-ram-2nd-table2.png){:width="100%"}
 
 *Tabella riepilogativa rivista analisi stati logici seconda versione modulo RAM.*
 
@@ -317,7 +317,7 @@ e così via.
 
 Avevo dunque infine riscritto la "truth table" del modulo RAM:
 
-![Tabella analisi modulo RAM - terza versione](../../assets/ram/20-ram-3rd-table.png "Tabella analisi modulo RAM - terza versione"){:width="100%"}
+![Tabella analisi modulo RAM - terza versione](../../../assets/ram/20-ram-3rd-table.png "Tabella analisi modulo RAM - terza versione"){:width="100%"}
 
 *Tabella analisi modulo RAM - terza versione.*
 
@@ -325,13 +325,13 @@ I due asterischi in tabella \*\* mi servivano a ricordare che dovevo stare parti
 
 ## Schema
 
-[![Terza versione del Modulo di memoria (RAM) del computer BEAM](../../assets/ram/20-ram-3rd.png "Terza versione del Modulo di memoria (RAM) del computer BEAM"){:width="100%"}](../../assets/ram/20-ram-3rd.png)
+[![Terza versione del Modulo di memoria (RAM) del computer BEAM](../../../assets/ram/20-ram-3rd.png "Terza versione del Modulo di memoria (RAM) del computer BEAM"){:width="100%"}](../../../assets/ram/20-ram-3rd.png)
 
 *Terza versione del Modulo di memoria (RAM) del computer BEAM.*
 
 Riprendendo il datasheet del 62256, a pagina 6 troviamo entrambe le modalità di scrittura: quella indicata come "WRITE CYCLE 2 (CE# Controlled)" era stata utilizzata per le prime due revisioni del modulo RAM; l'altra, "WRITE CYCLE 1 (WE# Controlled)", è quella utilizzata per il disegno definitivo del modulo, perché mantenere /OE e /CE LO fissi sia per le letture sia per le scritture rappresentava una semplificazione importante.
 
-[![Write Cycles](../../assets/ram/20-ram-write-cycles.png "Write Cycles"){:width="100%"}](../../assets/ram/20-ram-write-cycles.png)
+[![Write Cycles](../../../assets/ram/20-ram-write-cycles.png "Write Cycles"){:width="100%"}](../../../assets/ram/20-ram-write-cycles.png)
 
 La gestione dei segnali passa in maniera importante attraverso il MUX '157, così come avviene anche nello schema di The8BitEnthusiast, ma con qualche differenza.
 
@@ -359,7 +359,7 @@ Ecco un riassunto degli stati possibili:
 
 Invece dei più comuni dip-switch, ho utilizzato dei comodissimi Rocker Switch ("a bilanciere") come quelli in figura; si trovano facilmente presso i distributori di <a href="https://us.rs-online.com/product/te-connectivity/5435640-5/70156004/" target="_blank">materiale elettronico</a>. Notare che i pin originali sono piuttosto corti e non fissano correttamente lo switch alla breadboard, pertanto ho aggiunto uno zoccolo per circuiti integrati.
 
-[![Rocker Switch](../../assets/ram/20-ram-rocker.png "Rocker Switch"){:width="33%"}](../../assets/ram/20-ram-rocker.png)
+[![Rocker Switch](../../../assets/ram/20-ram-rocker.png "Rocker Switch"){:width="33%"}](../../../assets/ram/20-ram-rocker.png)
 
 *Rocker Switch.*
 

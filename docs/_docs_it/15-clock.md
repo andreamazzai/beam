@@ -5,7 +5,7 @@ excerpt: "Modulo di clock del computer BEAM"
 ---
 <small>[Il Loader e il Clock](#il-loader-e-il-clock) - [Schema](#schema) - [L'istruzione HLT](#listruzione-hlt) - [Link utili](#link-utili)</small>
 
-[![Modulo di Clock del computer BEAM](../../assets/clock/15-beam-clock.png "Modulo di Clock del computer BEAM"){:width="100%"}](../../assets/clock/15-beam-clock.png)
+[![Modulo di Clock del computer BEAM](../../../assets/clock/15-beam-clock.png "Modulo di Clock del computer BEAM"){:width="100%"}](../../../assets/clock/15-beam-clock.png)
 
 Il modulo di clock del computer BEAM riprende quello progettato da Ben Eater per il computer SAP-1, utilizzando però solo comodi pulsanti tattili anziché interruttori a scorrimento e aggiungendo qualche interazione con i segnali di controllo esterni provenienti dal Loader.
 
@@ -17,7 +17,7 @@ Una pressione del pulsante Step durante il normale funzionamento (astabile) ferm
 
 I pulsanti Start/Stop e Step sono stati duplicati anche in una zona più facilmente raggiungible del computer, cioè sotto alla Control Logic; in tale sede è stato incluso anche un pulsante di Reset.
 
-[![Pulsanti Start/Stop, Step, Reset](../../assets/clock/15-run-step-reset.png "Pulsanti Start/Stop, Step, Reset")]
+[![Pulsanti Start/Stop, Step, Reset](../../../assets/clock/15-run-step-reset.png "Pulsanti Start/Stop, Step, Reset")]
 
 ### Il Loader e il Clock
 
@@ -29,7 +29,7 @@ Il segnale **CLK-Start** viene utilizzato dal Loader alla fine della programmazi
 
 ## Schema
 
-[![Schema del modulo di Clock](../../assets/clock/15-clock-schema.png "Schema del modulo di Clock")](../../assets/clock/15-clock-schema.png)
+[![Schema del modulo di Clock](../../../assets/clock/15-clock-schema.png "Schema del modulo di Clock")](../../../assets/clock/15-clock-schema.png)
 
 *Schema del modulo di Clock.*
 

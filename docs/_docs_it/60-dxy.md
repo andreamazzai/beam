@@ -5,7 +5,7 @@ excerpt: "Registri indice del computer BEAM"
 ---
 <small>[Il registro D](#il-registro-d) - [Utilizzo con le modalità di indirizzamento indicizzate](#utilizzo-con-le-modalità-di-indirizzamento-indicizzate) - [Utilizzo per i salti condizionali](#utilizzo-per-i-salti-condizionali) - [Schema](#schema) - [Differenze tra Registri indice dell’NQSAP e del BEAM](#differenze-tra-registri-indice-dellnqsap-e-del-beam) - [Link utili](#link-utili)</small>
 
-[![Registri indice del computer BEAM](../../assets/dxy/60-beam-dxy.png "Registri indice del computer BEAM"){:width="100%"}](../../assets/dxy/60-beam-dxy.png)
+[![Registri indice del computer BEAM](../../../assets/dxy/60-beam-dxy.png "Registri indice del computer BEAM"){:width="100%"}](../../../assets/dxy/60-beam-dxy.png)
 
 Nel microprocessore 6502 sono presenti due registri indice, X e Y, che possono facilmente essere riprodotti in un computer TTL; sono registri indipendenti che possono essere scritti e letti alla bisogna.
 
@@ -39,7 +39,7 @@ Il risultato del computo può essere esportato attivando il segnale RD: gli outp
 
 Il flusso logico tratto dalla <a href="https://tomnisbet.github.io/nqsap/docs/dxy-registers/" targe ="_blank">spiegazione di Tom Nisbet</a> chiarisce il funzionamento:
 
-![Registri D, X e Y in azione](../../assets/dxy/60-dxy-nqsap-tom-flow.png "Registri D, X e Y in azione"){:width="66%"}
+![Registri D, X e Y in azione](../../../assets/dxy/60-dxy-nqsap-tom-flow.png "Registri D, X e Y in azione"){:width="66%"}
 
 ### Utilizzo per i salti condizionali
 
@@ -69,13 +69,13 @@ Poiché la configurazione utilizzata per gli Adder '283 permette la sola esecuzi
 
 Questa tecnica funziona correttamente grazie alla natura ciclica dell'indirizzo di memoria in un sistema a 8 bit.
 
-[![Schema dei registri indice dell'NQSAP](../../assets/dxy/60-nqsap-dxy-schema.png "Schema dei registri indice dell'NQSAP"){:width="100%"}](../../assets/dxy/60-nqsap-dxy-schema.png)
+[![Schema dei registri indice dell'NQSAP](../../../assets/dxy/60-nqsap-dxy-schema.png "Schema dei registri indice dell'NQSAP"){:width="100%"}](../../../assets/dxy/60-nqsap-dxy-schema.png)
 
 *Schema dei registri indice dell'NQSAP.*
 
 ## Schema
 
-[![Schema dei Registri indice del computer BEAM](../../assets/dxy/60-beam-dxy-schema.png "Schema dei Registri indice del computer BEAM"){:width="100%"}](../../assets/dxy/60-beam-dxy-schema.png)
+[![Schema dei Registri indice del computer BEAM](../../../assets/dxy/60-beam-dxy-schema.png "Schema dei Registri indice del computer BEAM"){:width="100%"}](../../../assets/dxy/60-beam-dxy-schema.png)
 
 *Schema dei registri indice del computer BEAM.*
 

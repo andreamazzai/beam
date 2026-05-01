@@ -5,7 +5,7 @@ excerpt: "EEPROM Programmer"
 ---
 <small>[Il programmatore di EEPROM](#il-programmatore-di-eeprom) - [Schema](#schema) - [Spiegazione del codice](#spiegazione-del-codice) - [Le EEPROM e il loro contenuto](#le-eeprom-e-il-loro-contenuto) - [Calcolo del CRC pre-programmazione](#calcolo-del-crc-pre-programmazione) - [Sblocco e blocco della EEPROM](#sblocco-e-blocco-della-eeprom) - [Cancellazione della EEPROM](#cancellazione-della-eeprom) - [Programmazione della EEPROM](#programmazione-della-eeprom) - [Verifica del CRC post-programmazione](#verifica-del-crc-post-programmazione) - [Note](#note) - [Link utili](#link-utili)</small>
 
-[![EEPROM programmer](../../assets/eeprom/eeprom-programmer.png "EEPROM programmer"){:width="100%"}](../../assets/eeprom/eeprom-programmer.png)
+[![EEPROM programmer](../../../assets/eeprom/eeprom-programmer.png "EEPROM programmer"){:width="100%"}](../../../assets/eeprom/eeprom-programmer.png)
 
 Il programmatore di EEPROM serve a programmare le EEPROM della [Control Logic](../control) con il microcode necessario ad eseguire le istruzioni definite per il computer BEAM.
 
@@ -13,7 +13,7 @@ Il programmatore di EEPROM serve a programmare le EEPROM della [Control Logic](.
 
 La mia prima esperienza con la programmazione di EEPROM risale alla costruzione del computer SAP-1 di Ben Eater e alla realizzazione del programmatore basato sui suoi schema e sketch. Questo progetto, molto semplice, permetteva di programmare le EEPROM del microcode, anche se la scrittura risultava particolarmente lenta. Ciononostante, la programmazione di una EEPROM (dapprima manualmente, poi con il programmatore) è stato un momento euforico - mai avrei pensato di riuscire a comprendere i (tutto sommato abbastanza semplici) meccanismi che lo rendevano possibile.
 
-[![Schema del programmatore di EEPROM del computer SAP](../../assets/eeprom/eeprom-ben.png "Schema del programmatore di EEPROM del computer SAP"){:width="100%"}](../../assets/eeprom/eeprom-ben.png)
+[![Schema del programmatore di EEPROM del computer SAP](../../../assets/eeprom/eeprom-ben.png "Schema del programmatore di EEPROM del computer SAP"){:width="100%"}](../../../assets/eeprom/eeprom-ben.png)
 
 *Schema del programmatore di EEPROM del computer SAP-1.*
 
@@ -25,7 +25,7 @@ Uno dei progetti di Tom, il programmatore <a href="https://github.com/TomNisbet/
 
 Non volevo iniziare il progetto di un nuovo programmatore di EEPROM mentre stavo ancora lavorando sul BEAM. Tuttavia, a un certo punto avevo realizzato che avrei speso meno tempo nel costruire un programmatore basato sul TommyPROM rispetto al tempo che avrei sprecato continuando ad utilizzare il programmatore elementare di Ben.
 
-[![Schema del programmatore di EEPROM TommyPROM di Tom Nisbet](../../assets/eeprom/TommyPROM-nano-sch.png "Schema del programmatore di EEPROM TommyPROM di Tom Nisbet"){:width="100%"}](../../assets/eeprom/TommyPROM-nano-sch.png)
+[![Schema del programmatore di EEPROM TommyPROM di Tom Nisbet](../../../assets/eeprom/TommyPROM-nano-sch.png "Schema del programmatore di EEPROM TommyPROM di Tom Nisbet"){:width="100%"}](../../../assets/eeprom/TommyPROM-nano-sch.png)
 
 *Schema del programmatore di EEPROM TommyPROM di Tom Nisbet.*
 
@@ -47,7 +47,7 @@ Un'altra differenza stava nella modalità di scrittura degli Shift Register: il 
 
 ## Schema
 
-[![Schema del programmatore di EEPROM del computer BEAM](../../assets/eeprom/90-eeprom-schema.png "Schema del programmatore di EEPROM del computer BEAM"){:width="100%"}](../../assets/eeprom/90-eeprom-schema.png)
+[![Schema del programmatore di EEPROM del computer BEAM](../../../assets/eeprom/90-eeprom-schema.png "Schema del programmatore di EEPROM del computer BEAM"){:width="100%"}](../../../assets/eeprom/90-eeprom-schema.png)
 
 *Schema del programmatore di EEPROM del computer BEAM.*
 
@@ -88,7 +88,7 @@ Ogni step abilita uno o più segnali: ad esempio il settimo step dell'istruzione
 
 Come si può vedere nello [sketch Arduino](https://github.com/andreamazzai/beam), ad ogni segnale di controllo corrispondono uno o più pin specifici nelle tre EEPROM numerate 1, 2 e 3:
 
-[![Definizione dei segnali di controllo gestiti dalle EEPROM 1, 2 e 3](../../assets/eeprom/eeprom-pins.png "Definizione dei segnali di controllo gestiti dalle EEPROM 1, 2 e 3"){:width="100%"}](../../assets/eeprom/eeprom-pins.png)
+[![Definizione dei segnali di controllo gestiti dalle EEPROM 1, 2 e 3](../../../assets/eeprom/eeprom-pins.png "Definizione dei segnali di controllo gestiti dalle EEPROM 1, 2 e 3"){:width="100%"}](../../../assets/eeprom/eeprom-pins.png)
 
 *Definizione dei segnali di controllo gestiti dalle EEPROM 1, 2 e 3.*
 
@@ -102,7 +102,7 @@ La EEPROM 0 governa invece i quattro demultiplexer '138, dunque le combinazioni 
 
 Si può dedurre che ogni EEPROM contiene solamente *una parte* del microcode di ogni istruzione, cioè (ovviamente) la porzione relativa ai segnali cablati sui suoi output. Ma come è suddiviso il microcode nelle quattro EEPROM? La seguente tabella mostra, per le istruzioni di esempio indicate in precedenza, quali segnali siano attivi su ogni EEPROM nei diversi step dell'istruzione correntemente in esecuzione:
 
-[![Suddivisione sulle quattro EEPROM del microcode di alcune istruzioni](../../assets/eeprom/4-eeprom-rappresentazione.png "Suddivisione sulle quattro EEPROM del microcode di alcune istruzioni"){:width="100%"}](../../assets/eeprom/4-eeprom-rappresentazione.png)
+[![Suddivisione sulle quattro EEPROM del microcode di alcune istruzioni](../../../assets/eeprom/4-eeprom-rappresentazione.png "Suddivisione sulle quattro EEPROM del microcode di alcune istruzioni"){:width="100%"}](../../../assets/eeprom/4-eeprom-rappresentazione.png)
 
 *Suddivisione sulle quattro EEPROM del microcode di alcune istruzioni.*
 
@@ -127,7 +127,7 @@ EEPROM<sub>0</sub>byte<sub>101</sub> + EEPROM<sub>1</sub>byte<sub>101</sub> + EE
 
 (RL) + (FNZC) + (CS\|C0) + (), cioè
 
-RL + FNZC + CS\|C0, così come indicato nel *Dettaglio microcode di alcune istruzioni di esempio*.
+RL + FNZC + CS\|C0, così come indicato nel box *Dettaglio microcode di alcune istruzioni di esempio*.
 
 In pratica, si devono tenere in considerazione i segnali di output cablati su ogni EEPROM e indicare quali di questi debbano essere attivi ad ogni combinazione di istruzione / step. Questo spiega la necessità di programmare le quattro EEPROM ognuna con una propria porzione specifica di microcode.
 
@@ -146,7 +146,7 @@ La tabella riassume la collocazione dei microcode da 4KB consolidati in un'unica
 
 Le colonne degli indirizzi indicano in quali locazioni della EEPROM da 16KB trovino posto le singole istanze da 4KB del microcode originariamente definito utilizzando quattro EEPROM da 4KB.
 
-[![Rappresentazione dei quattro microcode consolidati in un'unica EEPROM](../../assets/eeprom/eeprom-consolidata.png "Rappresentazione dei quattro microcode consolidati in un'unica EEPROM"){:width="100%"}](../../assets/eeprom/eeprom-consolidata.png)
+[![Rappresentazione dei quattro microcode consolidati in un'unica EEPROM](../../../assets/eeprom/eeprom-consolidata.png "Rappresentazione dei quattro microcode consolidati in un'unica EEPROM"){:width="100%"}](../../../assets/eeprom/eeprom-consolidata.png)
 
 *Rappresentazione dei quattro microcode consolidati in un'unica EEPROM.*
 
@@ -171,7 +171,7 @@ Perché *simulata*? Perché in questa fase del programma la EEPROM non è ancora
 
 Ci troviamo nella situazione in cui la routine del calcolo del CRC deve ricevere i dati sequenzialmente (dati che dobbiamo produrre utilizzando la routine **buildInstruction** preposta alla creazione di istruzioni e step); tuttavia, la buildInstruction esegue il frazionamento di ogni istruzione nei modi esposti nella [sezione precedente](#le-eeprom-e-il-loro-contenuto), generando cioè un opcode completo e suddividendo le scritture dei 32 bit della Control Word di ogni step sulle corrispondenti porzioni di microcode, come evidenziato nella tabella *Consolidamento dei microcode in un'unica EEPROM* e nella grafica *Rappresentazione dei quattro microcode consolidati in un'unica EEPROM.*
 
-![Microcode](../../assets/eeprom/tabella-grafica.png){:width="100%"}
+![Microcode](../../../assets/eeprom/tabella-grafica.png){:width="100%"}
 
 La **buildInstruction** prepara infatti i 32 bit / 4 byte di microcode di ogni step dell'istruzione corrente e li memorizza in un array tipo uint32_t di lunghezza 16, cioè 4 byte * 16 step = 64 byte; successivamente, le scritture avvengono in questa sequenza (routine **writeOpcode**):
 
@@ -193,7 +193,7 @@ e così via fino alla fine delle istruzioni.
 
 Riprendendo lo schema visto in precedenza, la **buildInstruction** prepara istruzioni e relativi step, dei quali vengono dapprima eseguite le scritture evidenziate dalle frecce rosse (istruzione 0), successivamente quelle evidenziate dalle frecce blu (istruzione 1) e così via, fino all'ultima istruzione.
 
-[![Sequenza di scrittura delle istruzioni](../../assets/eeprom/eeprom-consolidata-sequenza.png "Sequenza di scrittura delle istruzioni"){:width="100%"}](../../assets/eeprom/eeprom-consolidata-sequenza.png)
+[![Sequenza di scrittura delle istruzioni](../../../assets/eeprom/eeprom-consolidata-sequenza.png "Sequenza di scrittura delle istruzioni"){:width="100%"}](../../../assets/eeprom/eeprom-consolidata-sequenza.png)
 
 *Sequenza di scrittura delle istruzioni.*
 

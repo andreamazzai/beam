@@ -5,7 +5,7 @@ excerpt: "Stack Pointer del computer BEAM"
 ---
 <small>[Implementazione del microcode dello Stack Pointer](#implementazione-del-microcode-dello-stack-pointer) - [Lo Stack Pointer dell’NQSAP / NQSAP-PCB](#lo-stack-pointer-dellnqsap--nqsap-pcb) - [Schema](#schema) - [Link utili](#link-utili)</small>
 
-[![Stack Pointer del computer BEAM](../../assets/sp/70-beam-sp.png "Stack Pointer del computer BEAM"){:width="100%"}](../../assets/sp/70-beam-sp.png)
+[![Stack Pointer del computer BEAM](../../../assets/sp/70-beam-sp.png "Stack Pointer del computer BEAM"){:width="100%"}](../../../assets/sp/70-beam-sp.png)
 
 L'implementazione dello stack nel 6502 prevede l'utilizzo di un'area di memoria dedicata alla memorizzazione e al ripristino di informazioni secondo una logica LIFO (Last-In, First-Out, dove l'ultimo elemento inserito è il primo a essere letto), gestita da un puntatore a 8 bit (Stack Pointer, SP) che tiene traccia dell'indirizzo della prossima locazione disponibile.
 
@@ -117,7 +117,7 @@ Nella documentazione dell'NQSAP, Tom segnala di aver inizialmente previsto l'uti
 
 Poiché Tom non aveva pubblicato lo schema dello Stack Pointer dell'NQSAP, lo sostituiamo con quello dell'NQSAP-PCB.
 
-[![Schema dello Stack Register del computer NQSAP-PCB](../../assets/sp/70-stack-nqsap-pcb.png "Schema dello Stack Register del computer NQSAP-PCB"){:width="66%"}](../../assets/sp/70-stack-nqsap-pcb.png)
+[![Schema dello Stack Register del computer NQSAP-PCB](../../../assets/sp/70-stack-nqsap-pcb.png "Schema dello Stack Register del computer NQSAP-PCB"){:width="66%"}](../../../assets/sp/70-stack-nqsap-pcb.png)
 
 *Schema dello Stack Register del computer NQSAP-PCB.*
 
@@ -127,7 +127,7 @@ L'SP dell'NQSAP-PCB è governato dai segnali SE (Stack Enable) e C0/C1, che dete
 
 ## Schema
 
-[![Schema dello Stack Register del computer BEAM](../../assets/sp/70-stack-pointer-schema.png "Schema dello Stack Register del computer BEAM"){:width="100%"}](../../assets/sp/70-stack-pointer-schema.png)
+[![Schema dello Stack Register del computer BEAM](../../../assets/sp/70-stack-pointer-schema.png "Schema dello Stack Register del computer BEAM"){:width="100%"}](../../../assets/sp/70-stack-pointer-schema.png)
 
 *Schema dello Stack Register del computer BEAM.*
 

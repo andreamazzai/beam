@@ -73,7 +73,7 @@ Grazie alla sezione *Textbook ==> Module 3: Computer Integer Arithmetic ==> 2. N
 
 Il metodo **Signed Magnitude** è molto facile da comprendere: si sacrifica un bit dedicandolo alla rappresentazione del segno; il bit sacrificabile è quello più significativo (MSB), pertanto se un numero Unsigned a 8 bit può andare da 0 a 255 (2^8 = 256 combinazioni rappresentabili), un numero Unsigned avrà 7 bit disponibili per il Modulo (2^7 = 128 combinazioni) e un bit per il segno, dunque potrà andare da -128 a +127 (sempre 256 numeri rappresentabili, ma metà negativi e metà positivi).
 
-![Rappresentazione Modulo e Segno dei numeri a 4 bit](../../assets/math/math_signed_magnitude.gif){:width="100%"}
+![Rappresentazione Modulo e Segno dei numeri a 4 bit](../../../assets/math/math_signed_magnitude.gif){:width="100%"}
 
 *Rappresentazione Modulo e Segno dei numeri a 4 bit.*
 
@@ -81,7 +81,7 @@ Nell'immagine (semplificata a soli 4 bit per ragioni di spazio) si nota un probl
 
 NB: nella pagina citata, vi è un'immagina errata nella sottrazione "5 - 2". L'immagine è la seguente:
 
-![Errore sottrazione](../../assets/math/math_mistake.gif
+![Errore sottrazione](../../../assets/math/math_mistake.gif
 ){:width="15%"}
 
 La pagina desiderava in realtà rappresentare era una sottrazione tra A e B utilizzando il metodo Modulo e Segno, che *dovrebbe* permettere di trasformare l'operazione da "5 - 2" in "5 + (-2)" invertendo il primo bit del numero 2, che dunque da 0010 diventa 1010:
@@ -98,7 +98,7 @@ Tuttavia, la somma binaria di 0101 (5) e 1010 (-2) non porta al risultato aspett
 
 Tralasciando la spiegazione del metodo **Complemento a 1 (1C)** (inversione di tutti i bit del numero), anch'esso non ottimale, il **Complemento a 2 (2C)** risulta invece perfetto per la rappresentazione dei numeri negativi, portando tra l'altro in dote una grandissima semplificazione nell'esecuzione delle sottrazioni.
 
-![Rappresentazione in Complemento a 2 dei numeri a 4 bit](../../assets/math/math_2c.gif){:width="100%"}
+![Rappresentazione in Complemento a 2 dei numeri a 4 bit](../../../assets/math/math_2c.gif){:width="100%"}
 
 *Rappresentazione in Complemento a 2 dei numeri a 4 bit.*
 
@@ -275,13 +275,13 @@ In definitiva, possiamo dire che se il bit del segno viene corrotto si è verifi
 
 Dieter esponeva una rappresentazione logica di un Adder in grado di effettuare sia somme sia sottrazioni, segnalando che "le somme A+B sono facili; per eseguire invece le sottrazioni, il metodo più semplice è quello di invertire B e procedere poi esattamente come per le somme: A+(-B)".
 
-![Adder hardware per somme A+B e sottrazioni A-B](../../assets/math/dieter-alu.png){:width="66%"}
+![Adder hardware per somme A+B e sottrazioni A-B](../../../assets/math/dieter-alu.png){:width="66%"}
 
 *Adder hardware per somme A+B e sottrazioni A-B.*
 
 In un Adder a 8 bit abbiamo 8 Adder a 1 bit in cascata; quello rappresentato di seguito è l'8° ed ultimo, i cui ingressi A e B' sono i bit più significativi A7 e B7' dei numeri da sommare; l'ingresso Carry-in C_IN è connesso all'output Carry-Out C_OUT proveniente dall'Adder precedente.
 
-![Ultimo stadio di un Adder a 8 bit](../../assets/math/dieter-8th-adder.png){:width="25%"}
+![Ultimo stadio di un Adder a 8 bit](../../../assets/math/dieter-8th-adder.png){:width="25%"}
 
 *Ultimo stadio di un Adder a 8 bit.*
 
@@ -321,45 +321,45 @@ Mettendo a fattor comune quanto abbiamo visto fino ad ora, possiamo identificare
 
 La truth table **(A7 == B7') AND (A7 <> Q7)** del primo caso si tradurrebbe nella logica in figura; purtroppo, il computer basato su [74LS181](../alu/#il-74ls181) non offre visibilità del valore di B7', che è computato internamente all'ALU e non esposto, pertanto questo metodo non è utilizzabile:
 
-![Primo metodo](../../assets/math/overflow-detector-xor-not-and.png)
+![Primo metodo](../../../assets/math/overflow-detector-xor-not-and.png)
 
 Per dovere di cronaca 😊 riporto lo schema di due registri A e B e di un generico Half Adder che avevo disegnato per comprendere meglio le addizioni; si noti la circuiteria preposta ad individuare situazioni di Overflow.
 
-[![Adder su carta](../../assets/math/adder.png "Adder su carta"){:width="50%"}](../../assets/math/adder.png){:width="75%"}
+[![Adder su carta](../../../assets/math/adder.png "Adder su carta"){:width="50%"}](../../../assets/math/adder.png){:width="75%"}
 
 ---
 Anche nel secondo caso **C7 <> C8** manca una informazione, perché C7 è computato internamente all'ALU e non esposto:
 
-![Secondo metodo](../../assets/math/overflow-detector-xor.png)
+![Secondo metodo](../../../assets/math/overflow-detector-xor.png)
 
 ---
 Nemmeno il terzo metodo **(A7 = B7' = 1 AND Q7 = 0) OR (A7 = B7' = 0 AND Q7 = 1)** sembra utilizzabile, perché B7' è confinato alla circuiteria interna dell'ALU:
 
-![Terzo metodo](../../assets/math/overflow-detector-and-or.png){:width="45%"}
+![Terzo metodo](../../../assets/math/overflow-detector-and-or.png){:width="45%"}
 
 I tre metodi esaminati sembrano portare a una strada chiusa; tuttavia, è possibile ricostruire artificialmente il segnale B7' basandosi sugli altri segnali disponibili nel computer.
 
 - In una *addizione*, il valore B7' in ingresso all'ultimo Adder del '181 è uguale al valore di B7 dato in input al chip (in una somma A7 + B7, B7' non subisce modifiche dalla circuiteria interna dell'ALU e possiamo dunque usare B7 come input del circuito che determina l'eventuale stato di Overflow).
 
-![Overflow somma](../../assets/math/overflow-detector-a+b.png){:width="43%"}
+![Overflow somma](../../../assets/math/overflow-detector-a+b.png){:width="43%"}
 
 Qualche considerazione permette di riutilizzare lo stesso metodo anche per la verifica dell'Overflow nelle *sottrazioni*. Infatti, nelle sezioni [Fonti](#fonti) e [Numeri Unsigned e numeri Signed](#numeri-unsigned-e-numeri-signed) di questa pagina abbiamo appreso come una sottrazione possa essere svolta eseguendo una addizione tra minuendo e complemento a 2 del sottraendo, dunque:
 
 - Il valore B7' in ingresso all'ultimo Adder del '181 è invertito rispetto al valore di B7 dato in input al chip (in una sottrazione A7 - B7, B7' viene invertito dalla circuiteria interna dell'ALU e possiamo dunque usare l'inverso di B7 come input del circuito che determina l'eventuale stato di Overflow):
 
-![Overflow sottrazione](../../assets/math/overflow-detector-a-b.png){:width="43%"}
+![Overflow sottrazione](../../../assets/math/overflow-detector-a-b.png){:width="43%"}
 
 In definitiva, il terzo metodo è utilizzabile per la verifica dell'Overflow sia per le addizioni, sia per le sottrazioni.
 
 A questo punto, possiamo realizzare un circuito in grado di rilevare l'overflow. È necessario integrare la gestione delle istruzioni: il circuito di rilevamento dell'overflow per le addizioni deve includere un controllo che verifichi se l'operazione in esecuzione è un'addizione; lo stesso vale per la sottrazione.
 
-[![Overflow somma e sottrazione](../../assets/math/overflow-detector-a+b-a-b.png){:width="100%"}](../../assets/math/overflow-detector-a+b-a-b.png)
+[![Overflow somma e sottrazione](../../../assets/math/overflow-detector-a+b-a-b.png){:width="100%"}](../../../assets/math/overflow-detector-a+b-a-b.png)
 
 ### Semplificazione con 74LS151
 
 Ora le cose si fanno interessanti: Dieter prosegue indicando che un unico chip 74LS151, opportunamente connesso agli ingressi A, B, Q, A + B e A - B, è in grado di identificare tutte le situazioni di Overflow.
 
-![Schema logico del 74LS151](../../assets/math/overflow-74151.png){:width="80%"}
+![Schema logico del 74LS151](../../../assets/math/overflow-74151.png){:width="80%"}
 
 *Schema logico del 74LS151.*
 
@@ -390,11 +390,11 @@ Ipotizziamo ad esempio di eseguire una somma con:
 
 La combinazione 011 agli ingressi S2-S1-S0 del '151 attiverà l'ingresso I3, che porterà all'uscita Z il segnale allo stato logico 1 proveniente dall'IR, evidenziando una situazione di Overflow.
 
-![74LS151](../../assets/math/overflow-74151-i3-sum.png){:width="40%"}
+![74LS151](../../../assets/math/overflow-74151-i3-sum.png){:width="40%"}
 
 Dovendo indirizzare 8 combinazioni di Q, B e A (000, 001 etc. fino a 111), una configurazione dei pin di ingresso come evidenziato nella successiva figura risolve le equazioni di Overflow sia per le addizioni A + B, sia per le sottrazioni A - B e B - A, purché i pin I0-I7 del '151 siano correttamente connessi all'IR per rilevare l'esecuzione di istruzioni di somma A + B e sottrazione A - B e B - A:
 
-![74LS151](../../assets/math/overflow-74151-i3-sum-full.png){:width="50%"}
+![74LS151](../../../assets/math/overflow-74151-i3-sum-full.png){:width="50%"}
 
 La seguente tabella riepiloga le situazioni di Overflow in base agli stati di Q, B ed A ed al fatto che si stiano eseguendo addizioni o sottrazioni:
 
@@ -455,7 +455,7 @@ Q               -32                       1110.0000 ==> 0xE0 = -32, no Overflow
 
 Il microcode opportunamente codificato dell'istruzione A + B porterebbe a 1 gli ingressi I3 e I4 del '151, mentre tutti gli altri ingressi sarebbero a 0; l'operazione produrrebbe Q7=1, B7=1 e A7=0 sugli ingressi di selezione (S2-S1-S0 = 110), che attiverebbero l'ingresso **I6** che risulta a 0 in quanto non attivato dal microcode, pertanto l'uscita Q del '151 sarebbe a 0, indicando che non vi è Overflow --> situazione verificata correttamente:
 
-![74LS151](../../assets/math/overflow-74151-i6.png){:width="50%"}
+![74LS151](../../../assets/math/overflow-74151-i6.png){:width="50%"}
 
 ---
 
@@ -472,7 +472,7 @@ Q               144                       1001.0000 ==> 0x90 = -112, Overflow
 
 Il microcode opportunamente codificato dell'istruzione A + B porterebbe a 1 gli ingressi I3 e I4 del '151, mentre tutti gli altri ingressi sarebbero a 0; l'operazione produrrebbe Q7=1, B7=0 e A7=0 sugli ingressi di selezione (S2-S1-S0 = 100), che attiverebbero l'ingresso **I4** che risulta a 1 in quanto attivato dal microcode, pertanto l'uscita Q del '151 sarebbe a 1, indicando che vi è Overflow --> situazione verificata correttamente.
 
-![74LS151](../../assets/math/overflow-74151-i4.png){:width="50%"}
+![74LS151](../../../assets/math/overflow-74151-i4.png){:width="50%"}
 
 ---
 
@@ -489,7 +489,7 @@ Q                32                      10010.0000 ==> 0010.0000 ==> 0x20 = 32,
 
 Il microcode opportunamente codificato dell'istruzione A - B porterebbe a 1 gli ingressi I1 e I6 del '151, mentre tutti gli altri ingressi sarebbero a 0; l'operazione produrrebbe Q7=0, B7=0 e A7=0 sugli ingressi di selezione (S2-S1-S0 = 000), che attiverebbero l'ingresso **I0** che risulta a 0, pertanto l'uscita Q del '151 sarebbe a 0, indicando che non vi è Overflow --> situazione verificata correttamente.
 
-![74LS151](../../assets/math/overflow-74151-i0.png){:width="50%"}
+![74LS151](../../../assets/math/overflow-74151-i0.png){:width="50%"}
 
 ---
 
@@ -506,19 +506,19 @@ Q              -160                      10110.0000 ==> 0110.0000 ==> 0x60 = 96,
 
 Il microcode opportunamente codificato dell'istruzione A - B porterebbe a 1 gli ingressi I1 e I6 del '151, mentre tutti gli altri ingressi sarebbero a 0; l'operazione produrrebbe Q7=0, B7=0 e A7=1 sugli ingressi di selezione (S2-S1-S0 = 001), che attiverebbero l'ingresso **I1** che risulta a 1 in quanto attivato dal microcode, pertanto l'uscita Q del '151 sarebbe a 1, indicando che vi è Overflow --> situazione verificata correttamente.
 
-![74LS151](../../assets/math/overflow-74151-i1.png){:width="50%"}
+![74LS151](../../../assets/math/overflow-74151-i1.png){:width="50%"}
 
 Riprendendo la spiegazione dell'esempio svolto in testa ai quattro casi appena discussi, si noti che anche i casi 3 e 4 sono sottrazioni nelle quali il sottraendo è positivo: in entrambi i casi l'ALU eseguirà internamente una somma del minuendo nel suo stato originario e del sottraendo invertito col complemento a 2.
 
 Tornando poi all'interpretazione dell'hardware, abbiamo anticipato che i moduli ALU del computer NQSAP e del computer BEAM utilizzano solo le istruzioni A + B e A - B, dunque possiamo semplificare le connessioni del '151 eliminando B - A:
 
-![74LS151](../../assets/math/overflow-74151-a+b-a-b.png){:width="50%"}
+![74LS151](../../../assets/math/overflow-74151-a+b-a-b.png){:width="50%"}
 
 I segnali (A + B) e (A - B) dovranno avere una connessione hardwired con l'Instruction Register per permetterci di identificare rispettivamente le istruzioni di somma e di sottrazione. Quando nella descrizione dei quattro casi appena visti si indica "Il microcode opportunamente codificato..." si intende infatti che tali istruzioni dovranno rispettare dei vincoli nella scelta degli opcode, in modo da poter sapere con certezza se stiamo eseguendo l'una o l'altra.
 
 Riprendendo lo schema della sezione [Overflow](../flags/#overflow) dalla pagina del modulo Flag, possiamo ora applicare quanto visto in questa pagina per comprenderne il funzionamento e visualizzare la truth table definitiva:
 
-![Utilizzo del 74LS151 nell'NQSAP per il calcolo dell'Overflow con evidenza degli MSB di H, B e dell'ALU e degli ingressi di selezione dell'operazione IR-Q1 e IR-Q3.](../../assets/flags/30-flag-v-151.png){:width="50%"}
+![Utilizzo del 74LS151 nell'NQSAP per il calcolo dell'Overflow con evidenza degli MSB di H, B e dell'ALU e degli ingressi di selezione dell'operazione IR-Q1 e IR-Q3.](../../../assets/flags/30-flag-v-151.png){:width="50%"}
 
 *Utilizzo del 74LS151 nell'NQSAP per il calcolo dell'Overflow con evidenza degli MSB di H, B e dell'ALU e degli ingressi di selezione dell'operazione IR-Q1 e IR-Q3.*
 
@@ -564,7 +564,7 @@ Detto in altri termini, gli opcode delle istruzioni di addizione e sottrazione d
 
 Questo corrisponde esattamente a quanto indicato nella sezione [Un esempio pratico](../alu/#un-esempio-pratico) della pagina del modulo ALU, nella quale si evidenzia ad esempio che le istruzioni di somma dovranno presentare "01001 sui 5 bit comuni tra Instruction Register e ALU": il bit numero 3 è a 1, mentre il bit numero 1 è a 0, esattamente come richiesto dalla tabella precedente.
 
-![Connessioni in uscita dall'Instruction Register dell'NQSAP.](../../assets/math/IR-to-74151.png){:width="66%"}
+![Connessioni in uscita dall'Instruction Register dell'NQSAP.](../../../assets/math/IR-to-74151.png){:width="66%"}
 
 Per finire, da quanto visto fino ad ora possiamo dedurre un'altra regola: la somma di due Signed di segno opposto e la sottrazione di due Signed dello stesso segno non possono causare Overflow.
 
@@ -598,7 +598,7 @@ Nella quarta ipotesi notiamo che la somma di due bit entrambi a 1 genera un ripo
 
 Il risultato Q della somma dei due bit A e B si può ottenere con una porta logica XOR, mentre il Carry C<sub>OUT</sub> è chiaramente ottenibile con una porta AND. Ecco come si potrebbe costruire il circuito equivalente:
 
-![Half Adder](../../assets/math/half-adder.png){:width="50%"}
+![Half Adder](../../../assets/math/half-adder.png){:width="50%"}
 
 *Half Adder.*
 
@@ -633,13 +633,13 @@ Anziché ricorrere alla combinazione di AND e OR (Sum of Products, esposta nel v
 
 L'analisi di **Q** produce la seguente mappa (nella quale C corrisponde al C<sub>IN</sub> visto nella truth table):
 
-![Karnaugh Map](../../assets/math/Kmap1.png){:width="35%"}
+![Karnaugh Map](../../../assets/math/Kmap1.png){:width="35%"}
 
 Pur non potendo semplificare la truth table perché non è possibile creare gruppi di 1, si può notare il pattern "a scacchiera", che indica che il circuito logico equivalente è una porta XOR con tre ingressi (si veda il video <a href="https://www.youtube.com/watch?v=3SwLBw7RYiI" target="_blank">Combinational Logic Minimization: XORs</a>, sempre di Lameres).
 
 L'analisi di **C<sub>OUT</sub>** produce quest'altra mappa (nella quale, come in precedenza, C corrisponde al C<sub>IN</sub> visto nella truth table):
 
-![Karnaugh Map](../../assets/math/Kmap2.png){:width="35%"}
+![Karnaugh Map](../../../assets/math/Kmap2.png){:width="35%"}
 
 Utilizzando la proprietà distributiva dell'algebra booleana, è possibile semplificare la funzione
 
@@ -655,7 +655,7 @@ Tentiamo di rispondere al quesito. Si è visto che ogni Half Adder mette a dispo
 
 1) Per realizzare la somma **Q** è necessaria una porta XOR a tre ingressi, ma è dimostrabile che due porte XOR a due ingressi posizionate in cascata producono lo stesso risultato. Infatti, ipotizzando di avere due Half Adder, è possibile ottenere il risultato Q sfruttando le due porte XOR disponibili:
 
-![Due Half Adder](../../assets/math/full-adder-1.png){:width="100%"}
+![Due Half Adder](../../../assets/math/full-adder-1.png){:width="100%"}
 
 *Due Half Adder.*
 
@@ -682,7 +682,7 @@ Come si può vedere dalla truth table, l'output della terz'ultima colonna **C<su
 
 A questo punto, possiamo realizzare la funzione necessaria aggiungendo una semplice OR per effettuare la somma logica tra **C<sub>IN</sub>\*(A⊕B)** e **A\*B**.
 
-![Full Adder](../../assets/math/full-adder-2.png){:width="100%"}
+![Full Adder](../../../assets/math/full-adder-2.png){:width="100%"}
 
 *Full Adder.*
 
@@ -696,7 +696,7 @@ Per effettuare somme di più bit si utilizzano i Multiple Bit Adder. Il ruolo de
 
 Avendo a disposizione i Full Adder costituiti da due Half Adder e una porta OR, possiamo ora creare un Multiple Bit Adder per effettuare somme di nibble, byte e, più in generale, word di qualsiasi dimensione. Si noterà che questo paragrafo permette di rispondere positivamente al quesito che ci interrogava sulla possibilità di implementare un circuito complesso a partire da una logica di base semplice e ripetibile.
 
-![Multiple Bit Adder, o Ripple Carry Adder](../../assets/math/multiple-bit-adder.png){:width="100%"}
+![Multiple Bit Adder, o Ripple Carry Adder](../../../assets/math/multiple-bit-adder.png){:width="100%"}
 
 *Multiple Bit Adder, o Ripple Carry Adder, a 4 bit.*
 
@@ -706,7 +706,7 @@ Il Multiple Bit Adder creato ha un nome univoco: Ripple Carry Adder (RCA), perch
 
 L'immagine seguente, tratta dal video <a href="https://www.youtube.com/watch?v=TNoQ_djJW0I" target="_blank">Ripple Carry Adders Timing</a>, aiuta a visualizzare come il segnale C<sub>OUT</sub> dipenda da ben 9 livelli (nell'analisi di un circuito, si deve considerare il caso peggiore).
 
-![Timing di un Ripple Carry Adder](../../assets/math/rca-timing.png){:width="80%"}
+![Timing di un Ripple Carry Adder](../../../assets/math/rca-timing.png){:width="80%"}
 
 *Timing di un Ripple Carry Adder.*
 
@@ -722,7 +722,7 @@ Per indirizzare la problematica appena esposta, è necessario che ogni Full Adde
 
 Chiaramente, questo porta ad un compromesso: la velocità di risposta di ogni Full Adder aumenta, a discapito della aumentata complessità dovuta all'incremento di porte logiche.
 
-![Carry Look Ahead Adder](../../assets/math/carry-look-ahead-schema.png){:width="80%"}
+![Carry Look Ahead Adder](../../../assets/math/carry-look-ahead-schema.png){:width="80%"}
 
 *Carry Look Ahead Adder.*
 
@@ -822,13 +822,13 @@ Andiamo ora a realizzare un Carry Look Ahead Adder, ma prima, considerando quant
 
 La somma **Q**, come sempre, corrisponde ad A<sub>0</sub>⊕B<sub>0</sub>⊕C<sub>0</sub>. Aggiungiamo al Full Adder una porta OR e una porta AND con il solo scopo di ottenere i termini **p** (cioè A<sub>0</sub>+B<sub>0</sub> per il primo Adder) e **g** (cioé A<sub>0</sub>*B<sub>0</sub> per il primo Adder).
 
-![Logica della somma del Modified Full Adder](../../assets/math/modified-full-adder-1.png){:width="20%"}
+![Logica della somma del Modified Full Adder](../../../assets/math/modified-full-adder-1.png){:width="20%"}
 
 *Logica della somma del Modified Full Adder.*
 
 Aggiungiamo ora la logica del Carry C<sub>1</sub> = g<sub>0</sub> + p<sub>0</sub>\*C<sub>0</sub>:
 
-![Logica del Carry del Modified Full Adder](../../assets/math/modified-full-adder-2.png){:width="23%"}
+![Logica del Carry del Modified Full Adder](../../../assets/math/modified-full-adder-2.png){:width="23%"}
 
 *Logica del Carry del Modified Full Adder.*
 
@@ -836,13 +836,13 @@ Si noti che il Carry Out C<sub>1</sub> del primo Adder si trova al livello 3, ch
 
 Aggiungendo il prossimo Modified Full Adder, si verifica che la somma è computata al 4° livello, mentre il Carry è, come nell'adder precedente, computato ancora al 3° livello (OR in basso a sinistra).
 
-![Modified Full Adder a due stadi](../../assets/math/modified-full-adder-3.png){:width="42%"}
+![Modified Full Adder a due stadi](../../../assets/math/modified-full-adder-3.png){:width="42%"}
 
 *Modified Full Adder a due stadi.*
 
 Proseguendo con il terzo e con il quarto Modified Full Adder, la somma permane al 4° livello, mentre il Carry continua ad essere generato al 3° livello.
 
-![Modified Full Adder a quattro stadi](../../assets/math/modified-full-adder-4.png){:width="84%"}
+![Modified Full Adder a quattro stadi](../../../assets/math/modified-full-adder-4.png){:width="84%"}
 
 *Modified Full Adder a quattro stadi.*
 
@@ -885,7 +885,7 @@ Rimane l'ultimo passaggio, cioè *aggiungere 1*. Il primo Adder di un Multiple B
 
 Dunque, per negare un numero binario trasformandolo nel proprio complemento a due, possiamo utilizzare delle porte XOR per invertire tutti i bit di ingresso e sfruttare il segnale di Carry In del primo Adder per aggiungere 1: Ben Eater lo illustra molto chiaramente nel video <a href="https://www.youtube.com/watch?v=mOVOS9AjgFs" target="_blank">ALU Design</a> per il SAP-1 computer.
 
-![Dettaglio degli input del Multiple Bit Adder del SAP-1 Computer di Ben Eater](../../assets/math/adder-input-xor.png){:width="80%"}
+![Dettaglio degli input del Multiple Bit Adder del SAP-1 Computer di Ben Eater](../../../assets/math/adder-input-xor.png){:width="80%"}
 
 *Dettaglio degli input del Multiple Bit Adder del SAP-1 Computer di Ben Eater.*
 

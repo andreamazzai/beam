@@ -5,11 +5,11 @@ excerpt: "Modulo dei Flag del computer BEAM"
 ---
 <small>[Componenti e funzionamento](#componenti-e-funzionamento) - [I salti condizionali e incondizionati](#i-salti-condizionali-e-incondizionati) - [Calcolo dei Flag N, V, Z e C](#calcolo-dei-flag-n-v-z-e-c) - [Il Carry e i registri H e ALU](#il-carry-e-i-registri-h-e-alu) - [Schema](#schema) - [Differenze tra Moduli Flag dell’NQSAP e del BEAM](#differenze-tra-moduli-flag-dellnqsap-e-del-beam) - [Link utili](#link-utili)</small>
 
-[![Modulo dei Flag del computer BEAM](../../assets/flags/30-flag-beam.png "Modulo dei Flag del computer BEAM"){:width="100%"}](../../assets/flags/30-flag-beam.png)
+[![Modulo dei Flag del computer BEAM](../../../assets/flags/30-flag-beam.png "Modulo dei Flag del computer BEAM"){:width="100%"}](../../../assets/flags/30-flag-beam.png)
 
 Più volte, analizzando l'NQSAP e leggendo la documentazione di Tom Nisbet, avevo trovato delle idee molto ingegnose; alcune di queste si trovano nel modulo dei Flag.
 
-[![Schema del modulo dei Flag di Tom Nisbet, leggermente modificato al solo scopo di migliorarne la leggibilità](../../assets/flags/30-flag-nqsap-schematics.png "Schema del modulo dei Flag di Tom Nisbet, leggermente modificato al solo scopo di migliorarne la leggibilità"){:width="100%"}](../../assets/flags/30-flag-nqsap-schematics.png)
+[![Schema del modulo dei Flag di Tom Nisbet, leggermente modificato al solo scopo di migliorarne la leggibilità](../../../assets/flags/30-flag-nqsap-schematics.png "Schema del modulo dei Flag di Tom Nisbet, leggermente modificato al solo scopo di migliorarne la leggibilità"){:width="100%"}](../../../assets/flags/30-flag-nqsap-schematics.png)
 
 *Schema del modulo dei Flag di Tom Nisbet, leggermente modificato al solo scopo di migliorarne la leggibilità.*
 
@@ -30,11 +30,11 @@ Analizzando ad esempio un'istruzione di salto condizionale legata al flag Z risc
 
 - la selezione del flag da mettere in uscita sul '151 dipendeva dalla codifica dell'istruzione in esecuzione, poiché i 3 bit Select S2, S1 ed S0 erano direttamente collegati all'Instruction Register, cioè *hardwired*, in maniera similare a quanto realizzato anche nel modulo ALU;
 
- [![Output dell'Instruction Register verso il modulo Flag con evidenza dei 3 bit di selezione dell'istruzione di salto condizionale](../../assets/flags/30-flag-cl-ir-out.png "Output dell'Instruction Register verso il modulo Flag con evidenza dei 3 bit di selezione dell'istruzione di salto condizionale"){:width="100%"}](../../assets/flags/30-flag-cl-ir-out.png)
+ [![Output dell'Instruction Register verso il modulo Flag con evidenza dei 3 bit di selezione dell'istruzione di salto condizionale](../../../assets/flags/30-flag-cl-ir-out.png "Output dell'Instruction Register verso il modulo Flag con evidenza dei 3 bit di selezione dell'istruzione di salto condizionale"){:width="100%"}](../../../assets/flags/30-flag-cl-ir-out.png)
 
 *Output dell'Instruction Register verso il modulo Flag con evidenza dei 3 bit di selezione dell'istruzione di salto condizionale.*
 
-[![Ingressi di selezione dell'istruzione di salto condizionale del registro dei Flag e connessione "hardwired" con l'IR](../../assets/flags/30-flag-select-in.png "Ingressi di selezione dell'istruzione di salto condizionale del registro dei Flag e connessione "hardwired" con l'IR"){:width="80%"}](../../assets/flags/30-flag-select-in.png)
+[![Ingressi di selezione dell'istruzione di salto condizionale del registro dei Flag e connessione "hardwired" con l'IR](../../../assets/flags/30-flag-select-in.png "Ingressi di selezione dell'istruzione di salto condizionale del registro dei Flag e connessione "hardwired" con l'IR"){:width="80%"}](../../../assets/flags/30-flag-select-in.png)
 
 *Ingressi di selezione dell'istruzione di salto condizionale del registro dei Flag e connessione "hardwired" con l'IR.*
 
@@ -44,7 +44,7 @@ Se ad esempio una generica istruzione *Jump on Zero* fosse codificata come 010 s
 - in presenza del flag Z, l'uscita Q del Flip-Flop connessa al pin I2 avrebbe valore logico HI;
 - l'uscita del '151 andrebbe ad abilitare il segnale /PC-LOAD sul Program Counter (PC) per saltare al nuovo indirizzo.
 
-![Tabella funzioni Selector/Multiplexer 74LS151 con evidenza della ipotetica istruzione Jump on Zero](../../assets/flags/30-flag-151-table.png){:width="33%"}
+![Tabella funzioni Selector/Multiplexer 74LS151 con evidenza della ipotetica istruzione Jump on Zero](../../../assets/flags/30-flag-151-table.png){:width="33%"}
 
 *Tabella funzioni Selector/Multiplexer 74LS151 con evidenza della ipotetica istruzione Jump on Zero.*
 
@@ -77,7 +77,7 @@ Quattro porte AND permettono il caricamento dei FF in presenza del segnale di cl
 
 Ogni istruzione del computer, grazie alla personalizzazione del microcode, può settare anche più di un flag alla volta (come accade ad esempio per le operazioni ADC e SBC, che sul 6502 influiscono contemporaneamente su tutti i 4 flag **NVZC**).
 
-![Caricamento dei Flip-Flop C e Z con segnali Clock AND FC / FZ](../../assets/flags/30-flag-ff-cz.png){:width="50%"}
+![Caricamento dei Flip-Flop C e Z con segnali Clock AND FC / FZ](../../../assets/flags/30-flag-ff-cz.png){:width="50%"}
 
 *Caricamento dei Flip-Flop C e Z con segnali Clock AND FC / FZ.*
 
@@ -101,7 +101,7 @@ Come avviene la selezione del flag da portare all'uscita Z del '151? I segnali I
 
 Prendiamo come esempio l'istruzione BCS (Branch on Carry Set) ipotizzando che l'istruzione precedente abbia generato un Carry e che dunque il corrispondente FF presenti lo stato logico HI sull'uscita Q:
 
-[![Esempio istruzione Branch on Carry Set](../../assets/flags/30-flag-bcs.png "Esempio istruzione Branch on Carry Set"){:width="66%"}](../../assets/flags/30-flag-bcs.png)
+[![Esempio istruzione Branch on Carry Set](../../../assets/flags/30-flag-bcs.png "Esempio istruzione Branch on Carry Set"){:width="66%"}](../../../assets/flags/30-flag-bcs.png)
 
 *Esempio istruzione Branch on Carry Set.*
 
@@ -129,7 +129,7 @@ Perché tutte le istruzioni di salto dovrebbero essere "uguali"? La spiegazione,
 
 Prendiamo come ulteriore esempio l'istruzione BVC (Branch on OVerflow Clear) ipotizzando che non ci sia Overflow e che dunque il segnale /V sia attivo:
 
-[![Esempio istruzione Branch on OVerflow Clear](../../assets/flags/30-flag-bvc.png "Esempio istruzione Branch on OVerflow Clear"){:width="66%"}](../../assets/flags/30-flag-bvc.png)
+[![Esempio istruzione Branch on OVerflow Clear](../../../assets/flags/30-flag-bvc.png "Esempio istruzione Branch on OVerflow Clear"){:width="66%"}](../../../assets/flags/30-flag-bvc.png)
 
 *Esempio istruzione Branch on OVerflow Clear.*
 
@@ -152,7 +152,7 @@ L'utilizzo di una NOR all'uscita Z del '151 permette di gestire sia i salti cond
 
 - In caso di salto incondizionato (JMP, JSR), il microcode dell'istruzione di salto attiva /WP (in logica invertita) che a sua volta attiva il caricamento sul PC del valore presente sul bus: (/PC-LOAD = NOT (x+1) = 0), pertanto il PC carica dal bus il suo nuovo valore.
 
-![NOR per l'attivazione di /PC-LOAD con salti condizionali ed incondizionati](../../assets/flags/30-flag-je-wp.png){:width="50%"}
+![NOR per l'attivazione di /PC-LOAD con salti condizionali ed incondizionati](../../../assets/flags/30-flag-je-wp.png){:width="50%"}
 
 *NOR per l'attivazione di /PC-LOAD con salti condizionali ed incondizionati.*
 
@@ -171,7 +171,7 @@ Come detto precedentemente, il flag **N**egative è ricavato dal 7° bit del bus
 
 Il flag **Z**ero è attivo quando il valore presente nel bus è zero; anziché usare una serie di porte logiche NOR e AND per verificare se tutte le linee sono LO (come accadeva nel SAP), un singolo comparatore '688 può svolgere la stessa funzione. Notare che anche questo flag opera sul bus e non sui risultati della sola ALU.
 
-![Comparatore 74LS688 per verifica dello stato zero sul bus](../../assets/flags/30-flag-688.png){:width="50%"}
+![Comparatore 74LS688 per verifica dello stato zero sul bus](../../../assets/flags/30-flag-688.png){:width="50%"}
 
 *Comparatore 74LS688 per verifica dello stato zero sul bus.*
 
@@ -187,7 +187,7 @@ In seguito avevo capito che il calcolo dell'Overflow è strettamente legato all'
 
 In una delle innumerevoli sessioni di approfondimento e studio, ero finalmente arrivato a comprendere che se nella somma di due numeri con segno si nota un imprevisto cambiamento di segno del risultato, si ha una situazione di Overflow: il cambiamento di segno è rappresentato da una variazione dell'MSB del risultato, cosa che un '151 opportunamente connesso permette di identificare.
 
-![Utilizzo di un 74LS151 per il calcolo dell'Overflow con evidenza degli MSB di H, B e dell'ALU e degli ingressi di selezione dell'operazione IR-Q1 e IR-Q3.](../../assets/flags/30-flag-v-151.png){:width="50%"}
+![Utilizzo di un 74LS151 per il calcolo dell'Overflow con evidenza degli MSB di H, B e dell'ALU e degli ingressi di selezione dell'operazione IR-Q1 e IR-Q3.](../../../assets/flags/30-flag-v-151.png){:width="50%"}
 
 *Utilizzo di un 74LS151 per il calcolo dell'Overflow con evidenza degli MSB di H, B e dell'ALU e degli ingressi di selezione dell'operazione IR-Q1 e IR-Q3.*
 
@@ -211,7 +211,7 @@ Il registro dei Flag include un registro dedicato al **C**arry. L'NQSAP include 
 
 L'utilizzo di un altro '151 rappresenta il sistema più efficiente per selezionare la sorgente del Carry. A seconda dell'istruzione in esecuzione, il microcode di quella istruzione provvederà infatti ad attivare opportunamente i segnali C0 e C1:
 
-![Utilizzo di un 74LS151 per la selezione del Carry da memorizzare nel Carry flag](../../assets/flags/30-flag-c-151.png){:width="50%"}
+![Utilizzo di un 74LS151 per la selezione del Carry da memorizzare nel Carry flag](../../../assets/flags/30-flag-c-151.png){:width="50%"}
 
 *Utilizzo di un 74LS151 per la selezione del Carry da memorizzare nel Carry flag.*
 
@@ -230,7 +230,7 @@ L'utilizzo di un altro '151 rappresenta il sistema più efficiente per seleziona
 
 Oltre ad essere utilizzato per eseguire salti condizionali, il Carry trova chiaramente uso nel [modulo ALU](../alu/#lalu-dellnqsap) per eseguire operazioni aritmetiche ('181) e di scorrimento e rotazione ('194).
 
-![Selezione del Carry da passare al Carry Input di H e dei '181 del modulo ALU](../../assets/flags/30-flag-c-h-alu.png){:width="50%"}
+![Selezione del Carry da passare al Carry Input di H e dei '181 del modulo ALU](../../../assets/flags/30-flag-c-h-alu.png){:width="50%"}
 
 *Selezione del Carry da passare al Carry Input di H e dei '181 del modulo ALU.*
 
@@ -256,17 +256,17 @@ La negazione del segnale inviato in ingresso al Carry Input del '181 deriva dal 
 
 Si noti che la Truth Table della tabella richiederebbe i componenti evidenziati nello schema seguente, ma l'applicazione delle <a href="https://www.allaboutcircuits.com/textbook/digital/chpt-7/demorgans-theorems/" target="_blank">leggi di De Morgan</a> permette la semplificazione utilizzata poi nello schema adottato nell'NQSAP e nel BEAM.
 
-![Schema originale per realizzazione della Truth Table di selezione del Carry](../../assets/flags/30-flag-c-h-alu-de-morgan.png){:width="50%"}
+![Schema originale per realizzazione della Truth Table di selezione del Carry](../../../assets/flags/30-flag-c-h-alu-de-morgan.png){:width="50%"}
 
 *Schema originale per realizzazione della Truth Table di selezione del Carry.*
 
-![Schema rivisto con l'applicazione del teorema di De Morgan](../../assets/flags/30-flag-c-h-alu-de-morgan-nor.png){:width="50%"}
+![Schema rivisto con l'applicazione del teorema di De Morgan](../../../assets/flags/30-flag-c-h-alu-de-morgan-nor.png){:width="50%"}
 
 *Schema rivisto con l'applicazione del teorema di De Morgan.*
 
 ## Schema
 
-[![Schema del modulo dei Flag del computer BEAM](../../assets/flags/30-flag-beam-schematics.png "Schema del modulo dei Flag del computer BEAM"){:width="100%"}](../../assets/flags/30-flag-beam-schematics.png)
+[![Schema del modulo dei Flag del computer BEAM](../../../assets/flags/30-flag-beam-schematics.png "Schema del modulo dei Flag del computer BEAM"){:width="100%"}](../../../assets/flags/30-flag-beam-schematics.png)
 
 *Schema del modulo dei Flag del computer BEAM.*
 

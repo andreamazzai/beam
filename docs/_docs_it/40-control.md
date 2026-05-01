@@ -5,7 +5,7 @@ excerpt: "Control Logic del computer BEAM"
 ---
 <small>[Instruction Register e Istruzioni](#instruction-register-e-istruzioni) - [Ring Counter e Microistruzioni](#ring-counter-e-microistruzioni) - [Fasi](#fasi) - [Clock, "glitching" delle EEPROM e Instruction Register (parte 2)](#clock-glitching-delle-eeprom-e-instruction-register-parte-2) - [Lunghezza delle istruzioni](#lunghezza-delle-istruzioni) - [I 74LS138 per la gestione dei segnali](#i-74ls138-per-la-gestione-dei-segnali) - [Caricamento di un programma dal Loader](#caricamento-di-un-programma-dal-loader) - [Riepilogo segnali dell’NQSAP e del BEAM](#riepilogo-segnali-dellnqsap-e-del-beam) - [Segnali di controllo](#segnali-di-controllo) - [Bus e altri segnali](#bus-e-altri-segnali) - [Microcode](#microcode) - [Differenze rispetto all’Instruction Set del 6502](#differenze-rispetto-allinstruction-set-del-6502) - [Schema](#schema) - [Differenze tra Control Logic dell’NQSAP e del BEAM](#differenze-tra-control-logic-dellnqsap-e-del-beam) - [Note](#note) - [Link Utili](#link-utili) - [Riflessione sul microcode](#riflessione-sul-microcode)</small>
 
-[![Control Logic del computer BEAM](../../assets/control/40-beam-control.png "Control Logic del computer BEAM"){:width="100%"}](../../assets/control/40-beam-control.png)
+[![Control Logic del computer BEAM](../../../assets/control/40-beam-control.png "Control Logic del computer BEAM"){:width="100%"}](../../../assets/control/40-beam-control.png)
 
 In generale, la gestione delle istruzioni è affidata alla Control Logic, che consta di tre capisaldi: Instruction Register, Ring Counter e Microcode. L'Instruction Register contiene l'istruzione in esecuzione, il Ring Counter tiene traccia delle microistruzioni che compongono l'istruzione e il Microcode definisce i segnali di controllo necessari per eseguire le microistruzioni.
 
@@ -41,7 +41,7 @@ Alcune note propedeutiche:
 
 2. Nell'NQSAP e nel BEAM l'Instruction Register (IR) è incluso nello schema della Control Logic, mentre negli schemi del SAP-1 stava su un foglio separato.
 
-[![Schema della Control Logic dell'NQSAP](../../assets/control/40-control-logic-schema-nqsap.png "Schema della Control Logic dell'NQSAP"){:width="100%"}](../../assets/control/40-control-logic-schema-nqsap.png)
+[![Schema della Control Logic dell'NQSAP](../../../assets/control/40-control-logic-schema-nqsap.png "Schema della Control Logic dell'NQSAP"){:width="100%"}](../../../assets/control/40-control-logic-schema-nqsap.png)
 
 *Schema della Control Logic dell'NQSAP, leggermente modificato al solo scopo di migliorarne la leggibilità.*
 
@@ -58,7 +58,7 @@ Se i bit meno significativi contenevano un operando (ad esempio, un valore immed
 
 Nell'immagine seguente, tratta dal video <a href="https://youtu.be/JUVt_KYAp-I?t=1837" target="_blank">Reprogramming CPU microcode with an Arduino</a> di Ben Eater, si vede come ogni byte di un semplice programma di somma e sottrazione includa sia l'operazione sia l'operando:
 
-![Somma e sottrazione nel SAP](../../assets/control/40-lda-15-add-14.png "Somma e sottrazione nel SAP"){:width="50%"}
+![Somma e sottrazione nel SAP](../../../assets/control/40-lda-15-add-14.png "Somma e sottrazione nel SAP"){:width="50%"}
 
 Ad esempio:
 
@@ -85,7 +85,7 @@ Ad esempio:
 
 In conseguenza del numero di bit utilizzato per l'istruzione, la connessione tra Instruction Register del SAP-1 ed EEPROM contenenti il microcode poteva avere una ampiezza di soli 4 bit, come visibile in figura:
 
-[![Schema della Control Logic e dell'Instruction Register del SAP](../../assets/control/40-control-logic-schema-SAP.png "Schema della Control Logic e dell'Instruction Register del SAP"){:width="100%"}](../../assets/control/40-control-logic-schema-SAP.png)
+[![Schema della Control Logic e dell'Instruction Register del SAP](../../../assets/control/40-control-logic-schema-SAP.png "Schema della Control Logic e dell'Instruction Register del SAP"){:width="100%"}](../../../assets/control/40-control-logic-schema-SAP.png)
 
 *Schema della Control Logic e dell'Instruction Register del SAP.*
 
@@ -101,7 +101,7 @@ Per poter gestire queste combinazioni ed emulare così il set di istruzioni del 
 
 \* Un computer con 256 byte di RAM non necessita di istruzioni a 3 byte, perché un operando della lunghezza di un singolo byte è in grado di indirizzare tutta la memoria del computer, come brevemente discusso anche nella sezione [Indirizzamenti](../alu/#indirizzamenti) della pagina dedicata all'ALU.
 
-[![Schemi dell'Instruction Register dell'NQSAP e del BEAM](../../assets/control/40-cl-ir-beam-nqsap.png "Schemi dell'Instruction Register dell'NQSAP e del BEAM"){:width="100%"}](../../assets/control/40-cl-ir-beam-nqsap.png)
+[![Schemi dell'Instruction Register dell'NQSAP e del BEAM](../../../assets/control/40-cl-ir-beam-nqsap.png "Schemi dell'Instruction Register dell'NQSAP e del BEAM"){:width="100%"}](../../../assets/control/40-cl-ir-beam-nqsap.png)
 
 *Schemi dell'Instruction Register dell'NQSAP e del BEAM.*
 
@@ -170,7 +170,7 @@ Nel BEAM, ad esempio, l'istruzione LDA #$94 (che nel linguaggio mnemonico del 65
 
 Uno schema che mostra chiaramente gli step di alcune istruzioni del SAP-1 è visibile in questa immagine tratta dal video <a href="https://www.youtube.com/watch?v=dHWFpkGsxOs" target="_blank">8-bit CPU control logic: Part 3</a> di Ben Eater; gli step 000 e 001 sono comuni per tutte le istruzioni e compongono quella che viene chiamata **Fase Fetch**, evidenziata in giallo.
 
-[![Microcode del SAP](../../assets/control/40-cl-ben-step-microcode.png "Microcode del SAP"){:width="100%"}](../../assets/control/40-cl-ben-step-microcode.png)
+[![Microcode del SAP](../../../assets/control/40-cl-ben-step-microcode.png "Microcode del SAP"){:width="100%"}](../../../assets/control/40-cl-ben-step-microcode.png)
 
 *Microcode del SAP.*
 
@@ -237,7 +237,7 @@ Si intuisce che una CPU deve conoscere in ogni momento quale istruzione sia attu
 
 Come detto poc’anzi, la combinazione dell'opcode contenuto nell’Instruction Register e dallo step fornito dal Ring Counter indirizza una locazione di memoria specifica nelle EEPROM: tale locazione di memoria contiene la Control Word.
 
-[![Output di IR ed RC e input delle EEPROM del BEAM](../../assets/control/40-cl-ir-cr-beam.png "Output di IR ed RC e input delle EEPROM del BEAM"){:width="100%"}](../../assets/control/40-cl-ir-cr-beam.png)
+[![Output di IR ed RC e input delle EEPROM del BEAM](../../../assets/control/40-cl-ir-cr-beam.png "Output di IR ed RC e input delle EEPROM del BEAM"){:width="100%"}](../../../assets/control/40-cl-ir-cr-beam.png)
 
 *Output di IR ed RC e input delle EEPROM del BEAM*.
 
@@ -261,11 +261,11 @@ Per quale motivo si parla di eccezioni? Sicuramente il Ring Counter è una di qu
 
 In effetti, nel SAP-1 il caricamento dell'IR è sincrono con il Rising Edge del clock:
 
-[![Dettaglio Instruction Register del SAP](../../assets/control/40-cl-sap-ir-detail.png "Dettaglio Instruction Register del SAP"){:width="66%"}](../../assets/control/40-cl-sap-ir-detail.png)
+[![Dettaglio Instruction Register del SAP](../../../assets/control/40-cl-sap-ir-detail.png "Dettaglio Instruction Register del SAP"){:width="66%"}](../../../assets/control/40-cl-sap-ir-detail.png)
 
 Tale sincronia si ritrova anche nell'NQSAP:
 
-[![Dettaglio Instruction Register dell'NQSAP](../../assets/control/40-cl-nqsap-ir-detail.png "Dettaglio Instruction Register dell'NQSAP"){:width="66%"}](../../assets/control/40-cl-nqsap-ir-detail.png)
+[![Dettaglio Instruction Register dell'NQSAP](../../../assets/control/40-cl-nqsap-ir-detail.png "Dettaglio Instruction Register dell'NQSAP"){:width="66%"}](../../../assets/control/40-cl-nqsap-ir-detail.png)
 
 Quali sono le possibili conseguenze del caricamento dell'IR al Rising Edge del clock?
 
@@ -273,11 +273,11 @@ Bisogna prendere in considerazione una proprietà delle EEPROM: quando l'indiriz
 
 Nelle EEPROM come la <a href="https://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" target="_blank">AT28C256</a>, il parametro che indica la durata dell'incertezza all'output è tipicamente chiamato "Address Access Time" o "t<sub>ACC</sub>" e indica il periodo che intercorre tra l'applicazione di un nuovo indirizzo di ingresso e il momento in cui i dati corretti sono disponibili sull'uscita, come visibile in figura:
 
-[![AC Read Waveforms EEPROM AT28C256](../../assets/control/40-28C256-read-waveform.png "AC Read Waveforms EEPROM AT28C256"){:width="50%"}](../../assets/control/40-28C256-read-waveform.png)
+[![AC Read Waveforms EEPROM AT28C256](../../../assets/control/40-28C256-read-waveform.png "AC Read Waveforms EEPROM AT28C256"){:width="50%"}](../../../assets/control/40-28C256-read-waveform.png)
 
 Ad esempio, un <a href="https://www.reddit.com/r/beneater/comments/f7gcvx/glitches_on_eeprom_datalines_when_their_adress/" target="_blank">thread su Reddit</a> di rolf-electronics evidenzia il fenomeno nei primi 3 quadranti della seguente immagine, con i segnali di output che mostrano oscillazioni significative al momento del cambiamento degli input delle EEPROM:
 
-[![Glitching nel SAP-1 di Rolf Electronics](../../assets/control/40-glitching-rolf.png "Glitching nel SAP-1 di Rolf Electronics"){:width="66%"}](../../assets/control/40-glitching-rolf.png)
+[![Glitching nel SAP-1 di Rolf Electronics](../../../assets/control/40-glitching-rolf.png "Glitching nel SAP-1 di Rolf Electronics"){:width="66%"}](../../../assets/control/40-glitching-rolf.png)
 
 Ora, qual è la relazione tra il glitching e il caricamento dell'Instruction Register al Rising Edge del clock?
 
@@ -290,7 +290,7 @@ Il glitching dovuto alle variazioni degli indirizzi di ingresso delle EEPROM del
 
 Il fenomeno del glitching si manifesta su tutti i segnali di controllo gestiti dalle EEPROM, sia quelli variati di proposito, sia quelli che non vengono modificati nello step corrente. Come nota a latere, bisogna segnalare che *tutti* i segnali di controllo del computer sono soggetti a questo fenomeno, anche se non indicati nel grafico.
 
-[![SAP computer - istruzione LDA](../../assets/control/40-wavedrom-sap-lda.png "SAP computer - istruzione LDA"){:width="100%"}](../../assets/control/40-wavedrom-sap-lda.png)
+[![SAP computer - istruzione LDA](../../../assets/control/40-wavedrom-sap-lda.png "SAP computer - istruzione LDA"){:width="100%"}](../../../assets/control/40-wavedrom-sap-lda.png)
 
 *SAP computer - istruzione LDA*.
 
@@ -311,13 +311,13 @@ Possiamo ora riprendere la domanda fatta in precedenza in questa sezione: "Quali
 
 Se nel computer sono presenti registri privi di un segnale di Enable, il loro caricamento può essere effettuato implementando una logica combinatoria tra il clock e il segnale di controllo dedicato. Ad esempio, nell'NQSAP i [registri D, X e Y](../dxy) e il [registro B](../alu/#lalu-dellnqsap) sono realizzati con <a href="https://www.onsemi.com/pdf/datasheet/74vhc574-d.pdf" target="_blank">74LS574</a> e porte NOR.
 
-[![Registro Y dell'NQSAP](../../assets/control/40-NQSAP-dxy-y.png "Registro Y dell'NQSAP"){:width="75%"}](../../assets/control/40-NQSAP-dxy-y.png)
+[![Registro Y dell'NQSAP](../../../assets/control/40-NQSAP-dxy-y.png "Registro Y dell'NQSAP"){:width="75%"}](../../../assets/control/40-NQSAP-dxy-y.png)
 
 *Registro Y dell'NQSAP*.
 
 La risposta alla domanda è che il caricamento dell'Instruction Register al momento 7 genera un glitch sul segnale /WY, che può causare un caricamento indesiderato di Y. L'Enable del '574 dipende infatti dall'operazione NOR tra il clock invertito e /WY. Se quest'ultimo è instabile, potrebbe verificarsi una scrittura non voluta del registro.
 
-[![Glitching all'istruzione LDY nell'NQSAP](../../assets/control/40-nqsap-ldy.png "Glitching all'istruzione LDY nell'NQSAP"){:width="100%"}](../../assets/control/40-nqsap-ldy.png)
+[![Glitching all'istruzione LDY nell'NQSAP](../../../assets/control/40-nqsap-ldy.png "Glitching all'istruzione LDY nell'NQSAP"){:width="100%"}](../../../assets/control/40-nqsap-ldy.png)
 
 *Glitching all'istruzione LDY nell'NQSAP*.
 
@@ -327,7 +327,7 @@ Per risolvere i problemi di glitching, Tom ha ridisegnato l'IR sostituendo i 74L
 
 Questa miglioria è stata recepita nel BEAM, che nel suo design cerca di includere anche gli aspetti positivi dell'NQSAP-PCB.
 
-[![Schemi dell'Instruction Register dell'NQSAP e del BEAM](../../assets/control/40-cl-ir-beam-nqsap.png "Schemi dell'Instruction Register dell'NQSAP e del BEAM"){:width="100%"}](../../assets/control/40-cl-ir-beam-nqsap.png)
+[![Schemi dell'Instruction Register dell'NQSAP e del BEAM](../../../assets/control/40-cl-ir-beam-nqsap.png "Schemi dell'Instruction Register dell'NQSAP e del BEAM"){:width="100%"}](../../../assets/control/40-cl-ir-beam-nqsap.png)
 
 *Schemi dell'Instruction Register dell'NQSAP e del BEAM.*
 
@@ -335,7 +335,7 @@ Peraltro, *tutti* i registri a 8 bit del BEAM sono realizzati con componenti dot
 
 Risulta comunque interessante visualizzare il comportamento dei segnali di controllo al momento 7, durante il quale - come ormai assodato - l'unico registro aggiornato è l'IR:
 
-[![Nessun glitching sul BEAM al momento 7 nello step 1](../../assets/control/40-beam-ldy.png "Nessun glitching sul BEAM al momento 7 nello step 1"){:width="100%"}](../../assets/control/40-beam-ldy.png)
+[![Nessun glitching sul BEAM al momento 7 nello step 1](../../../assets/control/40-beam-ldy.png "Nessun glitching sul BEAM al momento 7 nello step 1"){:width="100%"}](../../../assets/control/40-beam-ldy.png)
 
 *Nessun glitching sul BEAM al momento 7 nello step 1*.
 
@@ -343,7 +343,7 @@ Il primo dei due '377 si aggiorna al Rising Edge al momento 7, senza causare gli
 
 Come possiamo essere certi che l'eliminazione del glitching nel BEAM derivi effettivamente dalla doppia bufferizzazione del Program Counter? Tutti i registri a 8 bit realizzati con componenti dotati di Enable e Clock separati sono immuni al fenomeno, ma alcuni altri registri sono privi di tale ingresso, come il Flip-Flop 74LS74 utilizzato per memorizzare i Flag. Una porta AND consente di realizzare un segnale di Enable artificiale, similarmente allo schema del *Registro Y dell’NQSAP*.
 
-![Registro Flag C del BEAM](../../assets/control/40-beam-c-flag.png "Registro Flag C del BEAM"){:width="66%"}
+![Registro Flag C del BEAM](../../../assets/control/40-beam-c-flag.png "Registro Flag C del BEAM"){:width="66%"}
 
 *Registro Flag C del BEAM*.
 
@@ -376,9 +376,9 @@ Esaminiamo la semplice istruzione SEC, che imposta il Carry.
 
 \* I primi due step di *tutte* le istruzioni sono *sempre* identici.
 
-CC attivo al momento 9 invia un segnale HI al pin ALU-Cin e l'[opcode 03](..alu/#relazione-diretta-hardwired-tra-instruction-register-e-alu), senza Carry, configura l'ALU per emettere un output di tutti 1 sul bus.
+CC attivo al momento 9 invia un segnale HI al pin ALU-Cin e l'[opcode 03](../alu/#relazione-diretta-hardwired-tra-instruction-register-e-alu), senza Carry, configura l'ALU per emettere un output di tutti 1 sul bus.
 
-[![Nessun glitching sul BEAM al caricamento del Flag C](../../assets/control/40-beam-sec.png "Nessun glitching sul BEAM al caricamento del Flag C"){:width="100%"}](../../assets/control/40-beam-sec.png)
+[![Nessun glitching sul BEAM al caricamento del Flag C](../../../assets/control/40-beam-sec.png "Nessun glitching sul BEAM al caricamento del Flag C"){:width="100%"}](../../../assets/control/40-beam-sec.png)
 
 *Nessun glitching sul BEAM al caricamento del Flag C*.
 
@@ -397,7 +397,7 @@ Altro aspetto importante da prendere in considerazione è il numero di microistr
 
 Il SAP-1 prevedeva un numero fisso di 5 step; conseguentemente, tutte le istruzioni avevano la stessa durata, indipendentemente dalla loro complessità. Tuttavia, nel microcode che segue possiamo vedere che in realtà l'istruzione di caricamento immediato LDA potrebbe essere eseguita in soli tre step, mentre somma e sottrazione necessitano di cinque step:
 
-[![Microcode del computer SAP](../../assets/control/40-cl-sap-microcode.png "Microcode del computer SAP"){:width="66%"}](../../assets/control/40-cl-sap-microcode.png)
+[![Microcode del computer SAP](../../../assets/control/40-cl-sap-microcode.png "Microcode del computer SAP"){:width="66%"}](../../../assets/control/40-cl-sap-microcode.png)
 
 *Microcode del computer SAP.*
 
@@ -405,7 +405,7 @@ Nello schema del *Ring Counter del SAP-1* si nota che il contatore '161 presenta
 
 E' facile notare come questa architettura comporti uno spreco di cicli di elaborazione durante l'esecuzione di istruzioni che richiedono pochi passaggi, in quanto il RC deve comunque attendere l'attivazione dell'ultima uscita 05 per essere resettato.
 
-[![Ring Counter del SAP](../../assets/control/40-control-sap-rc.png "Ring Counter del SAP"){:width="50%"}](../../assets/control/40-control-sap-rc.png)
+[![Ring Counter del SAP](../../../assets/control/40-control-sap-rc.png "Ring Counter del SAP"){:width="50%"}](../../../assets/control/40-control-sap-rc.png)
 
 *Ring Counter del SAP.*
 
@@ -417,7 +417,7 @@ Il momento del caricamento del contatore è visibile a pagina 11 del <a href="ht
 
 In pratica, il Ring Counter ritorna allo step iniziale.
 
-[![Segnale Next Instruction nel Ring Counter del BEAM](../../assets/control/40-beam-ni.png "Segnale Next Instruction nel Ring Counter del BEAM"){:width="66%"}](../../assets/control/40-beam-ni.png)
+[![Segnale Next Instruction nel Ring Counter del BEAM](../../../assets/control/40-beam-ni.png "Segnale Next Instruction nel Ring Counter del BEAM"){:width="66%"}](../../../assets/control/40-beam-ni.png)
 
 *Segnale Next Instruction nel Ring Counter del BEAM.*
 
@@ -429,7 +429,7 @@ In realtà, fa notare Tom, sarebbe comunque possibile utilizzare il Reset asincr
 
 \* e \*\*: ricordando quanto esposto alla fine della sezione precedente in relazione all'impostazione della Control Word e ai momenti di caricamento dei registri, troviamo qui un primo esempio concreto: il segnale /Load viene settato dalla Control Word durante il Falling Edge del clock, mentre l'effettivo caricamento del registro avviene in concomitanza con il Rising Edge.
 
-Come indicato anche nella sezione [Differenze](.../alu/#differenze-tra-moduli-alu-dellnqsap-e-del-beam) della pagina dell'ALU, bisogna notare che il computer NQSAP prevede solo 8 step per le microistruzioni. Per emulare alcune istruzioni del 6502 di scorrimento e rotazione servono più step, pertanto, sul computer BEAM ne sono stati previsti 16.
+Come indicato anche nella sezione [Differenze](../alu/#differenze-tra-moduli-alu-dellnqsap-e-del-beam) della pagina dell'ALU, bisogna notare che il computer NQSAP prevede solo 8 step per le microistruzioni. Per emulare alcune istruzioni del 6502 di scorrimento e rotazione servono più step, pertanto, sul computer BEAM ne sono stati previsti 16.
 
 ## I 74LS138 per la gestione dei segnali
 
@@ -439,7 +439,7 @@ L'aumento del numero di EEPROM e l'inserimento di quattro demultiplexer <a href=
 
 Come visibile nello schema, ogni '138 presenta 8 pin di output, 3 pin di selezione e 3 pin di Enable; connettendo opportunamente i pin di selezione ed Enable, è possibile pilotare ben quattro '138 (per un totale di 32 segnali di output) usando solo 8 segnali in uscita da una singola EEPROM. In altre parole, i '138 fungono da *demoltiplicatori* e permettono di indirizzare un numero elevato di segnali a partire da un numero limitato di linee in ingresso.
 
-[![Demultiplexer 74LS138 nel BEAM](../../assets/control/40-cl-beam-eeprom-138.png "Demultiplexer 74LS138 nel BEAM"){:width="100%"}](../../assets/control/40-cl-beam-eeprom-138.png)
+[![Demultiplexer 74LS138 nel BEAM](../../../assets/control/40-cl-beam-eeprom-138.png "Demultiplexer 74LS138 nel BEAM"){:width="100%"}](../../../assets/control/40-cl-beam-eeprom-138.png)
 
 *Demultiplexer 74LS138 nel BEAM.*
 
@@ -567,7 +567,7 @@ La fase di scrittura del microcode non è stata *troppo* complessa. L'esperienza
 
 Solo poche istruzioni hanno richiesto più tempo per essere assimilate, in particolare quelle di [comparazione](../alu/#istruzioni-di-comparazione), di [salto a subroutine](../stack/#implementazione-del-microcode-dello-stack-pointer) e di salto condizionale. Le istruzioni di comparazione hanno implicato una comprensione approfondita del risultato per impostarne correttamente i flag, mentre per le altre è stato necessario apprendere come utilizzare un registro temporaneo per memorizzare un'informazione da ripristinare in uno step successivo.
 
-[![Scrittura del microcode del BEAM con VScode](../../assets/control/40-microcode-vscode.png "Scrittura del microcode del BEAM con VScode"){:width="100%"}](../../assets/control/40-microcode-vscode.png)
+[![Scrittura del microcode del BEAM con VScode](../../../assets/control/40-microcode-vscode.png "Scrittura del microcode del BEAM con VScode"){:width="100%"}](../../../assets/control/40-microcode-vscode.png)
 
 *Scrittura del microcode del BEAM con VScode.*
 
@@ -577,7 +577,7 @@ Tom aveva automatizzato parte della generazione del microcodice attraverso un op
 
 La <a href="../../assets/BEAM computer.xlsx" target="_blank">cartella di lavoro Excel</a> che ho realizzato presenta l'Instruction Set del 6502, l'analisi delle istruzioni per determinare le modalità di indirizzamento e lo sviluppo dell'Instruction Set del BEAM, considerando la necessità di utilizzare il [segnale di controllo LF](../alu/#istruzioni-di-comparazione) per mettere in Subtract Mode l'ALU ed effettuare le operazioni di comparazione.
 
-[![Definizione dell'Instruction Set del BEAM](../../assets/control/40-control-inst-set.png "Definizione dell'Instruction Set del BEAM"){:width="100%"}](../../assets/control/40-control-inst-set.png)
+[![Definizione dell'Instruction Set del BEAM](../../../assets/control/40-control-inst-set.png "Definizione dell'Instruction Set del BEAM"){:width="100%"}](../../../assets/control/40-control-inst-set.png)
 
 *Definizione dell'Instruction Set del BEAM.*
 
@@ -603,7 +603,7 @@ Anche l'istruzione BRK non è stata implementata, ma si trova un comportamento s
 
 ## Schema
 
-[![Schema della Control Logic del computer BEAM](../../assets/control/40-control-logic-schema-beam.png "Schema della Control Logic del computer BEAM"){:width="100%"}](../../assets/control/40-control-logic-schema-beam.png)
+[![Schema della Control Logic del computer BEAM](../../../assets/control/40-control-logic-schema-beam.png "Schema della Control Logic del computer BEAM"){:width="100%"}](../../../assets/control/40-control-logic-schema-beam.png)
 
 *Schema della Control Logic del computer BEAM.*
 
