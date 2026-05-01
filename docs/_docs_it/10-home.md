@@ -36,7 +36,7 @@ Ho completato il SAP-1 computer a settembre, ma già in precedenza avevo cominci
 1. Evoluzione del computer di Ben Eater, col quale avevo iniziato a riacquistare confidenza con l'elettronica digitale.
 2. Emulazione del processore del mio primo computer, completa di registri indice, modalità di indirizzamento e Stack Pointer.
 3. Nel progetto originale di Ben Eater, il computer disponeva di soli 16 byte di RAM. Questa quantità era sufficiente per programmare una sequenza di Fibonacci minimale, ma assolutamente inadeguata per realizzare programmi più complessi. Un'espansione della RAM, quindi, diventava essenziale.
-4. Possibilità / necessità di imparare almeno le basi del C, utilizzato per la creazione del [programmatore di EEPROM](docs/eeprom-programmer) e del [Loader](docs/loader) basato su Arduino.
+4. Possibilità / necessità di imparare almeno le basi del C, utilizzato per la creazione del [programmatore di EEPROM](docs/it/eeprom-programmer) e del [Loader](docs/it/loader) basato su Arduino.
 
 ### BEAM?
 
@@ -50,14 +50,14 @@ La documentazione dell'NQSAP non era completa e avevo scovato anche alcuni error
 
 Tra gli aspetti da citare e sui quali ho speso molto, **molto**, ***davvero molto*** tempo:
 
-- comprensione del funzionamento dell'ALU 74181, per la quale ho realizzato un bench di test sulla base di quanto appreso da [David Courtney](docs/alu/#link-utili);
+- comprensione del funzionamento dell'ALU 74181, per la quale ho realizzato un bench di test sulla base di quanto appreso da [David Courtney](docs/it/alu/#link-utili);
 - comprensione dell'aritmetica binaria in complemento di 2;
 - comprensione dell'overflow, strettamente legato al punto precedente;
-- integrazione dell'ALU 74181 e dell'Instruction Register (IR) in modalità "[hardwired](docs/alu/#relazione-diretta-hardwired-tra-instruction-register-e-alu)" per poter generare "automaticamente" i segnali di ingresso dell'ALU a seconda dell'istruzione presente nell'IR;
+- integrazione dell'ALU 74181 e dell'Instruction Register (IR) in modalità "[hardwired](docs/it/alu/#relazione-diretta-hardwired-tra-instruction-register-e-alu)" per poter generare "automaticamente" i segnali di ingresso dell'ALU a seconda dell'istruzione presente nell'IR;
 - nuovo modulo di memoria basato su SRAM con pin IO comuni, a differenza dei 74189 utilizzati nel SAP-1 con porte di Input e di Output dedicate;
 - il registro dei flag - sicuramente il più complesso del computer:
   - utilizzo del 74151 per decodificare lo stato di overflow e la gestione del flag stesso - argomento strettamente legato alla perfetta comprensione dell'aritmetica binaria;
-  - utilizzo del 74151 per poter gestire le istruzioni di [salto condizionale in modalità hardwired](docs/flags/#i-salti-condizionali-e-incondizionati), similarmente a quanto fatto per la ALU;
+  - utilizzo del 74151 per poter gestire le istruzioni di [salto condizionale in modalità hardwired](docs/it/flags/#i-salti-condizionali-e-incondizionati), similarmente a quanto fatto per la ALU;
 - comprensione dello Stack Pointer e scrittura del microcode per le istruzioni che ne fanno uso;
 - sviluppo del software del programmatore di EEPROM / microcode basato su Arduino: ho studiato a fondo il codice di Tom, che ho compreso in buona parte:
   - schematizzazione delle istruzioni del 6502 e suddivisione in categorie;
