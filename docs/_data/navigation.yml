@@ -76,7 +76,10 @@
         url: ""
       - title: <a href = "https://tomnisbet.github.io/nqsap-pcb/" target = "_blank">> NQSAP-PCB di Tom Nisbet</a>
         url: ""
-
+  - title: "SWITCH TO ENGLISH"
+    children:
+      - title: "> English documentation"
+        url: /docs/en/home/
   docs_en:
   - title: "OVERVIEW"
     children:
@@ -136,9 +139,13 @@
     children:
       - title: "> BEAM on GitHub"
         url: "https://github.com/andreamazzai/beam"
-      - title: <a href = "https://eater.net/8bit/" target = "_blank">> SAP-1 di Ben Eater</a>
+      - title: <a href = "https://eater.net/8bit/" target = "_blank">> Ben Eater's SAP-1</a>
         url: ""
       - title: <a href = "https://github.com/TomNisbet/nqsap" target = "_blank">> Tom Nisbet's NQSAP</a>
         url: ""
       - title: <a href = "https://tomnisbet.github.io/nqsap-pcb/" target = "_blank">> Tom Nisbet's NQSAP-PCB</a>
         url: ""
+  - title: "SWITCH TO ITALIAN"
+    children:
+      - title: "> Italian documentation"
+        url: /
