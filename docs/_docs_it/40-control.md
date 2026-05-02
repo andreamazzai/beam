@@ -575,7 +575,7 @@ E' risultata invece particolarmente difficile l'*organizzazione* dell'Instructio
 
 Tom aveva automatizzato parte della generazione del microcodice attraverso un opportuno raggruppamento logico delle istruzioni. Personalmente, non sono riuscito a ottenere risultati comparabili, poiché la mia conoscenza del linguaggio C, sia all'epoca sia al momento della scrittura di questa documentazione, è modesta. Questo mi ha impedito di comprendere chiaramente come strutturare l'Instruction Set per sfruttare appieno tali vantaggi.
 
-La <a href="../../assets/BEAM computer.xlsx" target="_blank">cartella di lavoro Excel</a> che ho realizzato presenta l'Instruction Set del 6502, l'analisi delle istruzioni per determinare le modalità di indirizzamento e lo sviluppo dell'Instruction Set del BEAM, considerando la necessità di utilizzare il [segnale di controllo LF](../alu/#istruzioni-di-comparazione) per mettere in Subtract Mode l'ALU ed effettuare le operazioni di comparazione.
+La <a href="../../../assets/BEAM computer.xlsx" target="_blank">cartella di lavoro Excel</a> che ho realizzato presenta l'Instruction Set del 6502, l'analisi delle istruzioni per determinare le modalità di indirizzamento e lo sviluppo dell'Instruction Set del BEAM, considerando la necessità di utilizzare il [segnale di controllo LF](../alu/#istruzioni-di-comparazione) per mettere in Subtract Mode l'ALU ed effettuare le operazioni di comparazione.
 
 [![Definizione dell'Instruction Set del BEAM](../../../assets/control/40-control-inst-set.png "Definizione dell'Instruction Set del BEAM"){:width="100%"}](../../../assets/control/40-control-inst-set.png)
 
@@ -590,7 +590,7 @@ Il codice è parzialmente commentato e dovrebbe essere abbastanza esplicativo.
 Alcuni link:
 
 - Un <a href="https://www.atarimania.com/documents/6502%20(65xx)%20Microprocessor%20Instant%20Reference%20Card.pdf" target="_blank">compendio della Micro Logic</a> incredibilmente utile, che in sole due pagine include opcode, modalità di indirizzamento, flag e istruzioni che li modificano, funzionamento delle istruzioni di scorrimento e molto altro. Insostituibile.
-- Un validissimo riferimento per l'analisi della relazione tra Control Logic (CL) ed IR è stata la pagina <a href="https://www.masswerk.at/6502/6502_instruction_set.html" target="_blank">6502 Instruction Set</a> di Norbert Landsteiner. Inquadra l'Instruction Set in una comoda vista tabellare, dalla quale ho ricavato la <a href="../../assets/BEAM computer.xlsx" target="_blank">vista Excel</a> utilizzata per definire gli opcode delle istruzioni del BEAM.
+- Un validissimo riferimento per l'analisi della relazione tra Control Logic (CL) ed IR è stata la pagina <a href="https://www.masswerk.at/6502/6502_instruction_set.html" target="_blank">6502 Instruction Set</a> di Norbert Landsteiner. Inquadra l'Instruction Set in una comoda vista tabellare, dalla quale ho ricavato la <a href="../../../assets/BEAM computer.xlsx" target="_blank">vista Excel</a> utilizzata per definire gli opcode delle istruzioni del BEAM.
 - Sempre di Norbert, invito a consultare anche il <a href="https://www.masswerk.at/6502/assembler.html" target="_blank">6502 Assembler</a> e il <a href="https://www.masswerk.at/6502/" target="_blank">Virtual 6502</a> che ho utilizzato in fase di debug del microcode: utilissimi per simulare l'esecuzione passo dopo passo delle istruzioni, visualizzando gli aggiornamenti dei flag ed aggiustando di conseguenza il microcode del BEAM.
 
 ### Differenze rispetto all'Instruction Set del 6502
