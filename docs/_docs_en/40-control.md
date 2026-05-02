@@ -584,8 +584,6 @@ Tom had automated part of the microcode generation through an appropriate logica
 
 The <a href="../../../assets/BEAM computer.xlsx" target="_blank">Excel workbook</a> I created presents the 6502 Instruction Set, the analysis of the instructions to determine the addressing modes and the development of the BEAM Instruction Set, taking into account the need to use the [LF control signal](../alu/#comparison-instructions) to put the ALU in Subtract Mode and perform comparison operations.
 
-The <a href="../../../assets/BEAM computer.xlsx" target="_blank">Excel workbook</a> 
-
 [![Definition of the BEAM Instruction Set](../../../assets/control/40-control-inst-set.png "Definition of the BEAM Instruction Set"){:width="100%"}](../../../assets/control/40-control-inst-set.png)
 
 *Definition of the BEAM Instruction Set.*
