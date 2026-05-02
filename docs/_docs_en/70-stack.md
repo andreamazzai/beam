@@ -3,13 +3,13 @@ title: "Stack Pointer"
 lang: en
 locale: en-US
 permalink: /docs/en/stack/
-excerpt: "Stack Pointer del computer BEAM"
+excerpt: "BEAM computer Stack Pointer"
 ---
-<small>[Implementazione del microcode dello Stack Pointer](#implementazione-del-microcode-dello-stack-pointer) - [Lo Stack Pointer dell’NQSAP / NQSAP-PCB](#lo-stack-pointer-dellnqsap--nqsap-pcb) - [Schema](#schema) - [Link utili](#link-utili)</small>
+<small>[BEAM computer Stack Pointer](#stack-pointer-microcode-implementation) - [The NQSAP / NQSAP-PCB Stack Pointer](#the-nqsap--nqsap-pcb-stack-pointer) - [Schematic](#schematic) - [Useful links](#useful-links)</small>
 
-[![Stack Pointer del computer BEAM](../../../assets/sp/70-beam-sp.png "Stack Pointer del computer BEAM"){:width="100%"}](../../../assets/sp/70-beam-sp.png)
+[![BEAM computer Stack Pointer](../../../assets/sp/70-beam-sp.png "BEAM computer Stack Pointer"){:width="100%"}](../../../assets/sp/70-beam-sp.png)
 
-L'implementazione dello stack nel 6502 prevede l'utilizzo di un'area di memoria dedicata alla memorizzazione e al ripristino di informazioni secondo una logica LIFO (Last-In, First-Out, dove l'ultimo elemento inserito è il primo a essere letto), gestita da un puntatore a 8 bit (Stack Pointer, SP) che tiene traccia dell'indirizzo della prossima locazione disponibile.
+The stack implementation in the 6502 involves the use of a dedicated memory area for storing and restoring information according to a LIFO (Last-In, First-Out, where the last element inserted is the first to be read) logic, managed by an 8-bit pointer (Stack Pointer, SP) that keeps track of the address of the next available location.
 
 Two common use cases for the stack are saving the current state of the Flags and/or A, X, Y registers before executing a routine that modifies them, so that they can be restored at the end of the routine, and storing the return address of a subrouting called by a JSR instruction. 
 
@@ -17,125 +17,125 @@ The 6502's address bus is 16 bits wide and can address 2^16 = 64K of memory. The
 
 Lo Stack Pointer del 6502 è un registro, denominato S, la cui implementazione nel BEAM consta di due 4-bit Synchronous Binary Up-Down Counter <a href="https://www.ti.com/lit/ds/symlink/sn74ls157.pdf" target="_blank">74LS169</a> in grado di indirizzare i 256 byte del computer. In definitiva, si tratta di un normale registro che, oltre a poter memorizzare un valore specifico, ha la peculiarità di poter contare sia verso l'alto, sia verso il basso.
 
-Poiché il BEAM dispone di soli 256 byte di memoria e lo SP è in grado di indirizzarli tutti, l'area destinata allo stack dovrà essere necessariamente limitata dal programmatore, ad esempio usando i 16 byte compresi tra gli indirizzi 0xF0 e 0xFF.
+Since the BEAM has only 256 bytes of memory and the SP is able to address all of them, the area designated for the stack will necessarily have to be limited by the programmer, for example by using the 16 bytes between addresses 0xF0 and 0xFF.
 
-Lo Stack Pointer punta sempre alla successiva locazione disponibile nello stack, dunque:
+The Stack Pointer always points to the next available location on the stack, therefore:
 
-- un'operazione di scrittura sullo stack scrive il valore desiderato nella locazione di memoria indicata dallo Stack Pointer e poi lo decrementa (post-decrement);
-- un'operazione di lettura dallo stack dapprima incrementa lo SP (pre-increment) e poi restituisce il contenuto della locazione di memoria da esso indicata.
+- a write operation to the stack writes the desired value to the memory location indicated by the Stack Pointer and then decrements it (post-decrement);
+- a read operation from the stack first increments the SP (pre-increment) and then returns the contents of the memory location it points to.
 
-In altre parole, poiché lo stack "cresce" verso il basso, lo Stack Pointer viene decrementato dopo ogni inserimento di un byte nello stack e incrementato prima di ogni prelievo di un byte.
+In other words, since the stack "grows" downward, the Stack Pointer is decremented after each byte is pushed onto the stack and incremented before each byte is pulled from it.
 
-Poiché i '169 utilizzati nel BEAM non dispongono di un ingresso Reset, all'accensione potrebbero trovarsi in uno stato indefinito: di conseguenza, lo Stack Pointer deve essere inizializzato dal programma caricato in memoria dall'utente.
+Since the '169s used in the BEAM do not have a Reset input, they may be in an undefined state at power-on: consequently, the Stack Pointer must be initialized by the program loaded into memory by the user.
 
-Le istruzioni del 6502 che interagiscono con lo stack sono:
+The 6502 instructions that interact with the stack are:
 
-- PHA, PLA: Push e Pull del registro A verso lo stack / dallo stack
-- PHP, PLP: Push e Pull del registro dei Flag verso lo stack / dallo stack
-- JSR, RTS: salto a / ritorno da subroutine
-- TXS, TSX: caricamento / lettura dello SP tramite il registro X
+- PHA, PLA: Push and Pull of register A to / from the stack
+- PHP, PLP: Push and Pull of the Flag register to / from the stack
+- JSR, RTS: jump to / return from subroutine
+- TXS, TSX: loading / reading of the SP via the X register
 
-## Implementazione del microcode dello Stack Pointer
+## Stack Pointer microcode implementation
 
-Analizziamo un'istruzione JSR, ipotizzando di aver precedentemente inizializzato lo SP del BEAM a 0xFF. Il BEAM dispone di 256 byte, quindi lo SP punta ora all'ultima locazione di memoria del computer.
+Let us analyze a JSR instruction, assuming we have previously initialized the BEAM's SP to 0xFF. The BEAM has 256 bytes, so the SP now points to the last memory location of the computer.
 
-Supponiamo di avere il seguente codice, nel quale una istruzione NOP è seguita da un salto a una subroutine che incrementa il registro X. Al ritorno dalla subroutine, il programma continua con un'altra istruzione NOP.
+Suppose we have the following code, in which a NOP instruction is followed by a jump to a subroutine that increments the X register. Upon returning from the subroutine, the program continues with another NOP instruction.
 
 ~~~text
-| Mnemonico | Indirizzo | Valore | Contenuto                         |
+| Mnemonic  | Address   | Value  | Content                           |
 | --------- | --------- | ------ | --------------------------------- |
-| ...       | ...       | ?      | Istruzione precedente o operando  |
-| NOP       | 0x1F      | 0x0F   | Opcode istruzione NOP del BEAM    |
-| JSR $30   | 0x20      | 0x41   | Opcode istruzione JSR del BEAM    |
-|           | 0x21      | 0x30   | Indirizzo di salto istruzione JSR |
-| NOP       | 0x22      | 0x0F   | Opcode istruzione NOP del BEAM    |
-| ...       | ...       | ?      | Prossima istruzione               |
+| ...       | ...       | ?      | Previous instruction or operand   |
+| NOP       | 0x1F      | 0x0F   | BEAM NOP instruction opcode       |
+| JSR $30   | 0x20      | 0x41   | BEAM JSR instruction opcode       |
+|           | 0x21      | 0x30   | JSR instruction jump address      |
+| NOP       | 0x22      | 0x0F   | BEAM NOP instruction opcode       |
+| ...       | ...       | ?      | Next instruction                  |
 | ...       | ...       | ?      | ...                               |
-| INX       | 0x30      | 0xA0   | Opcode istruzione INX del BEAM    |
-| RTS       | 0x31      | 0x11   | Opcode istruzione RTS del BEAM    |
+| INX       | 0x30      | 0xA0   | BEAM INX instruction opcode       |
+| RTS       | 0x31      | 0x11   | BEAM RTS instruction opcode       |
 ~~~
 
-La tabella che segue **evidenzia visivamente** l'esecuzione dell'instruzione JSR con le modifiche apportate dalle microistruzioni ai registri Program Counter (PC), Stack Pointer, Memory Address Register (MAR), Instruction Register (IR), B e al valore della locazione di memoria indirizzata dal MAR. La tabella include anche l'istruzione precedente NOP e il primo step della istruzione successiva INX richiamata dalla JSR. I valori in **grassetto** indicano una variazione rispetto allo step precedente.
+The following table **visually highlights** the execution of the JSR instruction with the changes made by the microinstructions to the Program Counter (PC), Stack Pointer, Memory Address Register (MAR), Instruction Register (IR), B registers and the value of the memory location addressed by the MAR. The table also includes the preceding NOP instruction and the first step of the following INX instruction called by the JSR. Values in **bold** indicate a change from the previous step.
 
- | Istruzione | Step   | Microistruzioni   | PC      | SP      | MAR     | RAM     | IR      | B       |
- |------------|--------|-------------------|---------|---------|---------|---------|---------|---------|
- | NOP        | 0\*    | RPC \| WM         | 0x1F    | 0xFF    | <b>0x1F | <b>0x0F | ?       | ?       |
- | NOP        | 1\*    | RR  \| WIR \| PCI | <b>0x20 | 0xFF    | 0x1F    | 0x0F    | <b>0x0F | ?       |
- | NOP        | 2\*    | NI                | 0x20    | 0xFF    | 0x1F    | 0x0F    | 0x0F    | ?       |
- | JSR        | 0      | RPC \| WM         | 0x20    | 0xFF    | <b>0x20 | <b>0x41 | 0x0F    | ?       |
- | JSR        | 1      | RR  \| WIR \| PCI | <b>0x21 | 0xFF    | 0x20    | 0x41    | <b>0x41 | ?       |
- | JSR        | 2      | RPC \| WM         | 0x21    | 0xFF    | <b>0x21 | <b>0x30 | 0x41    | ?       |
- | JSR        | 3      | RR  \| WB  \| PCI | <b>0x22 | 0xFF    | 0x21    | 0x30    | 0x41    | <b>0x30 |
- | JSR        | 4      | RS  \| WM         | 0x22    | 0xFF    | <b>0xFF | ?\*\*   | 0x41    | 0x30    |
- | JSR        | 5      | RPC \| WR         | 0x22    | 0xFF    | 0xFF    | <b>0x22 | 0x41    | 0x30    |
- | JSR        | 6      | SE                | 0x22    | <b>0xFE | 0xFF    | 0x22    | 0x41    | 0x30    |
- | JSR        | 7      | RB  \| WPC \| NI  | <b>0x30 | 0xFE    | 0xFF    | 0x22    | 0x41    | 0x30    |
- | INX        | 0\*\*\*| RPC \| WM         | 0x30    | 0xFE    | <b>0x30 | <b>0xA0 | 0x41    | 0x30    |
+ | Instruction | Step   | Microinstructions | PC      | SP      | MAR     | RAM     | IR      | B       |
+ |-------------|--------|-------------------|---------|---------|---------|---------|---------|---------|
+ | NOP         | 0\*    | RPC \| WM         | 0x1F    | 0xFF    | <b>0x1F | <b>0x0F | ?       | ?       |
+ | NOP         | 1\*    | RR  \| WIR \| PCI | <b>0x20 | 0xFF    | 0x1F    | 0x0F    | <b>0x0F | ?       |
+ | NOP         | 2\*    | NI                | 0x20    | 0xFF    | 0x1F    | 0x0F    | 0x0F    | ?       |
+ | JSR         | 0      | RPC \| WM         | 0x20    | 0xFF    | <b>0x20 | <b>0x41 | 0x0F    | ?       |
+ | JSR         | 1      | RR  \| WIR \| PCI | <b>0x21 | 0xFF    | 0x20    | 0x41    | <b>0x41 | ?       |
+ | JSR         | 2      | RPC \| WM         | 0x21    | 0xFF    | <b>0x21 | <b>0x30 | 0x41    | ?       |
+ | JSR         | 3      | RR  \| WB  \| PCI | <b>0x22 | 0xFF    | 0x21    | 0x30    | 0x41    | <b>0x30 |
+ | JSR         | 4      | RS  \| WM         | 0x22    | 0xFF    | <b>0xFF | ?\*\*   | 0x41    | 0x30    |
+ | JSR         | 5      | RPC \| WR         | 0x22    | 0xFF    | 0xFF    | <b>0x22 | 0x41    | 0x30    |
+ | JSR         | 6      | SE                | 0x22    | <b>0xFE | 0xFF    | 0x22    | 0x41    | 0x30    |
+ | JSR         | 7      | RB  \| WPC \| NI  | <b>0x30 | 0xFE    | 0xFF    | 0x22    | 0x41    | 0x30    |
+ | INX         | 0\*\*\*| RPC \| WM         | 0x30    | 0xFE    | <b>0x30 | <b>0xA0 | 0x41    | 0x30    |
 
-*Scomposizione dell'istruzione JSR nelle sue otto microistruzioni elementari e raffigurazione dello stato dei registri e della RAM al termine di ogni step.*
+*Breakdown of the JSR instruction into its eight elementary microinstructions and representation of the state of the registers and RAM at the end of each step.*
 
-\* Istruzione NOP precedente  
-\*\* Il valore contenuto in questo istante nella locazione di memoria 0xFF non è noto; peraltro, è ininfluente, in quanto lo step successivo ne sovrascrive il contenuto con l'indirizzo di ritorno dalla subroutine  
-\*\*\* Primo step dell'istruzione INX successiva
+\* Previous NOP instruction  
+\*\* The value currently contained in memory location 0xFF is not known; moreover, it is irrelevant, as the next step overwrites its content with the return address from the subroutine  
+\*\*\* First step of the following INX instruction
 
-1. Il primo step dell'istruzione JSR carica l'indirizzo dell'istruzione corrente nel Memory Address Register:
-    - RPC, Read Program Counter - espone l'indirizzo del PC sul bus
-    - WM, Write Memory Address Register - carica l'indirizzo dell'istruzione nel MAR
-2. Il secondo step carica l'opcode dell'istruzione nell'IR e incrementa il PC per farlo puntare alla locazione di memoria successiva (che contiene l'operando dell'istruzione JSR, cioè l'indirizzo di destinazione del salto):
-    - RR, Read RAM - espone sul bus l'opcode dell'istruzione
-    - WIR, Write Instruction Register - carica l'opcode nell'IR\*
-    - PCI, Program Counter Increment - incrementa il PC
-3. Il terzo step carica nel Memory Address Register l'indirizzo del Program Counter, che ora punta all'operando:
-    - RPC, Read Program Counter - espone l'indirizzo del PC sul bus
-    - WM, Write Memory Address Register - carica l'indirizzo dell'operando nel MAR
-4. Il quarto step carica l'indirizzo della subroutine in B e incrementa il PC, che va ora a puntare alla prossima istruzione, coincidente con l'indirizzo di ritorno dalla subroutine:
-    - RR, Read RAM - espone l'operando sul bus
-    - WB, Write B - memorizza in B l'indirizzo di destinazione del salto
-    - PCI, Program Counter Increment - incrementa il PC
-5. Il quinto step carica nel Memory Address Register l'indirizzo dello Stack Pointer, che corrisponde alla prima locazione libera dello stack:
-    - RS, Read Stack - espone sul bus l'indirizzo il valore dello SP
-    - WM, Write Memory Address Register - carica l'indirizzo dello SP nel MAR
-6. Il sesto step carica nello stack l'indirizzo del PC, al quale il computer ritornerà alla fine della subroutine invocata dall'istruzione JSR:
-    - RPC, Read Program Counter - espone l'indirizzo del PC sul bus
-    - WR, Write RAM - carica nello stack l'indirizzo di ritorno dalla subroutine
-7. Il settimo step decrementa (post-decrement) lo Stack Pointer:
-    - SE, Stack Enable - i contatori '169 decrementano l'output di un'unità, andando a puntare alla prossima locazione libera dello stack
-8. L'ottavo step carica nel PC l'indirizzo della subroutine invocata dall'istruzione JSR:
-    - RB, Read B - espone sul bus il registro B, nel quale era stato precedentemente memorizzato l'indirizzo della subroutine
-    - WPC, Write Program Counter - carica nel PC l'indirizzo della subroutine
-    - NI, Next Instruction - resetta il Ring Counter
+1. The first step of the JSR instruction loads the address of the current instruction into the Memory Address Register:
+    - RPC, Read Program Counter - exposes the PC address on the bus
+    - WM, Write Memory Address Register - loads the instruction address into the MAR
+2. The second step loads the instruction opcode into the IR and increments the PC to make it point to the next memory location (which contains the JSR instruction operand, i.e. the jump destination address):
+    - RR, Read RAM - exposes the instruction opcode on the bus
+    - WIR, Write Instruction Register - loads the opcode into the IR\*
+    - PCI, Program Counter Increment - increments the PC
+3. The third step loads the Program Counter address into the Memory Address Register, which now points to the operand:
+    - RPC, Read Program Counter - exposes the PC address on the bus
+    - WM, Write Memory Address Register - loads the operand address into the MAR
+4. The fourth step loads the subroutine address into B and increments the PC, which now points to the next instruction, coinciding with the return address from the subroutine:
+    - RR, Read RAM - exposes the operand on the bus
+    - WB, Write B - stores the jump destination address in B
+    - PCI, Program Counter Increment - increments the PC
+5. The fifth step loads the Stack Pointer address into the Memory Address Register, corresponding to the first free location on the stack:
+    - RS, Read Stack - exposes the SP value on the bus
+    - WM, Write Memory Address Register - loads the SP address into the MAR
+6. The sixth step loads the PC address into the stack, to which the computer will return at the end of the subroutine called by the JSR instruction:
+    - RPC, Read Program Counter - exposes the PC address on the bus
+    - WR, Write RAM - pushes the subroutine return address into the stack
+7. The seventh step decrements (post-decrement) the Stack Pointer:
+    - SE, Stack Enable - the '169 counters decrement the output by one unit, pointing to the next free location on the stack
+8. The eighth step loads the subroutine address called by the JSR instruction into the PC:
+    - RB, Read B - exposes register B on the bus, in which the subroutine address had been previously stored
+    - WPC, Write Program Counter - loads the subroutine address into the PC
+    - NI, Next Instruction - resets the Ring Counter
 
-\*Notare come l'Instruction Register venga aggiornato solo alla fine del secondo step dell'istruzione, come già visto nella spiegazione delle [Fasi](../control/#fasi) della CPU.
+\*Note how the Instruction Register is updated only at the end of the second step of the instruction, as already seen in the explanation of the CPU [Phases](../control/#phases) of the CPU.
 
-Alla fine della subroutine, l'istruzione RTS esegue i seguenti passaggi:
+At the end of the subroutine, the RTS instruction performs the following steps:
 
-- incrementa l'SP (pre-increment);
-- carica il nuovo valore dell'SP nel MAR;
-- legge dallo stack l'indirizzo di ritorno e lo carica nel PC.
+- increments the SP (pre-increment);
+- loads the new SP value into the MAR;
+- reads the return address from the stack and loads it into the PC.
 
-## Lo Stack Pointer dell'NQSAP / NQSAP-PCB
+## The NQSAP / NQSAP-PCB Stack Pointer
 
-Nella documentazione dell'NQSAP, Tom segnala di aver inizialmente previsto l'utilizzo di Synchronous 4-Bit Up/Down Binary Counters <a href="https://www.ti.com/lit/ds/symlink/sn74ls193.pdf" target="_blank">74LS193</a>, incorrendo nelle [problematiche di glitching](../control/#clock-glitching-delle-eeprom-e-instruction-register-parte-2) delle EEPROM, descritte in una apposita sezione della documentazione della Control Logic del BEAM.
+In the NQSAP documentation, Tom notes that he had initially planned to use Synchronous 4-Bit Up/Down Binary Counters <a href="https://www.ti.com/lit/ds/symlink/sn74ls193.pdf" target="_blank">74LS193</a>, running into the [glitching issues](../control/#clock-eeprom-glitching-and-instruction-register-part-2) of the EEPROMs, described in a dedicated section of the BEAM Control Logic documentation.
 
-Poiché Tom non aveva pubblicato lo schema dello Stack Pointer dell'NQSAP, lo sostituiamo con quello dell'NQSAP-PCB.
+Since Tom had not published the schematic of the NQSAP Stack Pointer, we replace it with that of the NQSAP-PCB.
 
-[![Schema dello Stack Register del computer NQSAP-PCB](../../../assets/sp/70-stack-nqsap-pcb.png "Schema dello Stack Register del computer NQSAP-PCB"){:width="66%"}](../../../assets/sp/70-stack-nqsap-pcb.png)
+[![Schematic of the NQSAP-PCB computer Stack Register](../../../assets/sp/70-stack-nqsap-pcb.png "Schematic of the NQSAP-PCB computer Stack Register"){:width="66%"}](../../../assets/sp/70-stack-nqsap-pcb.png)
 
-*Schema dello Stack Register del computer NQSAP-PCB.*
+*Schematic of the NQSAP-PCB computer Stack Register.*
 
-Come si può vedere, Tom ritorna sui suoi passi ed utilizza proprio i '193, che contano verso l'alto o verso il basso in corrispondenza del Rising Edge dei segnali dedicati Up e Down. Tuttavia, l'NQSAP-PCB non soffre del problema del glitching, in quanto l'Instruction Register è stato bufferizzato.
+As can be seen, Tom revisits his earlier decision and uses the '193s after all, which count up or down on the Rising Edge of the dedicated Up and Down signals. However, the NQSAP-PCB does not suffer from the glitching problem, since the Instruction Register has been buffered.
 
-L'SP dell'NQSAP-PCB è governato dai segnali SE (Stack Enable) e C0/C1, che determinano la direzione del conteggio. C0 e C1 sostituiscono una parte dei segnali dell'NQSAP: Il consolidamento su C0 e C1 di alcuni segnali di controllo del registro dei Flag, dei segnali di controllo del registro DXY e dei segnali di direzione del conteggio dello SP ha permesso di ridurre il numero di EEPROM da 4 a 3. Un effetto collaterale è l'impossibilità di eseguire nello stesso step operazioni su stack, registri DXY e/o modulo dei Flag.
+The NQSAP-PCB SP is controlled by the SE (Stack Enable) and C0/C1 signals, which determine the counting direction. C0 and C1 replace part of the NQSAP signals: the consolidation of some Flag register control signals, DXY register control signals, and SP counting direction signals onto C0 and C1 allowed the number of EEPROMs to be reduced from 4 to 3. A side effect is the inability to perform stack, DXY register and/or Flag module operations in the same step.
 
-## Schema
+## Schematic
 
-[![Schema dello Stack Register del computer BEAM](../../../assets/sp/70-stack-pointer-schema.png "Schema dello Stack Register del computer BEAM"){:width="100%"}](../../../assets/sp/70-stack-pointer-schema.png)
+[![Schematic of the BEAM computer Stack Pointer Register](../../../assets/sp/70-stack-pointer-schema.png "Schematic of the BEAM computer Stack Pointer Register"){:width="100%"}](../../../assets/sp/70-stack-pointer-schema.png)
 
-*Schema dello Stack Register del computer BEAM.*
+*Schematic of the BEAM computer Stack Pointer Register.*
 
-## Link utili
+## Useful links
 
-- Il video <a href="https://www.youtube.com/watch?v=xBjQVxVxOxc&t=945s" target="_blank">What is a stack and how does it work?</a> di Ben Eater. Il video fa parte della serie dedicata al computer 6502 (e non all'8-bit computer), ma l'argomento è affine e la trattazione merita assolutamente di essere vista.
-- <a href="https://wilsonminesco.com/stacks/basics.html" target="_blank">Stack definition and basics</a> di Garth Wilson, contributore di <a href="http://www.6502.org" target="_blank">6502.org</a> e curatore di <a href="https://wilsonminesco.com/" target="_blank">Wilson Mines Co.</a>, vera miniera di articoli, nozioni, tutorial ed altro sul 6502.
-- Lo <a href="https://tomnisbet.github.io/nqsap/docs/stack-pointer/" target="_blank">Stack Pointer dell'NQSAP</a> di Tom Nisbet
-- Lo <a href="https://tomnisbet.github.io/nqsap-pcb/docs/program-counter-stack-pointer/" target="_blank">Stack Pointer dell'NQSAP-PCB</a> di Tom Nisbet
+- Ben Eater's video <a href="https://www.youtube.com/watch?v=xBjQVxVxOxc&t=945s" target="_blank">What is a stack and how does it work?</a> The video is part of the series dedicated to the 6502 computer (and not to the 8-bit computer), but the topic is closely related and the presentation is absolutely worth watching.
+- <a href="https://wilsonminesco.com/stacks/basics.html" target="_blank">Stack definition and basics</a> by Garth Wilson, contributor to <a href="http://www.6502.org" target="_blank">6502.org</a> and curator of <a href="https://wilsonminesco.com/" target="_blank">Wilson Mines Co.</a>, a true goldmine of articles, notions, tutorials and more on the 6502.
+- Tom Nisbet's <a href="https://tomnisbet.github.io/nqsap/docs/stack-pointer/" target="_blank">NQSAP Stack Pointer</a>.
+- Tom Nisbet's <a href="https://tomnisbet.github.io/nqsap-pcb/docs/program-counter-stack-pointer/" target="_blank">NQSAP-PCB Stack Pointer</a>.

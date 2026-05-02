@@ -123,7 +123,7 @@ Poiché Tom non aveva pubblicato lo schema dello Stack Pointer dell'NQSAP, lo so
 
 Come si può vedere, Tom ritorna sui suoi passi ed utilizza proprio i '193, che contano verso l'alto o verso il basso in corrispondenza del Rising Edge dei segnali dedicati Up e Down. Tuttavia, l'NQSAP-PCB non soffre del problema del glitching, in quanto l'Instruction Register è stato bufferizzato.
 
-L'SP dell'NQSAP-PCB è governato dai segnali SE (Stack Enable) e C0/C1, che determinano la direzione del conteggio. C0 e C1 sostituiscono una parte dei segnali dell'NQSAP: Il consolidamento su C0 e C1 di alcuni segnali di controllo del registro dei Flag, dei segnali di controllo del registro DXY e dei segnali di direzione del conteggio dello SP ha permesso di ridurre il numero di EEPROM da 4 a 3. Un effetto collaterale è l'impossibilità di eseguire nello stesso step operazioni su stack, registri DXY e/o modulo dei Flag.
+L'SP dell'NQSAP-PCB è governato dai segnali SE (Stack Enable) e C0/C1, che determinano la direzione del conteggio. C0 e C1 sostituiscono una parte dei segnali dell'NQSAP: il consolidamento su C0 e C1 di alcuni segnali di controllo del registro dei Flag, dei segnali di controllo del registro DXY e dei segnali di direzione del conteggio dello SP ha permesso di ridurre il numero di EEPROM da 4 a 3. Un effetto collaterale è l'impossibilità di eseguire nello stesso step operazioni su stack, registri DXY e/o modulo dei Flag.
 
 ## Schema
 
@@ -135,5 +135,5 @@ L'SP dell'NQSAP-PCB è governato dai segnali SE (Stack Enable) e C0/C1, che dete
 
 - Il video <a href="https://www.youtube.com/watch?v=xBjQVxVxOxc&t=945s" target="_blank">What is a stack and how does it work?</a> di Ben Eater. Il video fa parte della serie dedicata al computer 6502 (e non all'8-bit computer), ma l'argomento è affine e la trattazione merita assolutamente di essere vista.
 - <a href="https://wilsonminesco.com/stacks/basics.html" target="_blank">Stack definition and basics</a> di Garth Wilson, contributore di <a href="http://www.6502.org" target="_blank">6502.org</a> e curatore di <a href="https://wilsonminesco.com/" target="_blank">Wilson Mines Co.</a>, vera miniera di articoli, nozioni, tutorial ed altro sul 6502.
-- Lo <a href="https://tomnisbet.github.io/nqsap/docs/stack-pointer/" target="_blank">Stack Pointer dell'NQSAP</a> di Tom Nisbet
-- Lo <a href="https://tomnisbet.github.io/nqsap-pcb/docs/program-counter-stack-pointer/" target="_blank">Stack Pointer dell'NQSAP-PCB</a> di Tom Nisbet
+- Lo <a href="https://tomnisbet.github.io/nqsap/docs/stack-pointer/" target="_blank">Stack Pointer dell'NQSAP</a> di Tom Nisbet.
+- Lo <a href="https://tomnisbet.github.io/nqsap-pcb/docs/program-counter-stack-pointer/" target="_blank">Stack Pointer dell'NQSAP-PCB</a> di Tom Nisbet.

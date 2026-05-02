@@ -23,7 +23,7 @@ The Start/Stop and Step buttons have also been duplicated in a more easily acces
 
 ### Loader and Clock
 
-On the clock module, there are three signals coming from the [Loader](../en/loader/) based on Arduino: LDR-Active, LDR-CLK, and CLK-Start.
+On the clock module, there are three signals coming from the [Loader](../loader/) based on Arduino: LDR-Active, LDR-CLK, and CLK-Start.
 
 The **LDR-Active** signal, when set to HI, allows the Loader to take control of the clock circuit, completely disabling its output and halting the program execution. In this case, the Loader can inject its clock signal **LDR-CLK** into the computer.
 

@@ -5,7 +5,7 @@ locale: en-US
 permalink: /docs/en/control/
 excerpt: "Control Logic del computer BEAM"
 ---
-<small>[Instruction Register e Istruzioni](#instruction-register-e-istruzioni) - [Ring Counter e Microistruzioni](#ring-counter-e-microistruzioni) - [Fasi](#fasi) - [Clock, "glitching" delle EEPROM e Instruction Register (parte 2)](#clock-glitching-delle-eeprom-e-instruction-register-parte-2) - [Lunghezza delle istruzioni](#lunghezza-delle-istruzioni) - [I 74LS138 per la gestione dei segnali](#i-74ls138-per-la-gestione-dei-segnali) - [Caricamento di un programma dal Loader](#caricamento-di-un-programma-dal-loader) - [Riepilogo segnali dell’NQSAP e del BEAM](#riepilogo-segnali-dellnqsap-e-del-beam) - [Segnali di controllo](#segnali-di-controllo) - [Bus e altri segnali](#bus-e-altri-segnali) - [Microcode](#microcode) - [Differenze rispetto all’Instruction Set del 6502](#differenze-rispetto-allinstruction-set-del-6502) - [Schema](#schema) - [Differenze tra Control Logic dell’NQSAP e del BEAM](#differenze-tra-control-logic-dellnqsap-e-del-beam) - [Note](#note) - [Link Utili](#link-utili) - [Riflessione sul microcode](#riflessione-sul-microcode)</small>
+<small>[Instruction Register and Instructions](#instruction-register-and-instructions) - [Ring Counter e Microistruzioni](#ring-counter-e-microistruzioni) - [Fasi](#fasi) - [Clock, "glitching" delle EEPROM e Instruction Register (parte 2)](#clock-eeprom-glitching-and-instruction-register-part-2) - [Lunghezza delle istruzioni](#lunghezza-delle-istruzioni) - [I 74LS138 per la gestione dei segnali](#i-74ls138-per-la-gestione-dei-segnali) - [Caricamento di un programma dal Loader](#caricamento-di-un-programma-dal-loader) - [Riepilogo segnali dell’NQSAP e del BEAM](#riepilogo-segnali-dellnqsap-e-del-beam) - [Control signals](#control-signals) - [Bus e altri segnali](#bus-e-altri-segnali) - [Microcode](#microcode) - [Differenze rispetto all’Instruction Set del 6502](#differenze-rispetto-allinstruction-set-del-6502) - [Schematic](#schematic) - [Differenze tra Control Logic dell’NQSAP e del BEAM](#differenze-tra-control-logic-dellnqsap-e-del-beam) - [Note](#note) - [Link Utili](#link-utili) - [Riflessione sul microcode](#riflessione-sul-microcode)</small>
 
 [![Control Logic del computer BEAM](../../assets/control/40-beam-control.png "Control Logic del computer BEAM"){:width="100%"}](../../assets/control/40-beam-control.png)
 
@@ -47,7 +47,7 @@ Alcune note propedeutiche:
 
 *Schema della Control Logic dell'NQSAP, leggermente modificato al solo scopo di migliorarne la leggibilità.*
 
-## Instruction Register e Istruzioni
+## Instruction Register and Instructions
 
 Il ruolo dell'Instruction Register è di memorizzare l'istruzione corrente prelevandola dalla memoria.
 
@@ -183,7 +183,7 @@ Per finalizzare l'analisi dell'istruzione LDA #$94, riepiloghiamo lo stato del c
 - i Flag V e C non saranno modificati rispetto allo stato precedente;
 - l'accumulatore A e il registro H conterranno il valore $94 esadecimale.
 
-### Fasi
+### Phases
 
 Per garantire il corretto funzionamento del processore, la Control Logic deve impostare la giusta *Control Word* per ogni microistruzione. La Control Word è quella stringa di bit utilizzata per governare e coordinare il comportamento dei vari componenti del processore durante l'esecuzione di una microistruzione ed è definita nel microcode memorizzato nelle EEPROM; ad ogni bit / pin di output delle EEPROM corrisponde un segnale di controllo (come RPC, WM, PCI, RR eccetera).
 
@@ -249,7 +249,7 @@ Utilizzando una logica combinatoria, è possibile costruire il microcode da cari
 
 Nell'immagine si può osservare che le uscite del contatore controllano anche il demultiplexer, che viene utilizzato per visualizzare lo stato dell'RC. Anziché impiegare 16 LED (e due '138), un singolo LED "esteso" è pilotato dal pin più significativo del '161, che ha un valore pari ad 8: lo step correntemente in esecuzione sarà indicato dal LED acceso dal '138, al quale sommare 8 se il LED "esteso" è acceso.
 
-### Clock, "glitching" delle EEPROM e Instruction Register (parte 2)
+### Clock, EEPROM "glitching" and Instruction Register (part 2)
 
 In generale, i momenti essenziali di un ciclo di clock in un computer sono due: il Rising Edge ↗ (passaggio del segnale dallo stato logico LO allo stato logico HI) e il Falling Edge ↘ (viceversa).
 
@@ -487,7 +487,7 @@ La prima tabella riassume i segnali di controllo originati dalla Control Logic. 
 
 La colonna "Ambito o direzione segnale" indica il contesto di un bus, oppure sorgente e destinazione di un segnale di controllo.
 
-### Segnali di controllo
+### Control Signals
 
 | NQSAP         | BEAM           | Ambito o direzione segnale | Descrizione                                                                                                  |
 | -----         | ----           | -------------------------- | -----------                                                                                                  |
@@ -603,7 +603,7 @@ Sono state aggiunte le seguenti istruzioni: INA, DEA, OUT.
 
 Anche l'istruzione BRK non è stata implementata, ma si trova un comportamento simile nella [nuova HLT](../clock/#listruzione-hlt).
 
-## Schema
+## Schematic
 
 [![Schema della Control Logic del computer BEAM](../../assets/control/40-control-logic-schema-beam.png "Schema della Control Logic del computer BEAM"){:width="100%"}](../../assets/control/40-control-logic-schema-beam.png)
 

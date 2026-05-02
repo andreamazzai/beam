@@ -5,7 +5,7 @@ locale: en-US
 permalink: /docs/en/alu/
 excerpt: "Unità Aritmetica e Logica del computer BEAM"
 ---
-<small>[Il 74LS181](#il-74ls181) - [Il registro A](#il-registro-a) - [L’ALU dell’NQSAP](#lalu-dellnqsap) - [Il registro H](#il-registro-h) - [Funzioni logiche e operazioni aritmetiche](#funzioni-logiche-e-operazioni-aritmetiche) - [Relazione diretta (hardwired) tra Instruction Register e ALU](#relazione-diretta-hardwired-tra-instruction-register-e-alu) - [Indirizzamenti](#indirizzamenti) - [Istruzioni di comparazione](#istruzioni-di-comparazione) - [Le istruzioni di comparazione e i Flag](#le-istruzioni-di-comparazione-e-i-flag) - [Riepilogo: sottrazioni, comparazioni e indirizzamenti](#riepilogo-sottrazioni-comparazioni-e-indirizzamenti) - [Carry, addizioni e sottrazioni](#carry-addizioni-e-sottrazioni) - [Schema](#schema) - [Differenze tra Moduli ALU dell’NQSAP e del BEAM](#differenze-tra-moduli-alu-dellnqsap-e-del-beam) - [Link Utili](#link-utili)</small>
+<small>[Il 74LS181](#il-74ls181) - [Il registro A](#il-registro-a) - [The NQSAP ALU](#the-nqsap-alu) - [Il registro H](#il-registro-h) - [Funzioni logiche e operazioni aritmetiche](#funzioni-logiche-e-operazioni-aritmetiche) - [Relazione diretta (hardwired) tra Instruction Register e ALU](#relazione-diretta-hardwired-tra-instruction-register-e-alu) - [Addressing Modes](#addressing-modes) - [Istruzioni di comparazione](#istruzioni-di-comparazione) - [Le istruzioni di comparazione e i Flag](#le-istruzioni-di-comparazione-e-i-flag) - [Riepilogo: sottrazioni, comparazioni e indirizzamenti](#riepilogo-sottrazioni-comparazioni-e-indirizzamenti) - [Carry, addizioni e sottrazioni](#carry-addizioni-e-sottrazioni) - [Schema](#schema) - [Differenze tra Moduli ALU dell’NQSAP e del BEAM](#differenze-tra-moduli-alu-dellnqsap-e-del-beam) - [Link Utili](#link-utili)</small>
 
 [![Unità Aritmetica e Logica del computer BEAM](../../assets/alu/50-alu-beam.png "Unità Aritmetica e Logica del computer BEAM"){:width="100%"}](../../assets/alu/50-alu-beam.png)
 
@@ -29,7 +29,7 @@ Il registro A dell'NQSAP e del BEAM sono diversi per costruzione, ma identici da
 
 [![Schema del Registro A del computer BEAM](../../assets/alu/50-a-beam-schema.png "Schema del Registro A del computer BEAM"){:width="100%"}](../../assets/alu/50-a-beam-schema.png)
 
-## L'ALU dell'NQSAP
+## The NQSAP ALU
 
 Tra le caratteristiche che spiccavano nello schema dell'ALU dell'NQSAP, notavo soprattutto un numero elevato di chip - tra i quali i 4-bit Bidirectional Universal Shift Register <a href="https://www.ti.com/lit/ds/symlink/sn74ls194a.pdf" target="_blank">74LS194</a> - e un modo particolare di indirizzare i '181, che erano "strettamente legati" all'istruzione presente nell'Instruction Register della [Control Logic](../control). Anche il legame con la Control Logic è stato tra i più complessi da analizzare e comprendere, ma quello con il modulo dei Flag non è meno importante e la sua comprensione è stata altrettanto difficile: ad ogni operazione dell'ALU (e non solo) corrisponde infatti un'azione sul registro dei Flag.
 
@@ -247,7 +247,7 @@ Attivando questa istruzione, il risultato esposto in output dai '181 sarebbe sta
 
 Gli altri 3 bit di output dell'IR venivano scelti arbitrariamente, pur se con qualche accorgimento strutturato, per gestire le diverse modalità di indirizzamento disponibili sul 6502 e che dovevano essere emulate dal computer NQSAP.
 
-## Indirizzamenti
+## Addressing Modes
 
 Ogni istruzione del 6502, come ad esempio la succitata ADC, offre infatti un certo numero di indirizzamenti tra le 13 modalità totali disponibili (Accumulatore, Assoluto, Assoluto Indicizzato X o Y, Immediato, Implicito, Indiretto, Indiretto Indicizzato X, Indicizzato Y Indiretto, Relativo, Pagina Zero, Pagina Zero Indicizzato X o Y).
 

@@ -5,90 +5,90 @@ locale: en-US
 permalink: /docs/en/dxy/
 excerpt: "Registri indice del computer BEAM"
 ---
-<small>[Il registro D](#il-registro-d) - [Utilizzo con le modalità di indirizzamento indicizzate](#utilizzo-con-le-modalità-di-indirizzamento-indicizzate) - [Utilizzo per i salti condizionali](#utilizzo-per-i-salti-condizionali) - [Schema](#schema) - [Differenze tra Registri indice dell’NQSAP e del BEAM](#differenze-tra-registri-indice-dellnqsap-e-del-beam) - [Link utili](#link-utili)</small>
+<small>[The D register](#the-d-register) - [Use with indexed addressing modes](#use-with-indexed-addressing-modes) - [Use for conditional jumps](#use-for-conditional-jumps) - [Schematic](#schematic) - [Differences between NQSAP and BEAM index registers](#differences-between-nqsap-and-beam-index-registers) - [Useful links](#useful-links)</small>
 
-[![Registri indice del computer BEAM](../../assets/dxy/60-beam-dxy.png "Registri indice del computer BEAM"){:width="100%"}](../../assets/dxy/60-beam-dxy.png)
+[![BEAM computer index registers](../../../assets/dxy/60-beam-dxy.png "BEAM computer index registers"){:width="100%"}](../../../assets/dxy/60-beam-dxy.png)
 
-Nel microprocessore 6502 sono presenti due registri indice, X e Y, che possono facilmente essere riprodotti in un computer TTL; sono registri indipendenti che possono essere scritti e letti alla bisogna.
+The 6502 microprocessor features two index registers, X and Y, which can easily be reproduced in a TTL computer; they are independent registers that can be written to and read from as needed.
 
-## Il registro D
+## The D register
 
-Il registro D dell'NQSAP e del BEAM viene utilizzato a supporto delle istruzioni di salto condizionale e di quelle che eseguono operazioni in una locazione di memoria che è il risultato di un computo tra l'indirizzo base specificato nell'operando e quattro diversi modi di interpretazione dei valori assunti dai registri indice X e Y:
+The D register of the NQSAP and BEAM is used to support conditional jump instructions and those that perform operations on a memory location that is the result of a computation between the base address specified in the operand and four different ways of interpreting the values assumed by the X and Y index registers:
 
-| Modalità indirizzamento | Agisce sull'indirizzo definito                                            | Mnemonico    | Risultato                                                          | Esempio*                                                |
-| -                  | -                                                                              | -            | -                                                                  | -                                                       |  
-| Absolute, X        | dalla somma tra operando e valore contenuto in X                               | LDA ($20, X) | A = valore contenuto nella locazione ($20 + X)                     | X = #$03; A = valore presente nella locazione $23       |
-| Absolute, Y        | dalla somma tra operando e valore contenuto in Y                               | LDA ($20, Y) | A = valore contenuto nella locazione ($20 + Y)                     | Y = #$03; A = valore presente nella locazione $23       |
-| Indexed Indirect X | nella locazione puntata dalla somma tra operando e valore contenuto in X | LDA ($20, X) | A = valore contenuto nella locazione puntata dal pointer ($20 + X) | X = #$03; $23 = #$50; A = valore presente nella locazione $50 |
-| Indirect Indexed Y | dalla somma tra locazione puntata dall’operando e valore contenuto in Y | LDA ($20), Y  | A = valore contenuto nella locazione puntata dal pointer ($20) + Y | Y = #$03; $20 = #$60; A = valore presente nella locazione $63 |
+| Addressing Mode    | Acts on the address defined                                             | Mnemonic     | Result                                                              | Example*                                        |
+| -                  | -                                                                       | -            | -                                                                   | -                                               |  
+| Absolute, X        | by the sum of the operand and the value in X                            | LDA ($20, X) | A = value contained in location ($20 + X)                           | X = #$03; A = value at location $23             |
+| Absolute, Y        | by the sum of the operand and the value in Y                            | LDA ($20, Y) | A = value contained in location ($20 + Y)                           | Y = #$03; A = value at location $23             |
+| Indexed Indirect X | at the location pointed to by the sum of the operand and the value in X | LDA ($20, X) | A = value contained in the location pointed to by pointer ($20 + X) | X = #$03; $23 = #$50; A = value at location $50 |
+| Indirect Indexed Y | by the sum of the location pointed to by the operand and the value in Y | LDA ($20), Y | A = value contained in the location pointed to by pointer ($20) + Y | Y = #$03; $20 = #$60; A = value at location $63 |
 
-\* $23 = #$50 significa che l'indirizzo esadecimale $23 contiene il valore esadecimale #$50:
+\* $23 = #$50 means that hexadecimal address $23 contains hexadecimal value #$50:
 
-- la notazione $ fa riferimento a un indirizzo
-- la notazione #$ fa riferimento a un valore
+- the $ notation refers to an address
+- the #$ notation refers to a value
 
-Va ricordato che alcune modalità di indirizzamento del 6502 risultano ridondanti in un computer con soli 256 byte di RAM: per un chiarimento si veda la sezione [Indirizzamenti](../alu/#indirizzamenti) nella pagina dell'ALU.
+It should be noted that some 6502 addressing modes are redundant in a computer with only 256 bytes of RAM: for clarification see the [Addressing Modes](../alu/#addressing-modes) section on the ALU page.
 
-### Utilizzo con le modalità di indirizzamento indicizzate
+### Use with indexed addressing modes
 
-Il contenuto del registro D può essere sommato al contenuto dei registri X, Y o nessuno (in questo ultimo caso, D potrebbe risultare utile come ulteriore registro di appoggio per definire altre istruzioni personalizzate; l'utilizzo di questa modalità non è invece necessario per emulare le istruzioni originali del 6502).
+The contents of register D can be added to the contents of registers X, Y, or neither (in this last case, D could be useful as an additional auxiliary register for defining other custom instructions; the use of this mode is not necessary to emulate the original 6502 instructions).
 
-Per selezionare se D debba essere sommato a X, Y o nulla, si usano dei multiplexer (MUX) <a href="https://www.ti.com/lit/ds/symlink/sn74ls157.pdf" target="_blank">74LS157</a> pilotati dai segnali DY e DZ nell'NQSAP e DX/Y e DZ nel BEAM.
+To select whether D should be added to X, Y, or nothing, <a href="https://www.ti.com/lit/ds/symlink/sn74ls157.pdf" target="_blank">74LS157</a> multiplexers (MUX) are used, driven by signals DY and DZ in the NQSAP and DX/Y and DZ in the BEAM.
 
-Per eseguire il computo si usano dei 4-Bit Binary Full Adders With Fast Carry <a href="https://www.ti.com/lit/ds/symlink/sn54s283.pdf" target="_blank">74LS283</a> che eseguono la somma tra quanto viene caricato nel registro D e il valore contenuto nei registri indice X o Y.
+To perform the computation, 4-Bit Binary Full Adders With Fast Carry <a href="https://www.ti.com/lit/ds/symlink/sn54s283.pdf" target="_blank">74LS283</a> are used, which add whatever is loaded into register D to the value contained in index registers X or Y.
 
-Il risultato del computo può essere esportato attivando il segnale RD: gli output degli Adder saranno così esposti sul bus. Notare che il registro D è "Write only", dunque non è possibile metterne direttamente il contenuto in ouput sul bus; tuttavia, è possibile leggere il valore originariamente presente in D portando il segnale DZ allo stato HI, disabilitando così le uscite dei '157 e portando gli Adder a eseguire l'operazione D + 0 = D.
+The result of the computation can be exported by activating the RD signal: the Adder outputs will then be exposed on the bus. Note that register D is "Write only", so it is not possible to directly output its contents onto the bus; however, it is possible to read the value originally present in D by bringing the DZ signal to the HI state, thereby disabling the '157 outputs and causing the Adders to perform the operation D + 0 = D.
 
-Il flusso logico tratto dalla <a href="https://tomnisbet.github.io/nqsap/docs/dxy-registers/" targe ="_blank">spiegazione di Tom Nisbet</a> chiarisce il funzionamento:
+The logical flow taken from <a href="https://tomnisbet.github.io/nqsap/docs/dxy-registers/" targe ="_blank">Tom Nisbet's explanation</a> clarifies the operation:
 
-![Registri D, X e Y in azione](../../assets/dxy/60-dxy-nqsap-tom-flow.png "Registri D, X e Y in azione"){:width="66%"}
+![D, X and Y registers in action](../../../assets/dxy/60-dxy-nqsap-tom-flow.png "D, X and Y registers in action"){:width="66%"}
 
-### Utilizzo per i salti condizionali
+### Use for conditional jumps
 
-Un salto condizionale viene eseguito se una determinata situazione è verificata. Nell'esempio seguente, l'istruzione BCS è sicuramente eseguita. Il valore dell'operando $03 viene sommato all'indirizzo dell'istruzione *successiva* a quella di salto, cioé $03 + $83 = $86, che sarà caricato nel Program Counter (PC).
+A conditional jump is executed if a certain condition is met. In the following example, the BCS instruction is unconditionally executed. The operand value $03 is added to the address of the instruction *following* the jump instruction, i.e. $03 + $83 = $86, which will be loaded into the Program Counter (PC).
 
 ~~~text
 SEC         ; $80 - Set Carry Flag
-BCS $03     ; $81 - Salta a $03 + $83 = $86 se il Carry è settato
-INX         ; $83 - Questa istruzione sarà saltata
-INX         ; $84 - Questa istruzione sarà saltata
-INX         ; $85 - Questa istruzione sarà saltata
-LDA #$01    ; $86 - Questa istruzione verrà eseguita
+BCS $03     ; $81 - Salta a $03 + $83 = $86 if Carry is set
+INX         ; $83 - This instruction will be skipped
+INX         ; $84 - This instruction will be skipped
+INX         ; $85 - This instruction will be skipped
+LDA #$01    ; $86 - This instruction will be executed
 ~~~
 
-L'operando è un valore a 8 bit con segno (Signed) che può variare da -128 a +127, il che comporta che i salti condizionali possono saltare in avanti di 128 indirizzi e all'indietro di 127.
+The operand is a signed 8-bit value that can range from -128 to +127, which means that conditional jumps can jump forward by 128 addresses and backward by 127.
 
-Per saltare a un indirizzo precedente a quello del salto, il valore dell'operando dovrà essere un valore compreso tra $80 (-128) e $FF (-1), secondo le regole visibile nella sezione [Numeri Unsigned e numeri Signed](../math/#numeri-unsigned-e-numeri-signed) della pagina dedicata all'Aritmetica binaria (se aggiungo 0x01 all'indirizzo più grande 0xFF, ritorno all'indirizzo 0x00).
+To jump to an address preceding the jump instruction, the operand value must be between $80 (-128) and $FF (-1), according to the rules described in the [Unsigned and Signed Numbers](../math/#unsigned-and-signed-numbers) section of the Binary Arithmetic page (if I add 0x01 to the largest address 0xFF, I return to address 0x00).
 
 ~~~text
-LDX #$05    ; $80 - Carica il registro X con 5
-DEX         ; $82 - Decrementa X
-BNE $FD     ; $83 - Salta a $85 + $FD = $85 - $03 = $82 se X non è zero
-RTS         ; $85 - Ritorno da subroutine
+LDX #$05    ; $80 - Load register X with 5
+DEX         ; $82 - Decrement X
+BNE $FD     ; $83 - Jump to $85 + $FD = $85 - $03 = $82 if X is not zero
+RTS         ; $85 - Return from subroutine
 ~~~
 
-Poiché la configurazione utilizzata per gli Adder '283 permette la sola esecuzione di addizioni, ci si potrebbe chiedere come sia possibile eseguire un salto all'indietro. Nell'NQSAP, così come nel BEAM, i registri sono a 8 bit: una semplice scorciatoia per giungere al risultato desiderato è quella di aggiungere l'operando al PC considerando indirizzo e operando come numeri Unsigned: nel caso specifico, $85 + $FD = $182. Il 9° bit (corrispondente al Carry) non viene preso in considerazione e il rimanente $82 verrà caricato nel PC.
+Since the configuration used for the '283 Adders only allows additions to be performed, one might wonder how it is possible to execute a backward jump. In the NQSAP, as in the BEAM, registers are 8 bits wide: a simple shortcut to achieve the desired result is to add the operand to the PC treating both address and operand as unsigned numbers: in this specific case, $85 + $FD = $182. The 9th bit (corresponding to the Carry) is not taken into account and the remaining $82 will be loaded into the PC.
 
-Questa tecnica funziona correttamente grazie alla natura ciclica dell'indirizzo di memoria in un sistema a 8 bit.
+This technique works correctly thanks to the cyclic nature of memory addressing in an 8-bit system.
 
-[![Schema dei registri indice dell'NQSAP](../../assets/dxy/60-nqsap-dxy-schema.png "Schema dei registri indice dell'NQSAP"){:width="100%"}](../../assets/dxy/60-nqsap-dxy-schema.png)
+[![Schematic of the NQSAP index registers](../../../assets/dxy/60-nqsap-dxy-schema.png "Schematic of the NQSAP index registers"){:width="100%"}](../../../assets/dxy/60-nqsap-dxy-schema.png)
 
-*Schema dei registri indice dell'NQSAP.*
+*Schematic of the NQSAP index registers.*
 
-## Schema
+## Schematic
 
-[![Schema dei Registri indice del computer BEAM](../../assets/dxy/60-beam-dxy-schema.png "Schema dei Registri indice del computer BEAM"){:width="100%"}](../../assets/dxy/60-beam-dxy-schema.png)
+[![Schematic of the BEAM computer index registers](../../../assets/dxy/60-beam-dxy-schema.png "Schematic of the BEAM computer index registers"){:width="100%"}](../../../assets/dxy/60-beam-dxy-schema.png)
 
-*Schema dei registri indice del computer BEAM.*
+*Schematic of the BEAM computer index registers.*
 
-## Differenze tra Registri indice dell'NQSAP e del BEAM
+## Differences between NQSAP and BEAM index registers
 
-Dal punto di vista funzionale, gli schemi dei Registri indice dell'NQSAP e del BEAM sono identici.
+From a functional standpoint, the schematics of the NQSAP and BEAM index registers are identical.
 
-Negli appunti annotavo che "... come per gli altri registri del BEAM, anche qui uso dei registri tipo D <a href="https://www.ti.com/lit/ds/symlink/sn54ls377.pdf" target="_blank">74LS377</a> anziché gli Octal D-Type Flip-Flop with 3-State Outputs <a href="https://www.onsemi.com/pdf/datasheet/74vhc574-d.pdf" target="_blank">74LS574</a> usati da Tom nell'NQSAP"; si veda la sezione [L'ALU dell'NQSAP](../alu/#lalu-dellnqsap) per un chiarimento in tal senso.
+In my notes I had written that "… as with the other BEAM registers, here too I use <a href="https://www.ti.com/lit/ds/symlink/sn54ls377.pdf" target="_blank">74LS377</a> D-type registers instead of the Octal D-Type Flip-Flop with 3-State Outputs <a href="https://www.onsemi.com/pdf/datasheet/74vhc574-d.pdf" target="_blank">74LS574</a> used by Tom in the NQSAP"; see the section [The NQSAP ALU](../alu/#the-nqsap-alu) for clarification on this point.
 
-Per completezza, devo segnalare di aver conosciuto il 74LS377 studiando l'<a href="https://tomnisbet.github.io/nqsap-pcb/" target="_blank">NQSAP-PCB</a>, evoluzione dell’NQSAP che Tom aveva successivamente ingegnerizzato su PCB anziché su breadboard.
+For completeness, I should mention that I became acquainted with the 74LS377 while studying the <a href="https://tomnisbet.github.io/nqsap-pcb/" target="_blank">NQSAP-PCB</a>, an evolution of the NQSAP that Tom had subsequently engineered on PCB rather than on breadboard.
 
-## Link utili
+## Useful links
 
-- I <a href="https://tomnisbet.github.io/nqsap/docs/dxy-registers/" target="_blank">registri DXY dell'NQSAP</a> di Tom Nisbet
+- Tom Nisbet's <a href="https://tomnisbet.github.io/nqsap/docs/dxy-registers/" target="_blank">NQSAP DXY registers</a>.

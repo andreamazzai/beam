@@ -9,7 +9,7 @@ excerpt: "Loader of the BEAM computer"
 
 [![BEAM Computer Loader](../../../assets/loader/80-beam-loader.png "BEAM Computer Loader"){:width="100%"}](../../../assets/loader/80-beam-loader.png)
 
-After completing the [8-bit SAP-1 computer](../../#8-bit-ttl-logic-computer-sap), I was looking for a way to automate loading programs into memory, as doing so manually every time the system was powered on using the dip-switches was quite tedious. I also intended to frame it and hang it as a piece of artwork to show visitors. Gaining confidence with Arduino, I realized I could connect its outputs to MAR, RAM, and the Write button to automatically manage the computer’s programming, simulating the manual sequences precisely.
+After completing the [8-bit SAP-1 computer](../../en/home/#8-bit-ttl-logic-computer-sap), I was looking for a way to automate loading programs into memory, as doing so manually every time the system was powered on using the dip-switches was quite tedious. I also intended to frame it and hang it as a piece of artwork to show visitors. Gaining confidence with Arduino, I realized I could connect its outputs to MAR, RAM, and the Write button to automatically manage the computer’s programming, simulating the manual sequences precisely.
 
 I started from a project by <a href="https://github.com/dmytrostriletskyi/8-bit-computer-memory-init" target="_blank">Dmytro Striletskyi</a>, modifying it to automatically load and execute two programs, 'Fibonacci' and 'Counter,' each with a specific execution duration. At the end of each execution cycle, the Arduino stops the clock, loads the next program into memory, reactivates the clock, and resets the computer.
 

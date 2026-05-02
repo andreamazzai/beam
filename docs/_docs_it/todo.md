@@ -44,9 +44,15 @@ excerpt: "Cosa c'è da fare"
 - controllare tutti i link e inserire il link che apre nuova pagina <a href="https://link.di.esempio/file.pdf" target="_blank">ipertesto</a>
 - controllare le truth table, che non convenga rifare e mettere Cin all'inizio.
 
+## EEPROM PROGRAMMER
+
+- Add information on instruction creation with **buildInstruction**
+
+
 ---
 Here's a simple footnote,[^1] and here's a longer one.[^bignote]
 
 [^1]: This is the first footnote.
 
 [^bignote]: Here's one with multiple paragraphs and code.
+

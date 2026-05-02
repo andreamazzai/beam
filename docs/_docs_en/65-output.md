@@ -3,21 +3,21 @@ title: "Output"
 lang: en
 locale: en-US
 permalink: /docs/en/output/
-excerpt: "Output Register del computer BEAM"
+excerpt: "BEAM computer output register"
 ---
-[![Registro di output del computer BEAM](../../assets/output/65-beam-output.png "Registro di output del computer BEAM"){:width="100%"}](../../assets/output/65-beam-output.png)
+[![BEAM computer output register](../../../assets/output/65-beam-output.png "BEAM computer output register"){:width="100%"}](../../../assets/output/65-beam-output.png)
 
-Il modulo di output del BEAM è sostanzialmente identico a quello del SAP-1 di Ben Eater. Le due differenze sono:
+The BEAM output module is essentially identical to that of Ben Eater's SAP-1. The two differences are:
 
-- utilizzo di un display a 4 cifre anziché di 4 display a singola cifra;
-- modalità di output solo decimale, senza la possibilità di scegliere quella esadecimale.
+- use of a 4-digit display instead of four single-digit displays;
+- decimal-only output mode, without the option to switch to hexadecimal.
 
-## Schema
+## Schematic
 
-[![Schema del modulo Output](../../assets/output/65-output-schema.png "Schema del modulo Output"){:width="100%"}](../../assets/output/65-output-schema.png)
+[![Schematic of the BEAM computer Output module](../../../assets/output/65-output-schema.png "Schematic of the BEAM computer Output module"){:width="100%"}](../../../assets/output/65-output-schema.png)
 
-*Schema del modulo Output del computer BEAM.*
+*Schematic of the BEAM computer Output module.*
 
-## Link utili
+## Useful links
 
-- I video di Ben Eater che descrivono la realizzazione del <a href="https://eater.net/8bit/output" target="_blank">modulo di Output</a>.
+- Ben Eater's videos describing the construction of the <a href="https://eater.net/8bit/output" target="_blank">Output module</a>.

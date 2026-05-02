@@ -1,0 +1,78 @@
+# main links
+# main:
+#   - title: "Quick-Start Guide"
+#     url: https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/
+  # - title: "About"
+  #   url: https://mmistakes.github.io/minimal-mistakes/about/
+  # - title: "Sample Posts"
+  #   url: /year-archive/
+  # - title: "Sample Collections"
+  #   url: /collection-archive/
+  # - title: "Sitemap"
+  #   url: /sitemap/
+
+  docs_it:
+  - title: "PANORAMICA"
+    children:
+      - title: "> Il computer BEAM"
+        url: /
+      - title: "> Note costruttive"
+        url: /docs/it/build-notes/
+      # - title: "Why?"
+      #   url: /docs/why/
+  - title: "MODULI"
+    children:
+      - title: "> Clock"
+        url: /docs/it/clock/
+      - title: "> RAM e MAR"
+        url: /docs/it/ram/
+      - title: "> Flag"
+        url: /docs/it/flags/
+      - title: "> Program Counter"
+        url: /docs/it/programcounter/
+      - title: "> Control Logic"
+        url: /docs/it/control/
+      - title: "> ALU"
+        url: /docs/it/alu/
+      - title: "> Registri DXY"
+        url: /docs/it/dxy/
+      - title: "> Output"
+        url: /docs/it/output/
+      - title: "> Stack Pointer"
+        url: /docs/it/stack/
+      - title: "> Arduino Loader"
+        url: /docs/it/loader/
+      - title: "> EEPROM Programmer"
+        url: /docs/it/eeprom-programmer/
+  # - title: "Wrap-up"
+  #   children:
+  #     - title: "Tips"
+  #       url: /docs/tips/
+  #     - title: "Build History"
+  #       url: /docs/build-history/
+  - title: "APPROFONDIMENTI"
+    children:
+      - title: "> Aritmetica Binaria"
+        url: /docs/it/math/
+      # - title: "> Instruction Summary"
+      #   url: /docs/in-summary/
+  #     - title: "Opcode Table"
+  #       url: /docs/in-by-opcode/
+  #     - title: "Mode Group Table"
+  #       url: /docs/in-by-mode-group/
+  # - title: "References"
+  #   children:
+  #     - title: "74181 ALU Notes"
+  #       url: /docs/74181-alu-notes/
+  #     - title: "Further Reading"
+  #       url: /docs/further-reading/
+  - title: "RIFERIMENTI"
+    children:
+      - title: "> BEAM su GitHub"
+        url: "https://github.com/andreamazzai/beam"
+      - title: <a href = "https://eater.net/8bit/" target = "_blank">> SAP-1 di Ben Eater</a>
+        url: ""
+      - title: <a href = "https://github.com/TomNisbet/nqsap" target = "_blank">> NQSAP di Tom Nisbet</a>
+        url: ""
+      - title: <a href = "https://tomnisbet.github.io/nqsap-pcb/" target = "_blank">> NQSAP-PCB di Tom Nisbet</a>
+        url: ""

@@ -88,9 +88,9 @@ Ogni step abilita uno o più segnali: ad esempio il settimo step dell'istruzione
 
 Come si può vedere nello [sketch Arduino](https://github.com/andreamazzai/beam), ad ogni segnale di controllo corrispondono uno o più pin specifici nelle tre EEPROM numerate 1, 2 e 3:
 
-[![Definizione dei segnali di controllo gestiti dalle EEPROM 1, 2 e 3](../../../assets/eeprom/eeprom-pins.png "Definizione dei segnali di controllo gestiti dalle EEPROM 1, 2 e 3"){:width="100%"}](../../../assets/eeprom/eeprom-pins.png)
+[![Definizione dei segnali di controllo gestiti da ogni EEPROM](../../../assets/eeprom/eeprom-pins.png "Definizione dei segnali di controllo gestiti da ogni EEPROM"){:width="100%"}](../../../assets/eeprom/eeprom-pins.png)
 
-*Definizione dei segnali di controllo gestiti dalle EEPROM 1, 2 e 3.*
+*Definizione dei segnali di controllo gestiti da ogni EEPROM.*
 
 Perché *uno o più pin specifici*? Perché, ad esempio, il mnemonico WH è in realtà una macro che attiva sia HL, sia HR.
 
@@ -177,7 +177,7 @@ La **buildInstruction** prepara infatti i 32 bit / 4 byte di microcode di ogni s
 
 - il microcode relativo ai primi 8 segnali\* viene scritto sui primi 16 byte della prima porzione della EEPROM (indirizzo 0x0000 a 0x000F)
 - il microcode relativo ai successivi 8 segnali\* viene scritto sui primi 16 byte della seconda porzione della EEPROM (indirizzo 0x1000 a 0x100F)
-- il microcode relativo ai successivi 8 segnali\ viene scritto sui primi 16 byte della terza porzione della EEPROM (indirizzo 0x2000 a 0x200F)
+- il microcode relativo ai successivi 8 segnali\* viene scritto sui primi 16 byte della terza porzione della EEPROM (indirizzo 0x2000 a 0x200F)
 - il microcode relativo agli ultimi 8 segnali\* viene scritto sui primi 16 byte della quarta porzione della EEPROM (indirizzo 0x3000 a 0x300F)
 
 Il contatore dell'istruzione viene poi incrementato e vengono preparati i 16 step dell'istruzione successiva, scritti considerando l'offset di 16 byte di lunghezza di ogni istruzione:
@@ -242,7 +242,7 @@ Prima della programmazione, la EEPROM viene azzerata. Questa operazione comporta
 
 La sequenza di preparazione del microcode è già stata sostanzialmente esposta nella sezione [Calcolo del CRC pre-programmazione](#calcolo-del-crc-pre-programmazione), in quanto la importante routine di generazione del microcode **buildInstruction** è comune.
 
-La programmazione materiale della EEPROM, come indicato, avviene secondo la logica frazionata dettata dalla mia necessità di comprensione del codice esposta in precedenza (immagine *Sequenza di scrittura delle istruzioni* nella sezione [Calcolo del CRC pre-programmazione](#calcolo-del-crc-pre-programmazione)), cioè quella di scrivere un opcode per intero. La ruotine principale **eeprom_program** prepara l'opcode **buildInstruction**
+La programmazione materiale della EEPROM, come indicato, avviene secondo la logica frazionata dettata dalla mia necessità di comprensione del codice esposta in precedenza (immagine *Sequenza di scrittura delle istruzioni* nella sezione [Calcolo del CRC pre-programmazione](#calcolo-del-crc-pre-programmazione)), cioè quella di scrivere un opcode per intero. La routine principale **eeprom_program** prepara l'opcode **buildInstruction**
 
 ~~~c++
 void eeprom_program()

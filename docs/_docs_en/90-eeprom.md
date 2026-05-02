@@ -5,76 +5,76 @@ locale: en-US
 permalink: /docs/en/eeprom-programmer/
 excerpt: "EEPROM Programmer"
 ---
-<small>[Il programmatore di EEPROM](#il-programmatore-di-eeprom) - [Schema](#schema) - [Spiegazione del codice](#spiegazione-del-codice) - [Le EEPROM e il loro contenuto](#le-eeprom-e-il-loro-contenuto) - [Calcolo del CRC pre-programmazione](#calcolo-del-crc-pre-programmazione) - [Sblocco e blocco della EEPROM](#sblocco-e-blocco-della-eeprom) - [Cancellazione della EEPROM](#cancellazione-della-eeprom) - [Programmazione della EEPROM](#programmazione-della-eeprom) - [Verifica del CRC post-programmazione](#verifica-del-crc-post-programmazione) - [Note](#note) - [Link utili](#link-utili)</small>
+<small>[The EEPROM Programmer](#the-eeprom-programmer) - [Schematic](#schematic) - [Code Explanation](#code-explanation) - [The EEPROMs and Their Content](#the-eeproms-and-their-content) - [Pre-Programming CRC Calculation](#pre-programming-crc-calculation) - [EEPROM Unlock and Lock](#eeprom-unlock-and-lock) - [EEPROM erase](#eeprom-erase) - [EEPROM Programming](#eeprom-programming) - [Post-Programming CRC Verification](#post-programming-crc-verification) - [Notes](#notes) - [Useful links](#useful-links)</small>
 
-[![EEPROM programmer](../../assets/eeprom/eeprom-programmer.png "EEPROM programmer"){:width="100%"}](../../assets/eeprom/eeprom-programmer.png)
+[![EEPROM programmer](../../../assets/eeprom/eeprom-programmer.png "EEPROM programmer"){:width="100%"}](../../../assets/eeprom/eeprom-programmer.png)
 
-Il programmatore di EEPROM serve a programmare le EEPROM della [Control Logic](../control) con il microcode necessario ad eseguire le istruzioni definite per il computer BEAM.
+The EEPROM programmer is used to program the [Control Logic](../control) EEPROMs with the microcode needed to execute the instructions defined for the BEAM computer.
 
-## Il programmatore di EEPROM
+## The EEPROM Programmer
 
-La mia prima esperienza con la programmazione di EEPROM risale alla costruzione del computer SAP-1 di Ben Eater e alla realizzazione del programmatore basato sui suoi schema e sketch. Questo progetto, molto semplice, permetteva di programmare le EEPROM del microcode, anche se la scrittura risultava particolarmente lenta. Ciononostante, la programmazione di una EEPROM (dapprima manualmente, poi con il programmatore) è stato un momento euforico - mai avrei pensato di riuscire a comprendere i (tutto sommato abbastanza semplici) meccanismi che lo rendevano possibile.
+My first experience with EEPROM programming dates back to the construction of Ben Eater's SAP-1 computer and the realization of the programmer based on his schematics and sketches. This very simple project allowed the microcode EEPROMs to be programmed, although the writing process was particularly slow. Nevertheless, programming an EEPROM (first manually, then with the programmer) was an exhilarating moment — I never would have thought I could understand the (all things considered, fairly simple) mechanisms that made it possible.
 
-[![Schema del programmatore di EEPROM del computer SAP](../../assets/eeprom/eeprom-ben.png "Schema del programmatore di EEPROM del computer SAP"){:width="100%"}](../../assets/eeprom/eeprom-ben.png)
+[![Schematic of the SAP-1 computer EEPROM programmer](../../../assets/eeprom/eeprom-ben.png "Schematic of the SAP-1 computer EEPROM programmer"){:width="100%"}](../../../assets/eeprom/eeprom-ben.png)
 
-*Schema del programmatore di EEPROM del computer SAP-1.*
+*Schematic of the SAP-1 computer EEPROM programmer.*
 
-Durante lo studio del computer NQSAP di Tom Nisbet e la rivisitazione del suo progetto per creare il computer BEAM, mi ero reso conto che il numero di EEPROM da programmare (quattro anziché due) e la loro [dimensione](../control/#instruction-register-e-istruzioni) avrebbero ulteriormente aumentato i tempi di programmazione di ogni revisione del microcode. Il programmatore di Ben era funzionale, ma non sfruttava la funzionalità di scrittura a *pagine* delle EEPROM moderne, che permette la programmazione di una EEPROM da 32KB in pochi secondi. Ciononostante, continuavo a usarlo, con tempi di scrittura di parecchie decine di secondi per ogni EEPROM.
+While studying Tom Nisbet's NQSAP computer and revisiting his project to create the BEAM computer, I had realized that the number of EEPROMs to be programmed (four instead of two) and their [size](../control/#instruction-register-e-istruzioni) would have further increased the programming time for each microcode revision. Ben's programmer was functional, but did not take advantage of the page write feature of modern EEPROMs, which allows a 32KB EEPROM to be programmed in just a few seconds. Nevertheless, I continued to use it, with write times of several tens of seconds for each EEPROM.
 
-Con il progredire della costruzione dei moduli del BEAM, le riprogrammazioni necessarie ad implementare l'Instruction Set e risolvere i bug del microcode diventavano sempre più frequenti; il tempo trascorso ad attendere il completamento dei cicli di programmazione iniziava a diventare frustrante.
+As the construction of the BEAM modules progressed, the reprogramming operations needed to implement the Instruction Set and fix microcode bugs became increasingly frequent; the time spent waiting for the programming cycles to complete was starting to become frustrating.
 
-Uno dei progetti di Tom, il programmatore <a href="https://github.com/TomNisbet/TommyPROM" target="_blank">TommyPROM</a>, supportava una varietà di EPROM, EEPROM e memorie Flash. Questo programmatore includeva un software molto ricco e molto veloce grazie al supporto della modalità di scrittura *Page Write*. Una versione ridotta del software del TommyPROM - col solo scopo di creare il microcode e programmare le EEPROM 28C256 - venne pubblicata da Tom sul suo repository dell'NQSAP.
+One of Tom's projects, the <a href="https://github.com/TomNisbet/TommyPROM" target="_blank">TommyPROM</a> programmer, supported a variety of EPROMs, EEPROMs and Flash memories. This programmer included very feature-rich and very fast software thanks to its support for Page Write mode. A stripped-down version of the TommyPROM software — with the sole purpose of generating the microcode and programming the 28C256 EEPROMs — was published by Tom in his NQSAP repository.
 
-Non volevo iniziare il progetto di un nuovo programmatore di EEPROM mentre stavo ancora lavorando sul BEAM. Tuttavia, a un certo punto avevo realizzato che avrei speso meno tempo nel costruire un programmatore basato sul TommyPROM rispetto al tempo che avrei sprecato continuando ad utilizzare il programmatore elementare di Ben.
+I did not want to start a new EEPROM programmer project while I was still working on the BEAM. However, at a certain point I had realized that I would spend less time building a programmer based on the TommyPROM than the time I would waste continuing to use Ben's basic programmer.
 
-[![Schema del programmatore di EEPROM TommyPROM di Tom Nisbet](../../assets/eeprom/TommyPROM-nano-sch.png "Schema del programmatore di EEPROM TommyPROM di Tom Nisbet"){:width="100%"}](../../assets/eeprom/TommyPROM-nano-sch.png)
+[![Schema del programmatore di EEPROM TommyPROM di Tom Nisbet](../../../assets/eeprom/TommyPROM-nano-sch.png "Schema del programmatore di EEPROM TommyPROM di Tom Nisbet"){:width="100%"}](../../../assets/eeprom/TommyPROM-nano-sch.png)
 
-*Schema del programmatore di EEPROM TommyPROM di Tom Nisbet.*
+*Schematic of Tom Nisbet's TommyPROM EEPROM programmer.*
 
-Il mio programmatore iniziale era uguale a quello sviluppato da Ben per il SAP-1 e utilizzava i <a href="https://www.ti.com/lit/ds/symlink/sn74hc595.pdf" target="_blank">74HC595</a> anziché i <a href="https://www.ti.com/lit/ds/symlink/sn74ls164.pdf" target="_blank">74HCT164</a> utilizzati da Tom. In una sezione della documentazione, Tom evidenziava che il suo codice non funzionava sul progetto di Ben e che necessitava di significative modifiche. Se si desideravano i benefici del TommyPROM sull'hardware di Ben, Tom indicava che la strada più facile non era quella di modificare il software, bensì di adattare l'hardware rendendolo uguale a quello del TommyPROM.
+My initial programmer was identical to the one developed by Ben for the SAP-1 and used the <a href="https://www.ti.com/lit/ds/symlink/sn74hc595.pdf" target="_blank">74HC595</a> instead of the <a href="https://www.ti.com/lit/ds/symlink/sn74ls164.pdf" target="_blank">74HCT164</a> used by Tom. In one section of the documentation, Tom pointed out that his code did not work on Ben's design and that it required significant modifications. If one wanted the benefits of the TommyPROM on Ben's hardware, Tom indicated that the easiest path was not to modify the software, but rather to adapt the hardware to make it identical to that of the TommyPROM.
 
-Nella mia cocciutaggine, avevo optato per un compromesso: modificare solo parzialmente l'hardware sviluppato nel progetto iniziale di Ben e contemporaneamente approfittarne per studiare e modificare il software di Tom rendendolo compatibile col mio hardware, al quale desideravo applicare il minor numero di modifiche possibili. In quel momento non sapevo ancora che il programmatore rivisitato avrebbe visto la luce in un tempo sostanzialmente limitato, ma che la corretta implementazione della modalità *Page Write* e soprattutto gli errori riscontrati nel computo del CRC avrebbero richiesto uno sforzo piuttosto oneroso.
+In my stubbornness, I had opted for a compromise: only partially modifying the hardware developed in Ben's initial project, while at the same time taking the opportunity to study and modify Tom's software to make it compatible with my hardware, to which I wanted to apply the fewest possible changes. At that point I did not yet know that the revised programmer would see the light in a substantially limited amount of time, but that the correct implementation of Page Write mode and above all the errors found in the CRC calculation would require a rather demanding effort.
 
-Le modifiche minime necessarie rispetto al programmatore originale del SAP-1 erano le seguenti:
+The minimum necessary modifications compared to the original SAP-1 programmer were the following:
 
-1. il pin Write Enable della EEPROM (/WE) non più controllato dal segnale D13 di Arduino, bensì da A2.
-2. il pin Chip Enable della EEPROM (/CE) non più connesso a ground (chip sempre attivo), bensì controllato dal pin A0 di Arduino.
-3. il pin Output Enable della EEPROM (/OE) non più connesso allo Shift Register, ma controllato dal pin A1 di Arduino.
+1. The Write Enable pin of the EEPROM (/WE) no longer controlled by Arduino's D13 signal, but by A2.
+2. The Chip Enable pin of the EEPROM (/CE) no longer connected to ground (chip always active), but controlled by Arduino's A0 pin.
+3. The Output Enable pin of the EEPROM (/OE) no longer connected to the Shift Register, but controlled by Arduino's A1 pin.
 
-Nella sua documentazione Tom spiega che nel programmatore di Ben Eater D13 controlla il segnale Write Enable. Poiché D13 è internamente connesso al LED integrato su Arduino, che durante il boot lampeggia, a ogni accensione del programmatore potrebbero verificarsi scritture indesiderate nella EEPROM. Questo non rappresentava un problema per lo sketch di Ben, poiché a ogni esecuzione la EEPROM veniva completamente riprogrammata, sovrascrivendo eventuali scritture spurie. Tuttavia, dato che il TommyPROM poteva essere utilizzato anche per la sola lettura di una EEPROM, le scritture iniziali indesiderate avrebbero potuto causare problemi: di qui la necessità di governare /WE con un segnale diverso da D13.
+In his documentation Tom explains that in Ben Eater's programmer D13 controls the Write Enable signal. Since D13 is internally connected to the built-in LED on the Arduino, which blinks during boot, unwanted writes to the EEPROM could occur every time the programmer is powered on. This was not an issue with Ben's sketch, since the EEPROM was completely reprogrammed on every run, overwriting any spurious writes. However, since the TommyPROM could also be used for read-only operations on an EEPROM, the initial unwanted writes could have caused problems — hence the need to control /WE with a signal other than D13.
 
-Altro aspetto da tenere in considerazione era legato al pin Output Enable delle EEPROM: gli Shift Register '164 non sono dotati di una memoria intermedia che funga da *latch* durante il caricamento. Di conseguenza, i loro output vengono immediatamente modificati ad ogni Rising Edge del clock, sottoponendo /OE a possibili attivazioni indesiderate. Viceversa, i 74HC595 permettono il caricamento seriale dei dati in un latch interno e la erogazione contemporanea di tutti i nuovi stati di output al Rising Edge di un segnale dedicato (RCLK), annullando il rischio di attivazioni indesiderate di /OE. Tuttavia, durante la realizzazione delle modifiche al programmatore non avevo ben compreso questo aspetto e avevo deciso di seguire l'indicazione di Tom, cioè di dedicare un output di Arduino specificamente ad /OE della EEPROM. In altre parole, la modifica al punto 3 si sarebbe potuta evitare, ma in quel momento non l'avevo capito.
+Another aspect to consider was related to the Output Enable pin of the EEPROMs: the '164 Shift Registers do not have an intermediate buffer acting as a latch during loading. As a result, their outputs are immediately modified on every Rising Edge of the clock, exposing /OE to possible unwanted activations. Conversely, the 74HC595 allows serial loading of data into an internal latch and the simultaneous output of all new output states on the Rising Edge of a dedicated signal (RCLK), eliminating the risk of unwanted activations of /OE. However, during the implementation of the modifications to the programmer I had not fully understood this aspect and had decided to follow Tom's indication, that is, to dedicate a specific Arduino output to the EEPROM's /OE. In other words, the modification at point 3 could have been avoided, but at that point I had not realized it.
 
-Un'altra differenza stava nella modalità di scrittura degli Shift Register: il programmatore di Ben presentava i due SR connessi in cascata, mentre quello di Tom utilizzava due segnali di clock distinti per selezionare quale SR indirizzare. L'idea molto furba alla base della modifica di Tom permetteva di modificare le sole uscite del secondo SR senza effettuare lo scorrimento completo dell'indirizzo, risparmiando preziosi cicli di clock dell'Arduino. Avevo scelto di non riprendere questa modifica nel programmatore del BEAM e continuare con la sequenza di shift completa, sperando di rispettare i parametri di timing molto stringenti richiesti dalla modalità di programmazione *Page Write* delle EEPROM.
+Another difference lay in the write mode of the Shift Registers: Ben's programmer had the two SRs connected in cascade, whereas Tom's used two distinct clock signals to select which SR to address. The very clever idea behind Tom's modification allowed the outputs of the second SR alone to be modified without performing a full address shift, saving precious Arduino clock cycles. I had chosen not to incorporate this modification into the BEAM programmer and to continue with the full shift sequence, hoping to meet the very tight timing parameters required by the Page Write programming mode of the EEPROMs.
 
-## Schema
+## Schematic
 
-[![Schema del programmatore di EEPROM del computer BEAM](../../assets/eeprom/90-eeprom-schema.png "Schema del programmatore di EEPROM del computer BEAM"){:width="100%"}](../../assets/eeprom/90-eeprom-schema.png)
+[![Schematic of the BEAM computer EEPROM programmer](../../../assets/eeprom/90-eeprom-schema.png "Schematic of the BEAM computer EEPROM programmer"){:width="100%"}](../../../assets/eeprom/90-eeprom-schema.png)
 
-*Schema del programmatore di EEPROM del computer BEAM.*
+*Schematic of the BEAM computer EEPROM programmer.*
 
-## Spiegazione del codice
+## Code Explanation
 
-Il programmatore di EEPROM del BEAM, basato su quello dell'NQSAP di Tom, non è interattivo, a differenza del ben più completo TommyProm. Una volta fatto partire, esegue in sequenza i seguenti passaggi, alla fine dei quali è pronto per un reset e la programmazione di una nuova EEPROM:
+The BEAM EEPROM programmer, based on Tom's NQSAP one, is not interactive, unlike the far more complete TommyPROM. Once started, it sequentially performs the following steps, at the end of which it is ready for a reset and the programming of a new EEPROM:
 
-1. Calcolo del checksum dei dati da scrivere sulla EEPROM
-2. Sblocco della EEPROM
-3. Cancellazione della EEPROM
-4. Programmazione della EEPROM
-5. Blocco della EEPROM
-6. Calcolo del checksum rileggendo i dati scritti e confronto col valore calcolato al punto 1
-7. Stampa del tempo trascorso
+1. Calculation of the checksum of the data to be written to the EEPROM
+2. EEPROM unlock
+3. EEPROM erase
+4. EEPROM programming
+5. EEPROM lock
+6. Calculation of the checksum by re-reading the written data and comparison with the value calculated in step 1
+7. Elapsed time printout
 
-### Le EEPROM e il loro contenuto
+### The EEPROMs and Their Content
 
-Per governare i 42 [segnali di controllo](../control/#segnali-di-controllo) di ALU, RAM, SP, registri ecc. (21 direttamente in uscita dalle EEPROM + 21 demultiplexati dai [74LS138](../control/#i-74ls138-per-la-gestione-dei-segnali)) sono necessarie quattro EEPROM, ognuna delle quali esporta una word da 8 bit per un totale di 32 bit (i segnali fisici realmente necessari sono 29, cioè i 21 diretti ed 8 per governare i '138, lasciando 3 pin inutilizzati):
+To control the 42 [control signals](../control/#control-signals) of the ALU, RAM, SP, registers, etc. (21 directly output from the EEPROMs + 21 demultiplexed by the [74LS138](../control/#i-74ls138-per-la-gestione-dei-segnali)) four EEPROMs are required, each exporting an 8-bit word for a total of 32 bits (the physically required signals are actually 29, i.e. the 21 direct ones and 8 to control the '138, leaving 3 pins unused):
 
-- una EEPROM mette a disposizione 8 bit in output, perciò ne servono 4 per pilotare simultaneamente 29 segnali;
-- poiché ognuna delle 256 istruzioni del BEAM può essere composta da un massimo di 16 step, sono necessarie EEPROM di dimensione 256 * 16 = 4096 byte;
-- per indirizzare 4096 byte sono necessari 12 pin di indirizzamento ((2^8 = 256 istruzioni) * (2^4 = 16 step) = 2^12 = 4096), cioè da A0 a A11;
-- quattro EEPROM da 4KB, ognuna delle quali programmata con il proprio microcode, possono svolgere il compito richiesto.
+- one EEPROM provides 8 bits of output, so 4 are needed to simultaneously drive 29 signals;
+- since each of the 256 BEAM instructions can consist of a maximum of 16 steps, EEPROMs of size 256 * 16 = 4096 bytes are required;
+- to address 4096 bytes, 12 address pins are needed ((2^8 = 256 instructions) * (2^4 = 16 steps) = 2^12 = 4096), i.e. from A0 to A11;
+- four 4KB EEPROMs, each programmed with its own microcode, can perform the required task.
 
-Vediamo di seguito un dettaglio del microcode di alcune istruzioni di esempio, in particolar modo HLT (blocca l'esecuzione del codice), JMP (salta a un nuovo indirizzo definito nella locazione di memoria indicata dall'operando) e CPX (confronta il registro X con l'operando). L'istruzione più lunga tra quelle rappresentate è CPX, la cui durata è di 7 step (da 0 a 6); altre istruzioni del BEAM raggiungono una lunghezza di ben 10 step.
+Below we can see a detail of the microcode of some example instructions, in particular HLT (halts code execution), JMP (jumps to a new address defined in the memory location indicated by the operand) and CPX (compares the X register with the operand). The longest instruction among those shown is CPX, with a duration of 7 steps (from 0 to 6); other BEAM instructions reach a length of as many as 10 steps.
 
 ~~~c++
 // Step:
@@ -84,33 +84,33 @@ Vediamo di seguito un dettaglio del microcode di alcune istruzioni di esempio, i
 {  RPC|WM, RR|WIR|PCI, RPC|WM, RR|WB, RX|WH,     CS|C0|FNZC|RL, RA|WH|PCI|NI }, // 06 CPX
 ~~~
 
-*Dettaglio microcode di alcune istruzioni di esempio.*
+*Microcode detail of some example instructions.*
 
-Ogni step abilita uno o più segnali: ad esempio il settimo step dell'istruzione CPX attiva contemporaneamente RA, WH (che a sua volta è composto da HL ed HR), PCI ed NI.
+Each step enables one or more signals: for example, the seventh step of the CPX instruction simultaneously activates RA, WH (which in turn is composed of HL and HR), PCI and NI.
 
-Come si può vedere nello [sketch Arduino](https://github.com/andreamazzai/beam), ad ogni segnale di controllo corrispondono uno o più pin specifici nelle tre EEPROM numerate 1, 2 e 3:
+As can be seen in the [Arduino sketch](https://github.com/andreamazzai/beam), each control signal corresponds to one or more specific pins in the three EEPROMs numbered 1, 2 and 3:
 
-[![Definizione dei segnali di controllo gestiti dalle EEPROM 1, 2 e 3](../../assets/eeprom/eeprom-pins.png "Definizione dei segnali di controllo gestiti dalle EEPROM 1, 2 e 3"){:width="100%"}](../../assets/eeprom/eeprom-pins.png)
+[![Definition of the control signals managed by each EEPROM](../../../assets/eeprom/eeprom-pins.png "Definition of the control signals managed by each EEPROM"){:width="100%"}](../../../assets/eeprom/eeprom-pins.png)
 
-*Definizione dei segnali di controllo gestiti dalle EEPROM 1, 2 e 3.*
+*Definition of the control signals managed by each EEPROM.*
 
-Perché *uno o più pin specifici*? Perché, ad esempio, il mnemonico WH è in realtà una macro che attiva sia HL, sia HR.
+Why *one or more specific pins*? Because, for example, the mnemonic WH is actually a macro that activates both HL and HR.
 
 ~~~c++
 #define WH  HR|HL             // Write H
 ~~~
 
-La EEPROM 0 governa invece i quattro demultiplexer '138, dunque le combinazioni dei suoi 8 bit di output sono in grado di pilotare ben 32 segnali (ma quelli utilizzati sono solo 21).
+EEPROM 0 instead controls the four '138 demultiplexers, so the combinations of its 8 output bits are able to drive as many as 32 signals (but only 21 of them are actually used).
 
-Si può dedurre che ogni EEPROM contiene solamente *una parte* del microcode di ogni istruzione, cioè (ovviamente) la porzione relativa ai segnali cablati sui suoi output. Ma come è suddiviso il microcode nelle quattro EEPROM? La seguente tabella mostra, per le istruzioni di esempio indicate in precedenza, quali segnali siano attivi su ogni EEPROM nei diversi step dell'istruzione correntemente in esecuzione:
+It can be inferred that each EEPROM contains only a portion of the microcode of each instruction, i.e. (obviously) the part relating to the signals wired to its outputs. But how is the microcode distributed across the four EEPROMs? The following table shows, for the example instructions indicated above, which signals are active on each EEPROM during the different steps of the currently executing instruction:
 
-[![Suddivisione sulle quattro EEPROM del microcode di alcune istruzioni](../../assets/eeprom/4-eeprom-rappresentazione.png "Suddivisione sulle quattro EEPROM del microcode di alcune istruzioni"){:width="100%"}](../../assets/eeprom/4-eeprom-rappresentazione.png)
+[![Distribution across the four EEPROMs of the microcode of some example instructions](../../../assets/eeprom/4-eeprom-rappresentazione.png "Distribution across the four EEPROMs of the microcode of some example instructions"){:width="100%"}](../../../assets/eeprom/4-eeprom-rappresentazione.png)
 
-*Suddivisione sulle quattro EEPROM del microcode di alcune istruzioni.*
+*Distribution across the four EEPROMs of the microcode of some example instructions.*
 
-Ogni step di ogni istruzione va dunque letto come la concatenazione logica di ogni ennesimo byte di ogni EEPROM:
+Each step of each instruction must therefore be read as the logical concatenation of every nth byte of each EEPROM:
 
- | Istruzione | Step | Concatenazione logica                                                                                                                                    |
+ | Instruction | Step | Logical Concatenation                                                                                                                                   |
  |------------|------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
  | 0          | 0    | EEPROM<sub>0</sub>byte<sub>0</sub> OR EEPROM<sub>1</sub>byte<sub>0</sub> OR EEPROM<sub>2</sub>byte<sub>0</sub> OR EEPROM<sub>3</sub>byte<sub>0</sub>     |
  | 0          | 1    | EEPROM<sub>0</sub>byte<sub>1</sub> OR EEPROM<sub>1</sub>byte<sub>1</sub> OR EEPROM<sub>2</sub>byte<sub>1</sub> OR EEPROM<sub>3</sub>byte<sub>1</sub>     |
@@ -123,91 +123,91 @@ Ogni step di ogni istruzione va dunque letto come la concatenazione logica di og
  | 1          | 14   | EEPROM<sub>0</sub>byte<sub>30</sub> OR EEPROM<sub>1</sub>byte<sub>30</sub> OR EEPROM<sub>2</sub>byte<sub>30</sub> OR EEPROM<sub>3</sub>byte<sub>30</sub> |
  | 1          | 15   | EEPROM<sub>0</sub>byte<sub>31</sub> OR EEPROM<sub>1</sub>byte<sub>31</sub> OR EEPROM<sub>2</sub>byte<sub>31</sub> OR EEPROM<sub>3</sub>byte<sub>31</sub> |
 
-Ad esempio, il sesto step dell'istruzione CPX risulta in effetti composto dalla concatenazione del byte 101 di ogni EEPROM (le istruzioni e gli step si contano a partire da zero, dunque (settima istruzione \* 16 step + sesto step) = ((7-1) \* 16 + (6-1)) = 96 + 5 = 101):
+For example, the sixth step of the CPX instruction is in fact composed of the concatenation of byte 101 of each EEPROM (instructions and steps are counted starting from zero, therefore (seventh instruction \* 16 steps + sixth step) = ((7-1) \* 16 + (6-1)) = 96 + 5 = 101):
 
-EEPROM<sub>0</sub>byte<sub>101</sub> + EEPROM<sub>1</sub>byte<sub>101</sub> + EEPROM<sub>2</sub>byte<sub>101</sub> + EEPROM <sub>3</sub>byte<sub>101</sub>, cioè
+EEPROM<sub>0</sub>byte<sub>101</sub> + EEPROM<sub>1</sub>byte<sub>101</sub> + EEPROM<sub>2</sub>byte<sub>101</sub> + EEPROM <sub>3</sub>byte<sub>101</sub>, that is
 
-(RL) + (FNZC) + (CS\|C0) + (), cioè
+(RL) + (FNZC) + (CS\|C0) + (), that is
 
-RL + FNZC + CS\|C0, così come indicato nel *Dettaglio microcode di alcune istruzioni di esempio*.
+RL + FNZC + CS\|C0, as indicated in the *Microcode detail of some example instructions*.
 
-In pratica, si devono tenere in considerazione i segnali di output cablati su ogni EEPROM e indicare quali di questi debbano essere attivi ad ogni combinazione di istruzione / step. Questo spiega la necessità di programmare le quattro EEPROM ognuna con una propria porzione specifica di microcode.
+In practice, the output signals wired to each EEPROM must be taken into account and it must be indicated which of these should be active at each instruction / step combination. This explains the need to program the four EEPROMs each with its own specific portion of microcode.
 
-Ora, anziché effettuare quattro programmazioni distinte, risulta molto più comodo (anche se più dispendioso) utilizzare quattro EEPROM da 16KB e scrivere su ognuna di esse, in sequenza, tutti e quattro i microcode da 4KB inizialmente definiti. In questo modo, si possono programmare quattro EEPROM identiche da 16KB, ognuna delle quali conterrà tutte le porzioni di microcode da 4KB.
+Now, rather than performing four separate programming operations, it is much more convenient (albeit more costly) to use four 16KB EEPROMs and write on each of them, in sequence, all four 4KB microcodes initially defined. In this way, four identical 16KB EEPROMs can be programmed, each of which will contain all the 4KB microcode portions.
 
-La tabella riassume la collocazione dei microcode da 4KB consolidati in un'unica EEPROM di dimensioni maggiori:
+The table summarizes the placement of the 4KB microcodes consolidated into a single larger EEPROM:
 
- | Microcode<br>originario | Indirizzo<br>iniziale<sub>base10</sub> | Indirizzo<br>finale<sub>base10</sub> | Indirizzo<br>iniziale<sub>hex</sub> | Indirizzo<br>finale<sub>hex</sub> | A12 | A13 |
+ | Original<br>microcode | Start<br>address<sub>base10</sub> | End<br>address<sub>base10</sub> | Start<br>address<sub>hex</sub> | End<br>address<sub>hex</sub> | A12 | A13 |
  |------------|-------|-------------------|--------|--------|---|---|
  | 1°         | 0     | 4095              | 0x0000 | 0x0FFF | 0 | 0 |
  | 2°         | 4096  | 8191              | 0x1000 | 0x1FFF | 1 | 0 |
  | 3°         | 8192  | 12287             | 0x2000 | 0x2FFF | 0 | 1 |
  | 4°         | 12288 | 16383             | 0x2000 | 0x3FFF | 1 | 1 |
 
- *Consolidamento dei microcode in un'unica EEPROM.*
+ *Consolidation of the microcodes into a single EEPROM.*
 
-Le colonne degli indirizzi indicano in quali locazioni della EEPROM da 16KB trovino posto le singole istanze da 4KB del microcode originariamente definito utilizzando quattro EEPROM da 4KB.
+The address columns indicate in which locations of the 16KB EEPROM the individual 4KB instances of the microcode originally defined using four 4KB EEPROMs are placed.
 
-[![Rappresentazione dei quattro microcode consolidati in un'unica EEPROM](../../assets/eeprom/eeprom-consolidata.png "Rappresentazione dei quattro microcode consolidati in un'unica EEPROM"){:width="100%"}](../../assets/eeprom/eeprom-consolidata.png)
+[![Representation of the four microcodes consolidated into a single EEPROM](../../../assets/eeprom/eeprom-consolidata.png "Representation of the four microcodes consolidated into a single EEPROM"){:width="100%"}](../../../assets/eeprom/eeprom-consolidata.png)
 
-*Rappresentazione dei quattro microcode consolidati in un'unica EEPROM.*
+*Representation of the four microcodes consolidated into a single EEPROM.*
 
-Impostando opportunamente le linee di indirizzamento A12 e A13 delle EEPROM di dimensioni maggiori, è possibile mettere in output una porzione specifica di microcode; si vedano le connessioni fisse a Vcc o GND nello [schema](../control/#schema) della Control Logic. Ad esempio, l'impostazione di A12 a 1 e A13 a 0 farà in modo che una EEPROM da 16KB esponga sui suoi output il microcode da 4KB originariamente definito per la seconda EEPROM da 4KB.
+By appropriately setting the addressing lines A12 and A13 of the larger EEPROMs, it is possible to output a specific portion of microcode; see the fixed connections to Vcc or GND in the [schematic](../control/#schematic) of the Control Logic. For example, setting A12 to 1 and A13 to 0 will cause a 16KB EEPROM to expose on its outputs the 4KB microcode originally defined for the second 4KB EEPROM.
 
-In altre parole, abbiamo 256 istruzioni che si sviluppano in 16 step, ognuno dei quali è composto da una Control Word da 32 bit (4 byte) = 16.384 byte totali. Si dovrebbero programmare 4 EEPROM da 4KB: una per i primi 8 bit della Control Word, una per gli 8 bit successivi e così via. Anziché programmare quattro diverse EEPROM da 4KB ognuna con una porzione specifica di microcode, è possibile programmare quattro EEPROM identiche da 16KB. Nei primi 4KB si posiziona il microcode per i primi 8 bit della Control Word, nei secondi 4KB il microcode per i secondi 8 bit, e così via. Infine, si impostano opportunamente gli indirizzi A12 e A13 delle quattro EEPROM da 16KB, in modo che ognuna esponga solo la porzione specifica di microcode relativa ai segnali di controllo cablati sui suoi output.
+In other words, we have 256 instructions that develop over 16 steps, each of which consists of a 32-bit Control Word (4 bytes) = 16,384 bytes total. Four 4KB EEPROMs should be programmed: one for the first 8 bits of the Control Word, one for the next 8 bits, and so on. Rather than programming four different 4KB EEPROMs each with a specific portion of microcode, it is possible to program four identical 16KB EEPROMs. In the first 4KB the microcode for the first 8 bits of the Control Word is placed, in the second 4KB the microcode for the next 8 bits, and so on. Finally, the addresses A12 and A13 of the four 16KB EEPROMs are set appropriately, so that each one exposes only the specific portion of microcode relating to the control signals wired to its outputs.
 
-Una ulteriore spiegazione visiva di quanto appena descritto si può ottenere a partire dal minuto 17m:52s del video <a href="https://youtu.be/JUVt_KYAp-I?t=1072" target="_blank">Reprogramming CPU microcode with an Arduino</a> di Ben Eater.
+A further visual explanation of what has just been described can be obtained starting from minute 17m:52s of Ben Eater's video <a href="https://youtu.be/JUVt_KYAp-I?t=1072" target="_blank">Reprogramming CPU microcode with an Arduino</a>.
 
-In relazione al conteggio della dimensione, si veda anche la sezione [Instruction Register e Istruzioni](../control/#instruction-register-e-istruzioni). Un aspetto da ricordare è che nel mercato non sono presenti EEPROM parallele da 4KB e da 16KB, dunque al loro posto si utilizzano EEPROM da 8KB e 32KB impostando a 0 l'ultimo pin di indirizzamento, avvalendosi dunque solo della prima metà dello spazio disponibile.
+Regarding the size count, see also the section [Instruction Register and Instructions](../control/#instruction-register-and-instructions). One aspect to keep in mind is that 4KB and 16KB parallel EEPROMs are not available on the market, so instead 8KB and 32KB EEPROMs are used by setting the last addressing pin to 0, thus using only the first half of the available space.
 
-Fatta questa premessa, utile per capire la distribuzione del microcode nelle varie EEPROM, possiamo analizzare alcuni aspetti importanti dello sketch Arduino.
+With this premise, useful for understanding the distribution of the microcode across the various EEPROMs, we can analyze some important aspects of the Arduino sketch.
 
-### Calcolo del CRC pre-programmazione
+### Pre-Programming CRC Calculation
 
-La programmazione delle EEPROM col metodo originale "un byte alla volta in sequenza" risultava, tutto sommato, abbastanza facile. Molto più difficile mi stava risultando l'implementazione della scrittura in modalità Page Write e, pur avendo a disposizione il codice di Tom dal quale attingere e trarre ispirazione, continuavo a riscontrare errori nel microcode memorizzato sulle EEPROM.
+Programming the EEPROMs with the original "one byte at a time sequentially" method was, all things considered, fairly straightforward. Much more difficult was proving to be the implementation of Page Write mode, and although I had Tom's code available to draw from and be inspired by, I kept encountering errors in the microcode stored on the EEPROMs.
 
-Dunque, per capire se il programmatore stesse funzionando correttamente, avevo introdotto una verifica della corrispondenza tra il Cyclic Redundancy Check (CRC) calcolato *prima* della scrittura del microcode e quello calcolato dalla rilettura della EEPROM alla *fine* della sua programmazione.
+Therefore, to determine whether the programmer was working correctly, I had introduced a verification of the correspondence between the Cyclic Redundancy Check (CRC) calculated *before* writing the microcode and the one calculated by re-reading the EEPROM at the *end* of its programming cycle.
 
-Per semplicità e per facilitare la scrittura del codice, immaginavo una lettura sequenziale simulata dei valori da utilizzare per calcolare il CRC, partendo dall'indirizzo 0x0000 fino all'indirizzo 0x3FFF.\
-Perché *simulata*? Perché in questa fase del programma la EEPROM non è ancora stata programmata e ciò che si desidera ottenere ora è proprio un checksum del dato *da scrivere*, checksum che sarà poi confrontato con quello calcolato rileggendo la EEPROM alla *fine* del ciclo di programmazione.
+For simplicity and to facilitate the writing of the code, I imagined a simulated sequential reading of the values to be used to calculate the CRC, starting from address 0x0000 up to address 0x3FFF.\
+Why *simulated*? Because at this stage of the program the EEPROM has not yet been programmed, and what is desired at this point is precisely a checksum of the data *to be written*, a checksum that will then be compared with the one calculated by re-reading the EEPROM at the *end* of the programming cycle.
 
-Ci troviamo nella situazione in cui la routine del calcolo del CRC deve ricevere i dati sequenzialmente (dati che dobbiamo produrre utilizzando la routine **buildInstruction** preposta alla creazione di istruzioni e step); tuttavia, la buildInstruction esegue il frazionamento di ogni istruzione nei modi esposti nella [sezione precedente](#le-eeprom-e-il-loro-contenuto), generando cioè un opcode completo e suddividendo le scritture dei 32 bit della Control Word di ogni step sulle corrispondenti porzioni di microcode, come evidenziato nella tabella *Consolidamento dei microcode in un'unica EEPROM* e nella grafica *Rappresentazione dei quattro microcode consolidati in un'unica EEPROM.*
+We find ourselves in a situation where the CRC calculation routine must receive data sequentially (data that we must produce using the **buildInstruction** routine responsible for creating instructions and steps); however, buildInstruction performs the splitting of each instruction in the ways described in the [previous section](#the-eeproms-and-their-content), that is, generating a complete opcode and distributing the writes of the 32 bits of the Control Word of each step across the corresponding microcode portions, as highlighted in the table *Consolidation of the microcodes into a single EEPROM* and in the graphic *Representation of the four microcodes consolidated into a single EEPROM*.
 
-![Microcode](../../assets/eeprom/tabella-grafica.png){:width="100%"}
+![Microcode](../../../assets/eeprom/tabella-grafica.png){:width="100%"}
 
-La **buildInstruction** prepara infatti i 32 bit / 4 byte di microcode di ogni step dell'istruzione corrente e li memorizza in un array tipo uint32_t di lunghezza 16, cioè 4 byte * 16 step = 64 byte; successivamente, le scritture avvengono in questa sequenza (routine **writeOpcode**):
+**buildInstruction** in fact prepares the 32 bits / 4 bytes of microcode for each step of the current instruction and stores them in a uint32_t array of length 16, i.e. 4 bytes * 16 steps = 64 bytes; subsequently, the writes occur in the following sequence (**writeOpcode** routine):
 
-- il microcode relativo ai primi 8 segnali\* viene scritto sui primi 16 byte della prima porzione della EEPROM (indirizzo 0x0000 a 0x000F)
-- il microcode relativo ai successivi 8 segnali\* viene scritto sui primi 16 byte della seconda porzione della EEPROM (indirizzo 0x1000 a 0x100F)
-- il microcode relativo ai successivi 8 segnali\ viene scritto sui primi 16 byte della terza porzione della EEPROM (indirizzo 0x2000 a 0x200F)
-- il microcode relativo agli ultimi 8 segnali\* viene scritto sui primi 16 byte della quarta porzione della EEPROM (indirizzo 0x3000 a 0x300F)
+- the microcode relating to the first 8 signals\* is written to the first 16 bytes of the first portion of the EEPROM (address 0x0000 to 0x000F)
+- the microcode relating to the next 8 signals\* is written to the first 16 bytes of the second portion of the EEPROM (address 0x1000 to 0x100F)
+- the microcode relating to the next 8 signals\* is written to the first 16 bytes of the third portion of the EEPROM (address 0x2000 to 0x200F)
+- the microcode relating to the last 8 signals\* is written to the first 16 bytes of the fourth portion of the EEPROM (address 0x3000 to 0x300F)
 
-Il contatore dell'istruzione viene poi incrementato e vengono preparati i 16 step dell'istruzione successiva, scritti considerando l'offset di 16 byte di lunghezza di ogni istruzione:
+The instruction counter is then incremented and the 16 steps of the next instruction are prepared, written taking into account the 16-byte length offset of each instruction:
 
-- il microcode relativo ai primi 8 segnali\* viene scritto sui 16 byte successivi della prima porzione della EEPROM (indirizzo 0x0010 a 0x001F)
-- il microcode relativo ai successivi 8 segnali\* viene scritto sui 16 byte successivi della seconda porzione della EEPROM (indirizzo 0x1010 a 0x101F)
-- il microcode relativo ai successivi 8 segnali\* viene scritto sui 16 byte successivi della terza porzione della EEPROM (indirizzo 0x2010 a 0x201F)
-- il microcode relativo agli ultimi 8 segnali\* viene scritto sui 16 byte successivi della quarta porzione della EEPROM (indirizzo 0x3010 a 0x301F)
+- the microcode relating to the first 8 signals\* is written to the next 16 bytes of the first portion of the EEPROM (address 0x0010 to 0x001F)
+- the microcode relating to the next 8 signals\* is written to the next 16 bytes of the second portion of the EEPROM (address 0x1010 to 0x101F)
+- the microcode relating to the next 8 signals\* is written to the next 16 bytes of the third portion of the EEPROM (address 0x2010 to 0x201F)
+- the microcode relating to the last 8 signals\* is written to the next 16 bytes of the fourth portion of the EEPROM (address 0x3010 to 0x301F)
 
-e così via fino alla fine delle istruzioni.
+and so on until the end of the instructions.
 
-\* Si faccia riferimento all'immagine *Definizione dei segnali di controllo gestiti da ogni EEPROM* nella [sezione precedente](#le-eeprom-e-il-loro-contenuto).
+\* Please refer to the image *Definition of the control signals managed by each EEPROM* in the [previous section](#the-eeproms-and-their-content).
 
-Riprendendo lo schema visto in precedenza, la **buildInstruction** prepara istruzioni e relativi step, dei quali vengono dapprima eseguite le scritture evidenziate dalle frecce rosse (istruzione 0), successivamente quelle evidenziate dalle frecce blu (istruzione 1) e così via, fino all'ultima istruzione.
+Returning to the diagram seen previously, **buildInstruction** prepares instructions and their related steps, for which the writes highlighted by the red arrows (instruction 0) are performed first, followed by those highlighted by the blue arrows (instruction 1), and so on until the last instruction.
 
-[![Sequenza di scrittura delle istruzioni](../../assets/eeprom/eeprom-consolidata-sequenza.png "Sequenza di scrittura delle istruzioni"){:width="100%"}](../../assets/eeprom/eeprom-consolidata-sequenza.png)
+[![Instruction write sequence](../../../assets/eeprom/eeprom-consolidata-sequenza.png "Instruction write sequence"){:width="100%"}](../../../assets/eeprom/eeprom-consolidata-sequenza.png)
 
-*Sequenza di scrittura delle istruzioni.*
+*Instruction write sequence.*
 
-Volendo riutilizzare la routine **buildInstruction**, dovevo trovare il modo di interpretarne l'output ed estrapolarne in tempo reale solo ciò che mi interessava al fine di realizzare quella lettura simulata sequenziale discussa all'inizio di questa sezione.
+Wanting to reuse the **buildInstruction** routine, I had to find a way to interpret its output and extract in real time only what I needed in order to achieve that simulated sequential reading discussed at the beginning of this section.
 
-Per ottenere il risultato desiderato, viene eseguita una serie di cicli annidati: per ogni istruzione si genera la Control Word a 32 bit di tutti gli step, dalla quale si estrapola solo la word a 8 bit relativa alla porzione di EEPROM correntemente indirizzata dal ciclo più esterno
+To obtain the desired result, a series of nested loops is executed: for each instruction the 32-bit Control Word of all steps is generated, from which only the 8-bit word relating to the EEPROM portion currently addressed by the outermost loop is extracted.
 
 ~~~c++
 for (uint8_t rom = 0; rom < 4; rom++)
 ~~~
 
-Così facendo, la routine di calcolo del CRC pre-programmazione riceve sequenzialmente in input i 4096 byte di ognuna delle quattro porzioni di microcode:
+By doing so, the pre-programming CRC calculation routine sequentially receives as input the 4096 bytes of each of the four microcode portions:
 
 ~~~c++
 uint16_t calcCRC16_pre(void)
@@ -230,21 +230,21 @@ uint16_t calcCRC16_pre(void)
 }
 ~~~
 
-Con **rom** = 0, **crc** sarà calcolato tenendo in considerazione gli 8 bit più significativi (shift a destra di 24 - 8 \* 0 = 24 posizioni) della Control Word a 32 bit generata da **buildInstruction** e il ciclo sarà eseguito per tutti i 16 step di tutte le 256 istruzioni; quando **rom** = 1, **crc** sarà calcolato tenendo in considerazione i bit da 16 a 23 (shift a destra di 24 - 8 \* 1 = 16 posizioni) della Control Word a 32 bit generata da **buildInstruction** e il ciclo sarà nuovamente eseguito per tutti i 16 step di tutte le 256 istruzioni. Il processo si ripete per **rom** = 2 e 3, prendendo in considerazione i bit da 8 a 15 (shift a destra di 8 posizioni) e infine i bit da 0 a 7 (nessuno shift a destra).
+With **rom = 0**, the **crc** will be calculated taking into account the 8 most significant bits (right shift of 24 - 8 \* 0 = 24 positions) of the 32-bit Control Word generated by **buildInstruction** and the loop will be executed for all 16 steps of all 256 instructions; when **rom** = 1, the **crc** will be calculated taking into account bits 16 to 23 (right shift of 24 - 8 \* 1 = 16 positions) of the 32-bit Control Word generated by buildInstruction and the loop will again be executed for all 16 steps of all 256 instructions. The process repeats for **rom** = 2 and 3, taking into account bits 8 to 15 (right shift of 8 positions) and finally bits 0 to 7 (no right shift).
 
-### Sblocco e blocco della EEPROM
+### EEPROM Unlock and Lock
 
-Le EEPROM <a href="https://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" target="_blank">AT28C256</a> dispongono della funzione Software Data Protection, che permette di evitare scritture indesiderate: blocco e sblocco si eseguono inviando alla EEPROM una breve sequenza specifica di indirizzi / valori secondo le specifiche di pagina 10 del datasheet.
+The <a href="https://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" target="_blank">AT28C256</a> EEPROMs feature the Software Data Protection function, which prevents unwanted writes: locking and unlocking are performed by sending the EEPROM a short specific sequence of addresses / values according to the specifications on page 10 of the datasheet.
 
-### Cancellazione della EEPROM
+### EEPROM Erase
 
-Prima della programmazione, la EEPROM viene azzerata. Questa operazione comporta una maggior usura della EEPROM e una minor velocità rispetto alla funzionalità Software Chip Erase indicata nella <a href="https://ww1.microchip.com/downloads/en/Appnotes/doc0544.pdf" target="_blank">Application Note</a>, al momento non ancora implementata.
+Before programming, the EEPROM is erased. This operation results in greater wear of the EEPROM and lower speed compared to the Software Chip Erase functionality indicated in the <a href="https://ww1.microchip.com/downloads/en/Appnotes/doc0544.pdf" target="_blank">Application Note</a>, which has not yet been implemented at this time.
 
-### Programmazione della EEPROM
+### EEPROM Programming
 
-La sequenza di preparazione del microcode è già stata sostanzialmente esposta nella sezione [Calcolo del CRC pre-programmazione](#calcolo-del-crc-pre-programmazione), in quanto la importante routine di generazione del microcode **buildInstruction** è comune.
+The microcode preparation sequence has already been substantially described in the section [Pre-Programming CRC Calculation](#pre-programming-crc-calculation), since the important microcode generation routine **buildInstruction** is shared.
 
-La programmazione materiale della EEPROM, come indicato, avviene secondo la logica frazionata dettata dalla mia necessità di comprensione del codice esposta in precedenza (immagine *Sequenza di scrittura delle istruzioni* nella sezione [Calcolo del CRC pre-programmazione](#calcolo-del-crc-pre-programmazione)), cioè quella di scrivere un opcode per intero. La ruotine principale **eeprom_program** prepara l'opcode **buildInstruction**
+The actual programming of the EEPROM, as indicated, follows the fractional logic dictated by my need for code comprehension described earlier (image *Instruction write sequence* in the section [Pre-Programming CRC Calculation](#pre-programming-crc-calculation)), that is, writing one complete opcode at a time. The main routine **eeprom_program** prepares the opcode via **buildInstruction**
 
 ~~~c++
 void eeprom_program()
@@ -259,26 +259,26 @@ void eeprom_program()
 }
 ~~~
 
-e richiama la routine **writeOpcode**, che, dopo ogni 16 byte scritti, richiama a sua volta **waitForWriteCycleEnd** per verificare che la EEPROM sia pronta per ricevere nuove scritture, secondo la modalità descritta nella sezione 4.4 DATA Polling del <a href="https://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" target="_blank">datasheet</a>.
+and calls the **writeOpcode** routine, which, after every 16 bytes written, in turn calls **waitForWriteCycleEnd** to verify that the EEPROM is ready to receive new writes, according to the method described in section 4.4 DATA Polling of the <a href="https://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" target="_blank">datasheet</a>.
 
 ~~~c++
 void writeOpcode(uint8_t opcode)
 {
   for (uint8_t rom = 0; rom < 4; rom++)
   {
-    for (uint8_t step = 0; step < NUM_STEPS; step++) // ciclo fra i 16 step di ogni opcode
-    // e li scrivo consecutivamente su ogni porzione di EEPROM (modalità Page Write)
+    for (uint8_t step = 0; step < NUM_STEPS; step++) // we loop through the 16 steps of each opcode
+    // and write them consecutively to each EEPROM portion (Page Write mode)
     {
       uint16_t address;
       address = 0x1000 * rom;
       address += opcode * NUM_STEPS;
       address += step;
-      writeEEPROM(address, ((code[step]) >> (24 - 8 * rom)) & 0xFF); // code[step] prende tutti
-      // i 4 byte delle 4 ROM "consolidate" e poi con lo shift si seleziona il byte relativo ad
-      // ogni ROM specifica, ad esempio per la prima ROM bit 24-31, poi 16-23 etc
+      writeEEPROM(address, ((code[step]) >> (24 - 8 * rom)) & 0xFF); // code[step] takes all 4 bytes
+      // of the 4 "consolidated" ROMs and then the shift is used to select the byte relating to each
+      // specific ROM, for example for the first ROM bits 24-31, then 16-23 etc.
     }
-    byte b1Value; // attende che la EEPROM confermi di aver completato le scritture prima di
-                  // passare ai prossimi 16 byte
+    byte b1Value; // waits for the EEPROM to confirm that it has completed the writes before moving on
+    // to the next 16 bytes
     bool status = waitForWriteCycleEnd(((code[15]) >> (24 - 8 * rom)) & 0xFF, &b1Value);
     if (status == false)
     {
@@ -294,14 +294,15 @@ void writeOpcode(uint8_t opcode)
 }
 ~~~
 
-### Verifica del CRC post-programmazione
+### Post-Programming CRC Verification 
 
-La verifica del CRC post-programmazione è molto più semplice rispetto a quella pre-programmazione, perché in questo caso non si deve sottostare alla routine **buildInstruction** e lavorare con cicli annidati per ottenere una vista sequenziale simulata dei dati: giunti a questo punto, la EEPROM è stata realmente programmata ed è sufficiente passare alla routine di calcolo del CRC i valori letti consecutivamente da 0x0000 a 0x3FFF.
+The post-programming CRC verification is much simpler than the pre-programming one, because in this case there is no need to rely on the **buildInstruction** routine and work with nested loops to obtain a simulated sequential view of the data: at this point, the EEPROM has actually been programmed and it is sufficient to pass to the CRC calculation routine the values read consecutively from 0x0000 to 0x3FFF.
 
 ~~~c++
-// CALCOLO CRC16 POST-PROGRAMMAZIONE
-// Nella lettura di una EEPROM precedentemente programmata leggo tutti i byte in sequenza,
-// dunque è sufficiente leggere il contenuto da 0x0000 a 0x3FFF per calcolare il checksum.
+// POST-PROGRAMMING CRC16 CALCULATION
+// When reading a previously programmed EEPROM, all bytes are read sequentially,
+// so it is sufficient to read the contents from 0x0000 to 0x3FFF to calculate the checksum.
+
 uint16_t calcCRC16_post(void)
 {
   setDataBusMode(INPUT);
@@ -317,11 +318,11 @@ uint16_t calcCRC16_post(void)
 }
 ~~~
 
-Alla fine, i valori dei CRC calcolati pre-programmazione e post-programmazione vengono confrontati e viene stampato un messaggio positivo in caso di match, nonché il tempo totale trascorso.
+At the end, the pre-programming and post-programming CRC values are compared and a positive message is printed in case of a match, along with the total elapsed time.
 
-## Note
+## Notes
 
-Nella prima sezione menzionavo che la corretta implementazione della modalità *Page Write* avrebbe richiesto uno sforzo maggiore di quanto non pensassi, ma la difficoltà maggiore è stata in realtà riscontrata nella verifica del CRC post-programmazione: anche il timing delle letture è critico e avevo speso diverso tempo cercando la sequenza corretta di comandi. Quella corretta è la seguente:
+In the first section I mentioned that the correct implementation of Page Write mode would require more effort than I had anticipated, but the greatest difficulty was actually encountered in the post-programming CRC verification: the timing of the reads is also critical and I had spent considerable time searching for the correct command sequence. The correct one is the following:
 
 ~~~c++
   byte readEEPROM(uint16_t address)
@@ -336,7 +337,7 @@ Nella prima sezione menzionavo che la corretta implementazione della modalità *
   }
 ~~~
 
-Negli appunti ritrovo che la sequenza
+In my notes I find that the sequence
 
 ~~~c++
     setDataBusMode(INPUT);
@@ -344,17 +345,15 @@ Negli appunti ritrovo che la sequenza
     byte value = readDataBus();
 ~~~
 
-causava errori in lettura, mentre spostando **enableChip** prima di **setDataBusMode**, oppure aggiungendo 2uS di ritardo, riuscivo a leggere correttamente il contenuto della EEPROM. Alla fine avevo realizzato che fosse preferibile aggiungere i 2uS dopo aver abilitato il chip come ultimo step, anziché abilitare il chip e poi settare il data bus in input, perché nella seguente condizione si sarebbe potuto generare un cortocircuito:
+caused read errors, whereas by moving **enableChip** before **setDataBusMode**, or by adding a 2uS delay, I was able to correctly read the contents of the EEPROM. In the end I had realized that it was preferable to add the 2uS after enabling the chip as the last step, rather than enabling the chip and then setting the data bus to input, because in the following condition a short circuit could have been generated:
 
-- **enableChip()**: la EEPROM (che non ha resistenze in uscita) presenta uno o più output LO
-- **setDataBusMode(INPUT)**: Arduino presenta uno o più output HI, che vengono dunque cortocircuitati verso ground dagli output LO della EEPROM.
+- **enableChip()**: the EEPROM (which has no output resistors) presents one or more LO outputs
+- **setDataBusMode(INPUT)**: Arduino presents one or more HI outputs, which are therefore short-circuited to ground by the LO outputs of the EEPROM.
 
-## Link utili
+## Useful links
 
-- Il video <a href="https://www.youtube.com/watch?v=BA12Z7gQ4P0" target="_blank">Using an EEPROM to replace combinational logic</a> di Ben Eater, che descrive la programmazione manuale di una EEPROM.
-- Il video <a href="https://www.youtube.com/watch?v=K88pgWhEb1M" target="_blank">Build an Arduino EEPROM programmer</a> e il repository GitHub <a href="https://github.com/beneater/eeprom-programmer" target="_blank">Arduino EEPROM programmer</a> di Ben Eater.
-- Il programmatore di EEPROM <a href="https://github.com/TomNisbet/TommyPROM" target="_blank">TommyProm</a> e lo <a href="https://tomnisbet.github.io/nqsap/docs/microcode/" target="_blank">sketch semplificato</a> necessario alla sola programmazione delle EEPROM dell'NQSAP di Tom Nisbet, che ho studiato per sviluppare il codice del programmatore di EEPROM del BEAM.
+- Ben Eater's video <a href="https://www.youtube.com/watch?v=BA12Z7gQ4P0" target="_blank">Using an EEPROM to replace combinational logic</a>, which describes the manual programming of an EEPROM.
 
-## TO DO
+- Ben Eater's video <a href="https://www.youtube.com/watch?v=K88pgWhEb1M" target="_blank">Build an Arduino EEPROM programmer</a> and the GitHub repository <a href="https://github.com/beneater/eeprom-programmer" target="_blank">Arduino EEPROM programmer</a>.
 
-- Aggiungere informazioni sulla creazione delle istruzioni con buildInstruction
+- Tom Nisbet's <a href="https://github.com/TomNisbet/TommyPROM" target="_blank">TommyProm</a> EEPROM programmer and the <a href="https://tomnisbet.github.io/nqsap/docs/microcode/" target="_blank">simplified sketch</a> needed solely for programming the NQSAP EEPROMs, which I studied to develop the BEAM EEPROM programmer code.
