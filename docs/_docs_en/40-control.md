@@ -20,7 +20,7 @@ For ease of reference and to simplify the comparison between the three computers
 | Author                                 | Ben Eater | Tom Nisbet | Andrea Mazzai |
 | IR shared between Opcode and Operand   | Yes       | No         | No            |
 | Bit IR for Opcode                      | 4         | 8          | 8             |
-| Bit IR for Operando                    | 4         | 0          | 0             |
+| Bit IR for Operand                     | 4         | 0          | 0             |
 | Bus width from RC to EEPROM (bits)     | 3         | 3          | 4             |
 | Maximum number of Steps (RC)           | 5         | 8          | 16            |
 | Bus width from IR to EEPROM (bits)     | 4         | 8          | 8             |
@@ -497,12 +497,12 @@ The "Signal scope or direction" column indicates the context of a bus, or the so
 | NQSAP         | BEAM           | Signal scope or direction  | Description                                                                                                  |
 | -----         | ----           | -------------------------- | -----------                                                                                                  |
 | N             | NI             | CL                         | Next Instruction; [explanation](#instruction-length).                                                        |
-| LF            | LF             | CL → ALU                   | ALU Force; [explanation 1](../alu/#comparison-instructions) e [explanation 2](../alu/#summary-subtractions-comparisons-and-addressing-modes).   |
-| HL-HR         | HL-HR          | CL → ALU                   | Define the operation to be performed on the H register (parallel load, right or left shift / rotate).                                           |
-| IR-Q0 / IR-Q4 | IR-S0..3, IR-M | CL → ALU                   | Determine the operation that the ALU must perform; [explanation](../alu/#logic-functions-and-arithmetic-operations).                            |
-| HLT           | HLT            | CL → Clock                 | Halts the running program; [explanation](../clock/#the-hlt-instruction).                                                            |
-| DY-DZ         | DX/Y-DZ        | CL → DXY                   | DX/Y HI exposes X to the adders, LO exposes Y; DZ exposes zero; [explanation](../dxy/#use-with-indexed-addressing-modes).           |
-| C0-C1         | C0-C1          | CL → Flag                  | Determine whether the Carry to be saved in Flag C comes from the ALU Carry Output or from H (shift and rotate); [explanation](../flags/#carry).   |
+| LF            | LF             | CL → ALU                   | ALU Force; [explanation 1](../alu/#comparison-instructions) eand [explanation 2](../alu/#summary-subtractions-comparisons-and-addressing-modes).    |
+| HL-HR         | HL-HR          | CL → ALU                   | Define the operation to be performed on the H register (parallel load, right or left shift / rotate).                                               |
+| IR-Q0 / IR-Q4 | IR-S0..3, IR-M | CL → ALU                   | Determine the operation that the ALU must perform; [explanation](../alu/#logic-functions-and-arithmetic-operations).                                |
+| HLT           | HLT            | CL → Clock                 | Halts the running program; [explanation](../clock/#the-hlt-instruction).                                                                            |
+| DY-DZ         | DX/Y-DZ        | CL → DXY                   | DX/Y HI exposes X to the adders, LO exposes Y; DZ exposes zero; [explanation](../dxy/#use-with-indexed-addressing-modes).                           |
+| C0-C1         | C0-C1          | CL → Flag                  | Determine whether the Carry to be saved in Flag C comes from the ALU Carry Output or from H (shift and rotate); [explanation](../flags/#carry).     |
 | CC-CS         | CC-CS          | CL → Flag                  | Select which Carry to present to the ALU and H inputs (the real one, or a fixed 0 or 1); [explanation](../flags/#the-carry-and-the-h-and-alu-registers). |
 | FC            | FC             | CL → Flag                  | Loading of Flag C into the flag register.                                                                                           |
 | FN            | FN             | CL → Flag                  | Loading of Flag N into the flag register.                                                                                           |
