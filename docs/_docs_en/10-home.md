@@ -21,7 +21,7 @@ After several decades since completing my studies (a high school diploma in elec
 
 ### The First Project: 6502
 
-Toward the end of the year, I accidentally came across <a href="https://eater.net/" target="_blank">Ben Eater's blogs</a> and <a href="https://www.youtube.com/@BenEater/playlists" target="_blank">videos</a>. Remembering my first computer (a Commodore 64 from 1984) and the fact that I had done some assembly programming back then, I built Ben’s breadboard computer based on the 6502. I also started reading numerous blogs and forums on the subject, reviving some of my old knowledge.
+Toward the end of the year, I came across <a href="https://eater.net/" target="_blank">Ben Eater's blogs</a> and <a href="https://www.youtube.com/@BenEater/playlists" target="_blank">videos</a>. Remembering my first computer (a Commodore 64 from 1984) and the fact that I had done some assembly programming back then, I built Ben’s breadboard computer based on the 6502. I also started reading numerous blogs and forums on the subject, reviving some of my old knowledge.
 
 ### 8-Bit TTL Logic Computer: SAP
 
@@ -38,7 +38,7 @@ I completed the SAP-1 computer in September, but before that, I had started stud
 1. Evolution of Ben Eater’s Computer, with which I had started to regain confidence in digital electronics.
 2. Emulation of the processor from my first computer, complete with index registers, addressing modes, and Stack Pointer.
 3. In Ben Eater’s original design, the computer had only 16 bytes of RAM. This amount was enough to program a minimal Fibonacci sequence, but it was absolutely inadequate for creating more complex programs. Expanding the RAM, therefore, became essential.
-4. The need to learn at least the basics of C, which was used to create the [EEPROM programmer](docs/eeprom-programmer/) and the Arduino-based [Loader](docs/loader/).
+4. The need to learn at least the basics of C, which was used to create the [EEPROM programmer](../../../docs/en/eeprom-programmer/) and the Arduino-based [Loader](../../../docs/en/loader/).
 
 ### BEAM?
 
@@ -50,16 +50,16 @@ In the first eight months of work on the BEAM project, I dedicated myself entire
 
 The documentation for the NQSAP was incomplete, and I had also found a few errors, which I shared with Tom, who promptly corrected them. To deepen my understanding of the subject, after studying the NQSAP, I also analyzed the NQSAP-PCB evolution, to which Tom had made several improvements. In creating the BEAM, I aimed to take the best from both projects.
 
-Among the aspects to mention, on which I spent a lot, **a **lot**, ***really a lot of time***:
+Among the aspects to mention, on which I spent a lot, **a lot**, ***really a lot of time***:
 
 - understanding the operation of the 74181 ALU, for which I created a test bench based on what I learned from [David Courtney](docs/en/alu/#useful-links);
 - understanding binary arithmetic in two's complement;
 - understanding overflow, closely related to the previous point;
-- integration of the 74181 ALU and Instruction Register (IR) in "[hardwired](docs/en/alu/#relazione-diretta-hardwired-tra-instruction-register-e-alu)" mode to automatically generate the ALU input signals based on the instruction present in the IR;
+- integration of the 74181 ALU and Instruction Register (IR) in "[hardwired](../../../docs/en/alu/#direct-hardwired-relationship-between-instruction-register-and-alu)" mode to automatically generate the ALU input signals based on the instruction present in the IR;
 - new memory module based on SRAM with common IO pins, unlike the 74189 used in the SAP-1 with dedicated input and output ports;
 - the flag register—certainly the most complex part of the computer:
   - using the 74151 to decode the overflow state and manage the flag itself—an issue closely tied to the perfect understanding of binary arithmetic;
-  - Using the 74151 to handle [conditional jump instructions in "hardwired" mode](docs/en/flags/#i-salti-condizionali-e-incondizionati), similar to how it was done for the ALU;
+  - Using the 74151 to handle [conditional jump instructions in "hardwired" mode](../../../docs/en/flags/#conditional-and-unconditional-jumps), similar to how it was done for the ALU;
 
 - understanding the Stack Pointer and writing microcode for the instructions that use it;
 - development of the EEPROM programmer / microcode software based on Arduino: I studied Tom's code in depth, which I mostly understood:
@@ -70,7 +70,7 @@ Among the aspects to mention, on which I spent a lot, **a **lot**, ***really a l
 
 [![Logical Diagram of the BEAM Computer, July 2023.](../../../assets/home/hand-drawn-logic.jpg "Logical Diagram of the BEAM Computer, July 2023."){:width="66%"}](../../../assets/home/hand-drawn-logic.jpg)
 
-*Logical Diagram of the BEAM Computer, July 2023..*
+*Logical Diagram of the BEAM Computer, July 2023.*
 
 In July 2023, I tried to put together everything I had learned and attempted to transcribe it on paper: I had a good understanding of how some modules worked, while I still had many doubts about others. Additionally, several interactions between modules, especially in the control signals for the flags, were still unclear. By re-reading the material I had studied and the notes I had transcribed on OneNote in the previous months, I connected the dots and created the logical diagram of the computer, beginning to see not just a series of standalone modules, but a coherent logical construct.
 
