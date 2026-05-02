@@ -3,59 +3,59 @@ title: "ALU"
 lang: en
 locale: en-US
 permalink: /docs/en/alu/
-excerpt: "Unità Aritmetica e Logica del computer BEAM"
+excerpt: "BEAM computer Arithmetic and Logic Unit"
 ---
-<small>[Il 74LS181](#il-74ls181) - [Il registro A](#il-registro-a) - [The NQSAP ALU](#the-nqsap-alu) - [Il registro H](#il-registro-h) - [Funzioni logiche e operazioni aritmetiche](#funzioni-logiche-e-operazioni-aritmetiche) - [Relazione diretta (hardwired) tra Instruction Register e ALU](#relazione-diretta-hardwired-tra-instruction-register-e-alu) - [Addressing Modes](#addressing-modes) - [Istruzioni di comparazione](#istruzioni-di-comparazione) - [Le istruzioni di comparazione e i Flag](#le-istruzioni-di-comparazione-e-i-flag) - [Riepilogo: sottrazioni, comparazioni e indirizzamenti](#riepilogo-sottrazioni-comparazioni-e-indirizzamenti) - [Carry, addizioni e sottrazioni](#carry-addizioni-e-sottrazioni) - [Schema](#schema) - [Differenze tra Moduli ALU dell’NQSAP e del BEAM](#differenze-tra-moduli-alu-dellnqsap-e-del-beam) - [Link Utili](#link-utili)</small>
+<small>[The 74LS181](#il-74ls181) - [The A register](#il-registro-a) - [The NQSAP ALU](#the-nqsap-alu) - [The H register](#il-registro-h) - [Logic functions and arithmetic operations](#funzioni-logiche-e-operazioni-aritmetiche) - [Direct (hardwired) relationship between Instruction Register and ALU](#relazione-diretta-hardwired-tra-instruction-register-e-alu) - [Addressing Modes](#addressing-modes) - [Comparison instructions](#istruzioni-di-comparazione) - [Comparison instructions and Flags](#le-istruzioni-di-comparazione-e-i-flag) - [Summary: subtractions, comparisons and addressing modes](#riepilogo-sottrazioni-comparazioni-e-indirizzamenti) - [Carry, additions and subtractions](#carry-addizioni-e-sottrazioni) - [Schematic](#schematic) - [Differences between NQSAP and BEAM ALU modules](#differenze-tra-moduli-alu-dellnqsap-e-del-beam) - [Useful links](#useful-links)</small>
 
-[![Unità Aritmetica e Logica del computer BEAM](../../assets/alu/50-alu-beam.png "Unità Aritmetica e Logica del computer BEAM"){:width="100%"}](../../assets/alu/50-alu-beam.png)
+[![BEAM computer Arithmetic and Logic Unit](../../../assets/alu/50-alu-beam.png "BEAM computer Arithmetic and Logic Unit"){:width="100%"}](../../../assets/alu/50-alu-beam.png)
 
 The Arithmetic and Logic Unit (ALU) of Ben Eater's SAP-1 computer was limited to addition and subtraction. Tom Nisbet's NQSAP added logical and shift operations, and I had started studying it in detail.
 
-### Il 74LS181
+### The 74LS181
 
-Sviluppata attorno ai chip <a href="https://www.ti.com/lit/ds/symlink/sn54ls181.pdf" target="_blank">74LS181</a>, l'ALU dell'NQSAP presentava delle caratteristiche molto interessanti, ma di comprensione particolarmente difficile: sarà uno dei moduli sui quali spenderò più tempo, ma che alla fine darà maggiori soddisfazioni per il risultato.
+Developed around the <a href="https://www.ti.com/lit/ds/symlink/sn54ls181.pdf" target="_blank">74LS181</a> chips, the NQSAP ALU had very interesting features but was particularly difficult to understand: it will be one of the modules on which I will spend more time, but which in the end will give the greatest satisfaction for the result.
 
-Il '181 è un'ALU a 4 bit sviluppata negli anni '70 che può eseguire 16 operazioni aritmetiche e 16 funzioni logiche. E' possibile concatenare più chip per elaborare word di dimensioni maggiori.
+The '181 is a 4-bit ALU developed in the 1970s that can execute 16 arithmetic operations and 16 logic functions. It is possible to chain multiple chips to process wider words.
 
-**Utilizzo dei termini '181 e ALU come equivalenti**: in questa pagina, troveremo i termini ALU e '181 che vengono spesso utilizzati come equivalenti. Notare che ALU potrebbe indicare sia il modulo Unità Aritmetica e Logica nella sua interezza, sia il solo chip '181. Il contesto aiuterà a comprendere se per ALU si intenda il modulo, oppure il solo chip.
+**Use of the terms '181 and ALU as equivalents**: throughout this page, the terms ALU and '181 are often used interchangeably. Note that ALU may refer either to the Arithmetic and Logic Unit module as a whole, or to the '181 chip alone. The context will help clarify whether ALU refers to the module or to the chip alone.
 
-Inoltre, poiché nel modulo si utilizzano due '181 per poter comporre una word di 8 bit, in determinate situazioni si definiscono primo e secondo '181 oppure '181 inferiore e superiore rispettivamente quello che contiene i 4 bit meno significativi (Least Significant Bit, LSB) e quello che contiene i 4 bit più significativi (Most Significant Bit, MSB).
+Furthermore, since the module uses two '181s to compose an 8-bit word, in certain situations the first and second '181 — or lower and upper '181 — are defined respectively as the one containing the 4 least significant bits (Least Significant Bit, LSB) and the one containing the 4 most significant bits (Most Significant Bit, MSB).
 
-## Il registro A
+## The A register
 
-Il registro A non è direttamente connesso alla ALU, ma, analizzando a livello logico quanto accade nel computer, ha senso includerne la descrizione questa pagina. Il registro A è un registro molto semplice, simile ai registri A e B già visti nel SAP-1 di Ben Eater; il BEAM lo implementa utilizzando un registro tipo D <a href="https://www.ti.com/lit/ds/symlink/sn54ls377.pdf" target="_blank">74LS377</a>.
+The A register is not directly connected to the ALU, but, when analyzing at a logical level what happens in the computer, it makes sense to include its description on this page. The A register is a very simple register, similar to the A and B registers already seen in Ben Eater's SAP-1; the BEAM implements it using a D-type register <a href="https://www.ti.com/lit/ds/symlink/sn54ls377.pdf" target="_blank">74LS377</a>.
 
-Il registro A dell'NQSAP e del BEAM sono diversi per costruzione, ma identici dal punto di vista funzionale. Lo schema seguente, pur facendo riferimento al BEAM, è riutilizzabile in tutte le spiegazioni che seguono, anche quando principalmente rivolte alla descrizione del modulo ALU dell'NQSAP.
+The A register of the NQSAP and BEAM differ in construction, but are identical from a functional standpoint. The following schematic, although referring to the BEAM, can be reused in all the explanations that follow, even when primarily aimed at describing the NQSAP ALU module.
 
-[![Schema del Registro A del computer BEAM](../../assets/alu/50-a-beam-schema.png "Schema del Registro A del computer BEAM"){:width="100%"}](../../assets/alu/50-a-beam-schema.png)
+[![Schematic of the BEAM computer A Register](../../../assets/alu/50-a-beam-schema.png "Schematic of the BEAM computer A Register"){:width="100%"}](../../../assets/alu/50-a-beam-schema.png)
 
 ## The NQSAP ALU
 
-Tra le caratteristiche che spiccavano nello schema dell'ALU dell'NQSAP, notavo soprattutto un numero elevato di chip - tra i quali i 4-bit Bidirectional Universal Shift Register <a href="https://www.ti.com/lit/ds/symlink/sn74ls194a.pdf" target="_blank">74LS194</a> - e un modo particolare di indirizzare i '181, che erano "strettamente legati" all'istruzione presente nell'Instruction Register della [Control Logic](../control). Anche il legame con la Control Logic è stato tra i più complessi da analizzare e comprendere, ma quello con il modulo dei Flag non è meno importante e la sua comprensione è stata altrettanto difficile: ad ogni operazione dell'ALU (e non solo) corrisponde infatti un'azione sul registro dei Flag.
+Among the features that stood out in the NQSAP ALU schematic, I noticed above all a large number of chips — among which the 4-bit Bidirectional Universal Shift Register <a href="https://www.ti.com/lit/ds/symlink/sn74ls194a.pdf" target="_blank">74LS194</a> — and a particular way of addressing the '181s, which were "tightly coupled" to the instruction present in the Instruction Register of the [Control Logic](../control). The relationship with the Control Logic was also among the most complex to analyze and understand, but the one with the Flag module is no less important and its understanding was equally difficult: every ALU operation (and not only) corresponds in fact to an action on the Flag register.
 
-[![Schema dell'ALU di Tom Nisbet](../../assets/alu/50-alu-nqsap.png "Schema dell'ALU di Tom Nisbet"){:width="100%"}](../../assets/alu/50-alu-nqsap.png)
+[![Schematic of Tom Nisbet's ALU](../../../assets/alu/50-alu-nqsap.png "Schematic of Tom Nisbet's ALU"){:width="100%"}](../../../assets/alu/50-alu-nqsap.png)
 
-*Schema dell'ALU di Tom Nisbet, leggermente modificato al solo scopo di migliorarne la leggibilità. Manca il segnale H-Q0, probabile dimenticanza di Tom.*
+*Schematic of Tom Nisbet's ALU, slightly modified for the sole purpose of improving its readability. The H-Q0 signal is missing, likely an oversight by Tom.*
 
-Il modulo ALU è sommariamente composto da due registri di input H e B e da una coppia di '181 interconnessi, che permettono di gestire una word di 8 bit: H e B sono i registri di input dei '181.
+The ALU module is broadly composed of two input registers H and B and a pair of interconnected '181s, which allow an 8-bit word to be handled: H and B are the input registers of the '181s.
 
-- Il registro H è in realtà uno Shift Register in grado sia di comportarsi come un normale registro a 8 bit, sia di *shiftare* a destra o a sinistra il valore presente in ingresso.
-- Il registro B è un Octal D-Type Flip-Flop with 3-State Outputs <a href="https://www.onsemi.com/pdf/datasheet/74vhc574-d.pdf" target="_blank">74LS574</a> a 8 bit. Il '574 non include un ingresso Enable, che Tom ha dunque realizzato in maniera artificiale mettendo una NOR su /Clock e /WB ("Write B"); in questo modo il registro si attiva solo in corrispondenza di /WB (che è attivo LO) e del Falling Edge del clock invertito, equivalente al Rising Edge del clock normale, che è il momento in cui si caricano i registri (riferimento: video di Ben Eater <a href="https://www.youtube.com/watch?v=X7rCxs1ppyY" target="_blank">8-bit CPU control logic: Part 2</a>). Si veda anche la nota sul glitching nella sezione <a href="../control/#il-clock-il-glitching-delle-eeprom-e-linstruction-register-parte-2" target="_blank">Il clock e il “glitching” delle EEPROM</a> nella pagina della Control Logic.
-- Tre transceiver '245 permettono di poter leggere i valori contenuti in H, B ed L (L è l'output dell'A**L**U).
+- The H register is actually a Shift Register capable of both behaving as a normal 8-bit register and shifting the input value left or right.
+- The B register is an 8-bit Octal D-Type Flip-Flop with 3-State Outputs <a href="https://www.onsemi.com/pdf/datasheet/74vhc574-d.pdf" target="_blank">74LS574</a>. The '574 does not include an Enable input, which Tom therefore implemented artificially by placing a NOR gate on /Clock and /WB ("Write B"); in this way the register activates only in correspondence with /WB (which is active LO) and the Falling Edge of the inverted clock, equivalent to the Rising Edge of the normal clock, which is the moment when registers are loaded (reference: Ben Eater's video <a href="https://www.youtube.com/watch?v=X7rCxs1ppyY" target="_blank">8-bit CPU control logic: Part 2</a>). See also the note on glitching in the section <a href="../control/#il-clock-il-glitching-delle-eeprom-e-linstruction-register-parte-2" target="_blank">The clock and EEPROM "glitching"</a> on the Control Logic page.
+- Three '245 transceivers allow the values contained in H, B and L to be read (L is the A**L**U output).
 
-## Il registro H
+## The H register
 
-Nel computer SAP-1 di Ben Eater i registri di input all'ALU erano A e B, mentre nell'NQSAP sono H e B. Come accennato nella sezione precedente, il registro H si può comportare come un comune registro a 8 bit e può sostituire il registro A come input dell'ALU.
+In Ben Eater's SAP-1 computer the ALU input registers were A and B, whereas in the NQSAP they are H and B. As mentioned in the previous section, the H register can behave as a common 8-bit register and can replace register A as the ALU input.
 
-Poiché le istruzioni del 6502 fanno riferimento al registro A, è necessario che A ed H siano sempre allineati, così che i '181 ritrovino trasparentemente in H il contenuto di A (ad esempio una somma ADC sarà effettivamente realizzata dando in input ai '181 i registri H e B: essendo H una copia di A, il risultato della somma sarà uguale ad A + B).
+Since the 6502 instructions refer to register A, it is necessary that A and H are always aligned, so that the '181s transparently find the contents of A in H (for example, an ADC addition will actually be performed by giving the '181s registers H and B as input: since H is a copy of A, the result of the addition will be equal to A + B).
 
-Qual è l'utilità di un registro "ombra" come H? Alcune delle istruzioni che agiscono direttamente su una locazione di memoria o su un registro possono essere eseguite senza interferire col contenuto del registro A, ad esempio INX implicito, ASL Assoluto Indicizzato X e molte altre.
+What is the usefulness of a "shadow" register like H? Some of the instructions that act directly on a memory location or on a register can be executed without interfering with the contents of register A, for example implicit INX, Absolute Indexed X ASL, and many others.
 
-In tutti questi casi, uno degli ultimi step eseguiti dal microcode sarà la copia di A su H:
+In all these cases, one of the last steps executed by the microcode will be the copy of A to H:
 
 ~~~text
 | ---- | -------------------------- |
-| Step | Microistruzione            |
+| Step | Microinstruction           |
 | ---- | -------------------------- |
 | 0*   | RPC | WM                   |
 | 1*   | RR  | WIR | PCI            |
@@ -65,46 +65,46 @@ In tutti questi casi, uno degli ultimi step eseguiti dal microcode sarà la copi
 | ---- | -------------------------- |
 ~~~
 
-*Scomposizione dell'istruzione INX nelle sue cinque microistruzioni elementari*.
+*Breakdown of the INX instruction into its five elementary microinstructions*.
 
-Nell'esempio dell'istruzione INX del 6502, dopo la [fase Fetch](../control/#fasi)* comune a tutte le istruzioni:
+In the example of the 6502 INX instruction, after the [Fetch phase](../control/#phases)* common to all instructions:
 
-- X viene letto (RX) e copiato in H (WH), che presenta il suo contenuto agli ingressi "A" dei '181;
-- i '181 eseguono l'operazione **A Plus 1**, il cui risultato viene esposto sul bus (RL) e copiato in X (WX);
-- A, non modificato, viene esposto sul bus (RA) ed H viene riallineato (WH).
+- X is read (RX) and copied into H (WH), which presents its contents to the "A" inputs of the '181s;
+- the '181s perform the **A Plus 1** operation, whose result is exposed on the bus (RL) and copied into X (WX);
+- A, unmodified, is exposed on the bus (RA) and H is realigned (WH).
 
-Altra caratteristica rilevante del registro H realizzato con Shift Register '194 è la capacità di effettuare operazioni di scorrimento e rotazione. I due pin di ingresso S0 ed S1 definiscono il comportamento dello Shift Register al Rising Edge del clock:
+Another relevant feature of the H register implemented with '194 Shift Registers is the ability to perform shift and rotate operations. The two input pins S0 and S1 define the behavior of the Shift Register on the Rising Edge of the clock:
 
-| S1 | S0 | Operazione                                                                                            |
-|  - | -  |  -                                                                                                    |
-| LO | LO | Mantiene lo stato precedente                                                                          |
-| LO | HI | Scorre a sinistra i bit di output (Q3 ← Q2 \| Q2 ← Q1 \| Q1 ← Q0) e carica l'input Serial Right in Q0 |
-| HI | LO | Scorre a destra i bit di output (Q3 → Q2 \| Q2 → Q1 \| Q1 → Q0) e carica l'input Serial Left in Q3    |
-| HI | HI | Carica gli input P0-P3 in Q0-Q3                                                                       |
+| S1 | S0 | Operation                                                                                  |
+|  - | -  |  -                                                                                         |
+| LO | LO | Maintains previous state                                                                   |
+| LO | HI | Shifts output bits left (Q3 ← Q2 | Q2 ← Q1 | Q1 ← Q0) and loads Serial Right input into Q0 |
+| HI | LO | Shifts output bits right (Q3 → Q2 | Q2 → Q1 | Q1 → Q0) and loads Serial Left input into Q3 |
+| HI | HI | Loads inputs P0-P3 into Q0-Q3                                                              |
 
-Lo schema mostra l'esecuzione di un'operazione di scorrimento a sinistra, che richiede l'attivazione del segnale di controllo HL/S0:
+The schematic shows the execution of a left shift operation, which requires the activation of the control signal HL/S0:
 
-[![Scorrimento a sinistra nel registro H del BEAM](../../assets/alu/50-alu-beam-h.png "Scorrimento a sinistra nel registro H del BEAM"){:width="100%"}](../../assets/alu/50-alu-beam-h.png)
+[![Left shift in the BEAM H register](../../../assets/alu/50-alu-beam-h.png "Left shift in the BEAM H register"){:width="100%"}](../../../assets/alu/50-alu-beam-h.png)
 
-*Scorrimento a sinistra nel registro H del BEAM.*
+*Left shift in the BEAM H register.*
 
-Al rising Edge del clock i '194 traslano verso sinistra gli output Q0-Q3 e caricano in Q0 i valori presenti agli ingressi Serial Right (Dsr), eseguendo tutte le operazioni seguenti nello stesso momento:
+At the Rising Edge of the clock the '194s shift outputs Q0-Q3 to the left and load into Q0 the values present at the Serial Right (Dsr) inputs, performing all the following operations at the same time:
 
-- il '194 di destra carica in Q0/H0 il segnale H-Cin presente al suo ingresso Dsr, che diventa il nuovo LSB del byte traslato;
-- il '194 di sinistra carica in Q0/H4 il valore di H3 presente al suo ingresso Dsr;
-- gli ouput Q0-Q3 di entrambi i '194 scorrono verso sinistra.
+- the right '194 loads into Q0/H0 the H-Cin signal present at its Dsr input, which becomes the new LSB of the shifted byte;
+- the left '194 loads into Q0/H4 the value of H3 present at its Dsr input;
+- the Q0-Q3 outputs of both '194s shift to the left.
 
-Le istruzioni di scorrimento / rotazione a sinistra del 6502 memorizzano nel Carry il bit più significativo del byte da traslare. L'immagine mostra le diverse istruzioni di scorrimento e rotazione del 6502 ed evidenzia lo scorrimento a sinistra.
+The 6502 left shift/rotate instructions store the most significant bit of the byte to be shifted in the Carry. The image shows the various 6502 shift and rotate instructions and highlights the left shift.
 
-![Istruzioni di scorrimento e rotazione del 6502](../../assets/alu/50-alu-shift-rotate-6502.png "Istruzioni di scorrimento e rotazione del 6502"){:width="40%"}
+![6502 shift and rotate instructions](../../../assets/alu/50-alu-shift-rotate-6502.png "6502 shift and rotate instructions"){:width="40%"}
 
-*Istruzioni di scorrimento e rotazione del 6502.*
+*6502 shift and rotate instructions.*
 
-L'MSB di H / output H-Q7 evidenziato in giallo nello schema è connesso al modulo dei Flag e viene salvato dal microcode prima di eseguire lo scorrimento:
+The MSB of H / output H-Q7 highlighted in yellow in the schematic is connected to the Flag module and is saved by the microcode before performing the shift:
 
 ~~~text
 | ---- | -------------------------- |
-| Step | Microistruzione            |
+| Step | Microinstruction           |
 | ---- | -------------------------- |
 | 0*   | RPC | WM                   |
 | 1*   | RR  | WIR | PCI            |
@@ -114,7 +114,7 @@ L'MSB di H / output H-Q7 evidenziato in giallo nello schema è connesso al modul
 | ---- | -------------------------- |
 ~~~
 
-*Scomposizione dell'istruzione ASL Accumulatore nelle sue cinque microistruzioni elementari*.
+*Breakdown of the ASL Accumulator instruction into its five elementary microinstructions*.
 
 1. Il primo step carica l'indirizzo del Program Counter nel Memory Address Register
 2. Il secondo step carica l'opcode dell'istruzione nell'IR e incrementa il PC per farlo puntare alla locazione di memoria successiva (che nel caso dell'istruzione ASL Accumulatore contiene l'istruzione successiva)
@@ -137,13 +137,13 @@ L'MSB di H / output H-Q7 evidenziato in giallo nello schema è connesso al modul
 
 Vista la flessibilità e l'utilità del Registro H, questo è stato implementato anche nel BEAM, con una differenza nella scrittura del microcode: l'NQSAP implementa scorrimento e rotazione a sinistra sfruttando l'operazione A Plus A dei '181, mentre il BEAM sfrutta i '194 sia verso sinistra sia verso destra.
 
-## Funzioni logiche e operazioni aritmetiche
+## Logic functions and arithmetic operations
 
 Come detto nell'introduzione, il computer BEAM, al pari dell'NQSAP, include il set di istruzioni completo del 6502, comprese quelle logiche e aritmetiche. Ricordavo discretamente le principali operazioni del 6502 e sapevo *abbastanza* bene quale dovesse essere il risultato di quello che stavo facendo, ma in quel momento non avevo ancora idea di come fosse possibile ottenerlo.
 
 Avevo intanto deciso di comprendere le operazioni messe a disposizione dal '181 e se vi fosse una logica nella loro disposizione, una sorta di raggruppamento.
 
-[![Funzioni logiche e operazioni aritmetiche del 74LS181](../../assets/alu/50-alu-operations.png "Funzioni logiche e operazioni aritmetiche del 74LS181"){:width="100%"}](../../assets/alu/50-alu-operations.png)
+[![Funzioni logiche e operazioni aritmetiche del 74LS181](../../../assets/alu/50-alu-operations.png "Funzioni logiche e operazioni aritmetiche del 74LS181"){:width="100%"}](../../../assets/alu/50-alu-operations.png)
 
 *Funzioni logiche e operazioni aritmetiche del 74LS181.*
 
@@ -151,7 +151,7 @@ Il datasheet del '181 era abbastanza criptico e dunque ho avevo fatto ricorso an
 
 Inizialmente avevo trascritto la tabella delle funzioni / operazioni in un foglio Excel per poter lavorare più agevolmente:
 
-![Funzioni logiche e operazioni aritmetiche del 74LS181](../../assets/alu/50-alu-operations-xls.png)
+![Funzioni logiche e operazioni aritmetiche del 74LS181](../../../assets/alu/50-alu-operations-xls.png)
 
 *Funzioni logiche e operazioni aritmetiche del 74LS181 - su Excel.*
 
@@ -172,13 +172,13 @@ A questo punto è anche opportuno segnalare che il '181 mette a disposizione due
 
 Ritornando alla tabella delle funzioni / operazioni e cercando di seguire le spiegazioni e logica dell'NQSAP, avevo compreso che il sottoinsieme visibile in questa tabella fosse sufficiente per lo scopo prefissato, che era quello di poter emulare le istruzioni del 6502:
 
-![Operazioni logiche e aritmetiche utili del 74LS181](../../assets/alu/50-alu-operations-xls-subset.png)
+![Operazioni logiche e aritmetiche utili del 74LS181](../../../assets/alu/50-alu-operations-xls-subset.png)
 
 *Operazioni logiche e aritmetiche utili del 74LS181.*
 
 Successivamente capirò che le istruzioni necessarie erano in realtà ancora meno di quelle che ipotizzavo.
 
-## Relazione diretta (*hardwired*) tra Instruction Register e ALU
+## Direct (*hardwired*) relationship between Instruction Register and ALU
 
 Un altro degli aspetti di più difficile comprensione, come anticipato in precedenza, è stata l'associazione diretta tra l'istruzione correntemente contenuta nell'Instruction Register e la funzione logica / operazione aritmetica eseguita dal '181.
 
@@ -239,7 +239,7 @@ cioè:
 
 In pratica, poiché gli ingressi M ed S3/S0 dei '181 sono direttamente connessi all'[Instruction Register](../control), l'istruzione di somma dovrà forzatamente essere codificata nel microcode presentando **01001** sui 5 bit comuni tra Instruction Register e ALU.
 
-![Output dell'Instruction Register verso il modulo ALU con evidenza dei 5 bit di selezione della funzione / operazione dei '181](../../assets/alu/50-alu-cl-ir-out.png)
+![Output dell'Instruction Register verso il modulo ALU con evidenza dei 5 bit di selezione della funzione / operazione dei '181](../../../assets/alu/50-alu-cl-ir-out.png)
 
 *Output dell'Instruction Register verso il modulo ALU con evidenza dei 5 bit di selezione della funzione / operazione dei '181.*
 
@@ -255,7 +255,7 @@ Un valido riferimento per l'analisi della relazione tra IR ed ALU è stata la pa
 
 Dalla tabella HTML delle istruzioni avevo ricavato una tabella Excel a partire dalla quale ho ragionato sugli indirizzamenti, notando che ogni istruzione del 6502 non presentava mai più di 8 diverse modalità di indirizzamento: ecco che gli altri 3 bit di output dell'IR permettevano dunque di costruire un set di istruzioni basato sulle funzioni logiche / operazioni aritmetiche del '181 incrociandole con le (non più di) 8 modalità di indirizzamento usate da ogni istruzione (2^3 = 8 modalità di indirizzamento sfruttabili da ogni istruzione).
 
-Lo spreadsheet Excel citato nel paragrafo precedente è [scaricabile qui](../../assets/BEAM computer.xlsx); le tabelle appena menzionate sono presenti nel foglio "6502 Inst. Set".
+Lo spreadsheet Excel citato nel paragrafo precedente è [scaricabile qui](../../../assets/BEAM computer.xlsx); le tabelle appena menzionate sono presenti nel foglio "6502 Inst. Set".
 
 Vale anche la pena notare che, in un computer con soli 256 byte di RAM, gli indirizzamenti Zero Page e Assoluti risultano ridondanti, poiché entrambi possono accedere agli stessi 256 byte di memoria. Di conseguenza, le modalità di indirizzamento Zero Page (ZP, "Zero Page" in inglese) non verranno implementate, essendo equivalenti a quelle Assolute.
 
@@ -283,7 +283,7 @@ Si nota che i 5 bit dell'operazione sono sempre gli stessi per ogni modalità di
 
 Partendo da questo ragionamento diventava possibile definire gli opcode di ogni istruzione da codificare poi nel microcode.
 
-## Istruzioni di comparazione
+## Comparison instructions
 
 Abbiamo evidenziato in precedenza che le istruzioni di modificano lo stato dei flag sono molte e che tra queste ci sono anche quelle di comparazione.
 
@@ -302,7 +302,7 @@ Tutti i segnali che pilotano i '181 derivano direttamente dall'Instruction Regis
 
 Effetto benefico collaterale molto importante del collegamento hardwired tra IR e ALU è che non è necessario dedicare preziose uscite delle ROM per le linee di controllo delle funzioni / operazioni dei '181.
 
-![Ingressi di selezione della funzione logica / operazione aritmetica dell'ALU e connessione "hardwired" con l'IR](../../assets/alu/50-alu-select-in.png)
+![Ingressi di selezione della funzione logica / operazione aritmetica dell'ALU e connessione "hardwired" con l'IR](../../../assets/alu/50-alu-select-in.png)
 
 *Ingressi di selezione della funzione logica / operazione aritmetica dell'ALU e connessione "hardwired" con l'IR.*
 
@@ -320,7 +320,7 @@ Detto in altre parole ancora:
 - Quando l'IR carica una istruzione 00111 di comparazione, metterà tale codifica in output verso le EEPROM e verso l'ALU, ma l'ultimo bit di tale codifica raggiungerà l'ALU solo dopo aver attraversato la NOR.
 - Una delle EEPROM ospitanti il microcode, quando troverà in ingresso xxx00111, attiverà il segnale LF sul pin 8 della NOR: la NOR invertirà l'ultimo bit 0011**1** e i '181 troveranno in realtà in ingresso 0011**0**, configurandosi dunque in Subtract Mode ed effettuando la sottrazione, della quale scarteremo il risultato per mantenere solo i flag.
 
-## Le istruzioni di comparazione e i Flag
+## Comparison instructions and Flags
 
 Inizialmente avevo incontrato qualche difficoltà nel comprendere la logica della variazione dei Flag nelle istruzioni di comparazione. Un supporto eccellente si trova in un <a href="http://www.6502.org/tutorials/compare_beyond.html" target="_blank">tutorial</a> su 6502.org, che descrive come un'operazione di confronto equivalga ad impostare il Carry e ad [eseguire la differenza](../alu/#relazione-diretta-hardwired-tra-instruction-register-e-alu), mantenendo solamente i Flag modificati e scartando il valore della sottrazione.
 
@@ -365,7 +365,7 @@ BMI $60
 
 non attiva né Z, né C, coerentemente con quanto esposto in precedenza; attiva invece N, perché la sottrazione simulata genera un risultato negativo: l'MSB assume valore 1, attivando così il Flag N. Il Flag C, settato all'inizio della comparazione, assume il valore 0 perché viene "preso in prestito". Trovando N attivo, la successiva istruzione BMI (Branch on MInus) viene eseguita.
 
-## Riepilogo: sottrazioni, comparazioni e indirizzamenti
+## Summary: subtractions, comparisons and addressing modes
 
 La documentazione dell'NQSAP segnalava che "poiché la ALU è legata all'IR, ci sono solo 8 Opcode disponibili per metterla in Subtract Mode", ma non capivo cosa volesse dire. "Per creare i 16 Opcode necessari per tutte le combinazioni di Subtract e Compare, si mette una NOR su ALU-S0 (IR 0) e su LF, così da  riutilizzare la Selection 0111 come se fosse 0110, che è la modalità Subtract".
 
@@ -389,11 +389,11 @@ La tabella successiva evidenzia come con la disponibilità di 8 bit per la codif
 
 Letto dopo averlo capito mi sembra ora molto semplice; inizialmente non lo era proprio.
 
-## Carry, addizioni e sottrazioni
+## Carry, additions and subtractions
 
 Alcuni esempi chiariranno il funzionamento del Carry utilizzando due '181 messi in cascata tra di loro per comporre una word di 8 bit.
 
-![Interconnessione di due ALU '181 in cascata](../../assets/alu/50-alu-nqsap-cascade.png)
+![Interconnessione di due ALU '181 in cascata](../../../assets/alu/50-alu-nqsap-cascade.png)
 
 *Interconnessione di due ALU '181 in cascata.*
 
@@ -436,11 +436,11 @@ Tutto questo è spiegato molto bene da Tom nella stessa pagina citata poche righ
 
 ## Schema
 
-[![Schema dell'ALU del computer BEAM](../../assets/alu/50-alu-beam-schematics.png "Schema dell'ALU del computer BEAM"){:width="100%"}](../../assets/alu/50-alu-beam-schematics.png)
+[![Schema dell'ALU del computer BEAM](../../../assets/alu/50-alu-beam-schematics.png "Schema dell'ALU del computer BEAM"){:width="100%"}](../../../assets/alu/50-alu-beam-schematics.png)
 
 *Schema dell'ALU del computer BEAM.*
 
-## Differenze tra Moduli ALU dell'NQSAP e del BEAM
+## Differences between NQSAP and BEAM ALU modules
 
 Come si può vedere dallo schema del modulo ALU del computer BEAM, questo è quasi una copia 1:1 del modulo ALU del computer NQSAP: non avevo certamente la capacità di sviluppare autonomamente un modulo ALU così complesso e legato a doppio filo con altri moduli del computer, ma la comprensione completa del funzionamento dell'ALU sviluppata da Tom ha rappresentato comunque un traguardo molto importante.
 
@@ -448,7 +448,7 @@ Ecco una lista delle differenze:
 
 - Per il registro B è stato utilizzato un registro tipo D <a href="https://www.ti.com/lit/ds/symlink/sn54ls377.pdf" target="_blank">74LS377</a> al posto del <a href="https://www.onsemi.com/pdf/datasheet/74vhc574-d.pdf" target="_blank">74LS574</a> utilizzato da Tom. A differenza del '574, il '377 è dotato di ingresso Enable, che solo quando attivo permette il caricamento del registro in corrispondenza del Rising Edge del clock: così facendo si elimina la necessità di un gate in ingresso sul clock per realizzare un Enable artificiale, come descritto nella sezione [L'ALU dell'NQSAP](#lalu-dellnqsap).
 
-![Schema di uno degli 8 Flip-Flop del 74LS377](../../assets/alu/50-alu-377.png){:width="66%"}
+![Schema di uno degli 8 Flip-Flop del 74LS377](../../../assets/alu/50-alu-377.png){:width="66%"}
 
 *Schema di uno degli 8 Flip-Flop del 74LS377.*
 
@@ -456,7 +456,7 @@ Ecco una lista delle differenze:
 
 - Tom ha utilizzato l'operazione A Plus A dei '181 per implementare lo scorrimento a sinistra delle istruzioni ASL e ROL del 6502 e il registro H per lo scorrimento a destra delle istruzioni LSR e ROR, mentre il BEAM utilizza H in [entrambe le situazioni](#il-registro-h).
 
-## Link utili
+## Useful links
 
 - <a href="https://www.righto.com/2017/03/inside-vintage-74181-alu-chip-how-it.html" target="_blank">Inside the vintage 74181 ALU chip: how it works and why it's so strange</a> di Ken Shirriff. Fondamentale per capire il perché dell'implementazione apparentemente così strana del chip; eccellente anche lo **schema interattivo**, che permette di visualizzare l'attivazione dei segnali interni e degli output come conseguenza degli input applicati.
 - La pagina delle <a href="https://tomnisbet.github.io/nqsap/docs/74181-alu-notes" target="_blank">note sul 74181</a> di Tom Nisbet.
