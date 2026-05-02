@@ -142,7 +142,7 @@ The table summarizes the placement of the 4KB microcodes consolidated into a sin
  | 1°         | 0     | 4095              | 0x0000 | 0x0FFF | 0 | 0 |
  | 2°         | 4096  | 8191              | 0x1000 | 0x1FFF | 1 | 0 |
  | 3°         | 8192  | 12287             | 0x2000 | 0x2FFF | 0 | 1 |
- | 4°         | 12288 | 16383             | 0x2000 | 0x3FFF | 1 | 1 |
+ | 4°         | 12288 | 16383             | 0x3000 | 0x3FFF | 1 | 1 |
 
  *Consolidation of the microcodes into a single EEPROM.*
 

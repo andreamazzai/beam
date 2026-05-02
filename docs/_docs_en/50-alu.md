@@ -11,7 +11,7 @@ excerpt: "BEAM computer Arithmetic and Logic Unit"
 
 The Arithmetic and Logic Unit (ALU) of Ben Eater's SAP-1 computer was limited to addition and subtraction. Tom Nisbet's NQSAP added logical and shift operations, and I had started studying it in detail.
 
-### The 74LS181
+## The 74LS181
 
 Developed around the <a href="https://www.ti.com/lit/ds/symlink/sn54ls181.pdf" target="_blank">74LS181</a> chips, the NQSAP ALU had very interesting features but was particularly difficult to understand: it will be one of the modules on which I will spend more time, but which in the end will give the greatest satisfaction for the result.
 
@@ -376,7 +376,7 @@ The following table highlights how, with 8 bits available for instruction encodi
 
 | Bit IR  | 7      | 6      | 5      | 4  | 3   | 2   | 1   | 0   |
 |  -      | -      | -      | -      | -  | -   | -   | -   | -   |
-| Segnale | I2     | I1     | I0     | M  | S3  | S2  | S1  | S0  |
+| Signal  | I2     | I1     | I0     | M  | S3  | S2  | S1  | S0  |
 | Opcode  | **0**  | **0**  | **0**  | 0  | 0   | 1   | 1   | 0   |
 | Opcode  | **0**  | **0**  | **1**  | 0  | 0   | 1   | 1   | 0   |
 | Opcode  | **0**  | **1**  | **0**  | 0  | 0   | 1   | 1   | 0   |
@@ -429,7 +429,7 @@ When performing an **A + 1** operation (see the signals to be applied to the '18
   - A = 0000.0101 which, incremented by a value of 1, becomes 0000.0110; the increment occurs by injecting a LO signal on the Carry In (/Cn) of the first '181; its Carry Out (/Cn+4) is HI, i.e. not active; the result of the operation performed by the second '181 does not involve a Carry, therefore its Carry Out (/Cn+4) is still HI.
   - A = 0000.1111 which, incremented by a value of 1, becomes 0001.0000; the increment occurs by injecting a LO signal on the Carry In (/Cn) of the first '181; its output Carry (/Cn+4) is LO, i.e. active; the result of the operation performed by the second '181 does not involve a Carry, therefore its Carry Out (/Cn+4) is HI.
 
-- In the first case both /Cn+4 are LO and therefore an XOR with inputs connected to those outputs would not signal an Overflow condition, correctly.
+- In the first case both /Cn+4 are HI and therefore an XOR with inputs connected to those outputs would not signal an Overflow condition, correctly.
 - In the second case there is no real Overflow when incrementing the initial word from 0000.1111 to 0001.0000, but if one were to interpret the Carry Outs of the two '181s with an XOR function, an error would be made, as the two signals are inverted and the XOR would incorrectly signal Overflow.
 
 All of this is explained very well by Tom on the same page cited a few lines above; as just mentioned, the topic of Overflow is also extensively covered in a [dedicated section](../math/#overflow-in-depth).
@@ -460,7 +460,7 @@ Here is a list of the differences:
 ## Useful links
 
 - <a href="https://www.righto.com/2017/03/inside-vintage-74181-alu-chip-how-it.html" target="_blank">Inside the vintage 74181 ALU chip: how it works and why it's so strange</a> by Ken Shirriff. Essential for understanding the reason behind the apparently so strange implementation of the chip; also excellent is the **interactive schematic**, which allows the activation of internal signals and outputs to be visualized as a consequence of the applied inputs.
-- Tom Nisbet's notes page on the <a href="https://tomnisbet.github.io/nqsap/docs/74181-alu-notes" target="_blank">note sul 74181</a>.
+- Tom Nisbet's notes page on the <a href="https://tomnisbet.github.io/nqsap/docs/74181-alu-notes" target="_blank">74181 ALU Notes</a>.
 - <a href="https://web.archive.org/web/20160326004629/http://www.ti.com/product/sn74ls181" target="_blank">Home page</a> of the 74181 on ti.com preserved by Internet Archive.
 - <a href="https://www.youtube.com/watch?v=Fq0MIJjlGsw" target="_blank">Demo of 74LS181 (74HCT181) ALU</a> and <a href="https://www.youtube.com/watch?v=jmROTNtoUGI" target="_blank">Comparator Functions of 74LS181 (74HCT181) ALU</a>: two excellent videos by David Courtney.
 - The <a href="https://www.atarimania.com/documents/6502%20(65xx)%20Microprocessor%20Instant%20Reference%20Card.pdf" target="_blank">Micro Logic compendium</a>, from which the image on the 6502 [shift and rotate](#the-h-register) modes is taken.

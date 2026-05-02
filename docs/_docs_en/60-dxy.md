@@ -1,9 +1,9 @@
 ---
-title: "D, X e Y"
+title: "D, X and Y"
 lang: en
 locale: en-US
 permalink: /docs/en/dxy/
-excerpt: "Registri indice del computer BEAM"
+excerpt: "BEAM computer index registers"
 ---
 <small>[The D register](#the-d-register) - [Use with indexed addressing modes](#use-with-indexed-addressing-modes) - [Use for conditional jumps](#use-for-conditional-jumps) - [Schematic](#schematic) - [Differences between NQSAP and BEAM index registers](#differences-between-nqsap-and-beam-index-registers) - [Useful links](#useful-links)</small>
 
@@ -49,7 +49,7 @@ A conditional jump is executed if a certain condition is met. In the following e
 
 ~~~text
 SEC         ; $80 - Set Carry Flag
-BCS $03     ; $81 - Salta a $03 + $83 = $86 if Carry is set
+BCS $03     ; $81 - Jump to $03 + $83 = $86 if Carry is set
 INX         ; $83 - This instruction will be skipped
 INX         ; $84 - This instruction will be skipped
 INX         ; $85 - This instruction will be skipped
