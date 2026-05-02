@@ -3,72 +3,74 @@ title: "Control Logic"
 lang: en
 locale: en-US
 permalink: /docs/en/control/
-excerpt: "Control Logic del computer BEAM"
+excerpt: "BEAM computer Control Logic"
 ---
-<small>[Instruction Register and Instructions](#instruction-register-and-instructions) - [Ring Counter and Microinstructions](#ring-counter-and-microinstructions) - [Fasi](#fasi) - [Clock, "glitching" delle EEPROM e Instruction Register (parte 2)](#clock-eeprom-glitching-and-instruction-register-part-2) - [Lunghezza delle istruzioni](#lunghezza-delle-istruzioni) - [I 74LS138 per la gestione dei segnali](#i-74ls138-per-la-gestione-dei-segnali) - [Caricamento di un programma dal Loader](#caricamento-di-un-programma-dal-loader) - [Riepilogo segnali dell’NQSAP e del BEAM](#riepilogo-segnali-dellnqsap-e-del-beam) - [Control signals](#control-signals) - [Bus e altri segnali](#bus-e-altri-segnali) - [Microcode](#microcode) - [Differenze rispetto all’Instruction Set del 6502](#differenze-rispetto-allinstruction-set-del-6502) - [Schematic](#schematic) - [Differenze tra Control Logic dell’NQSAP e del BEAM](#differenze-tra-control-logic-dellnqsap-e-del-beam) - [Note](#note) - [Link Utili](#link-utili) - [Riflessione sul microcode](#riflessione-sul-microcode)</small>
+<small>[Instruction Register (Part 1) and Instructions](#instruction-register-part-1-and-instructions) - [Ring Counter and Microinstructions](#ring-counter-and-microinstructions) - [Phases](#phases) - [Clock, EEPROM "glitching" and Instruction Register (part 2)](#clock-eeprom-glitching-and-instruction-register-part-2) - [Instruction length](#instruction-length) - [The 74LS138s for signal management](#the-74ls138s-for-signal-management) - [Loading a program from the Loader](#loading-a-program-from-the-loader) - [NQSAP and BEAM signal summary](#nqsap-and-beam-signal-summary) - [Control signals](#control-signals) - [Bus and other signals](#bus-and-other-signals) - [Microcode](#microcode) - [Differences from the 6502 Instruction Set](#differences-from-the-6502-instruction-set) - [Schematic](#schematic) - [Differences between NQSAP and BEAM Control Logic](#differences-between-nqsap-and-beam-control-logic) - [Notes](#notes) - [Useful links](#useful-links) - [Thoughts on the microcode](#thoughts-on-the-microcode)</small>
 
-[![Control Logic del computer BEAM](../../assets/control/40-beam-control.png "Control Logic del computer BEAM"){:width="100%"}](../../assets/control/40-beam-control.png)
+[![BEAM computer Control Logic](../../../assets/control/40-beam-control.png "BEAM computer Control Logic"){:width="100%"}](../../../assets/control/40-beam-control.png)
 
-In generale, la gestione delle istruzioni è affidata alla Control Logic, che consta di tre capisaldi: Instruction Register, Ring Counter e Microcode. L'Instruction Register contiene l'istruzione in esecuzione, il Ring Counter tiene traccia delle microistruzioni che compongono l'istruzione e il Microcode definisce i segnali di controllo necessari per eseguire le microistruzioni.
+In general, instruction management is entrusted to the Control Logic, which consists of three cornerstones: the Instruction Register, the Ring Counter and the Microcode. The Instruction Register contains the instruction being executed, the Ring Counter keeps track of the microinstructions that make up the instruction and the Microcode defines the control signals needed to execute the microinstructions.
 
-Questa pagina descrive le Control Logic dell'NQSAP e del BEAM, evidenzia alcune differenze con la Control Logic del SAP-1 di Ben Eater e approfondisce gli argomenti che avevo trovato più ostici o più interessanti.
+This page describes the Control Logic of the NQSAP and the BEAM, highlights some differences with the Control Logic of Ben Eater's SAP-1 and delves deeper into the topics I had found most challenging or most interesting.
 
-Per facilità di consultazione e semplificazione del confronto fra i tre computer SAP, NQSAP e BEAM, è opportuno riepilogare in tabella alcuni degli aspetti ricorrenti nel testo.
+For ease of reference and to simplify the comparison between the three computers SAP, NQSAP and BEAM, it is useful to summarize in a table some of the recurring aspects in the text.
 
-| ↓ ↓ Caratteristica / Sistema → →       | SAP-1       | NQSAP      | BEAM          |
+| ↓ ↓ Feature / System → →               | SAP-1     | NQSAP      | BEAM          |
 | -                                      | -         | -          | -             |
-| Autore                                 | Ben Eater | Tom Nisbet | Andrea Mazzai |
-| IR condiviso tra Opcode e Operando     | Sì        | No         | No            |
-| Bit IR per Opcode                      | 4         | 8          | 8             |
-| Bit IR per Operando                    | 4         | 0          | 0             |
-| Ampiezza bus da RC a EEPROM (bit)      | 3         | 3          | 4             |
-| Numero massimo Step (RC)               | 5         | 8          | 16            |
-| Ampiezza bus da IR a EEPROM  (bit)     | 4         | 8          | 8             |
-| Numero massimo Istruzioni (IR)         | 16        | 256        | 256           |
-| Istruzioni implementate nel Microcode  | ~ 10      | 120        | > 110         |
-| Lunghezza Istruzioni variabile         | No        | Sì         | Sì            |
-| IR bufferizzato                        | No        | No         | Sì            |
-| Caricamento IR a Rising o Falling Edge | Rising    | Rising     | Falling       |
-| Caricamento RC a Rising o Falling Edge | Falling   | Falling    | Falling       |
+| Author                                 | Ben Eater | Tom Nisbet | Andrea Mazzai |
+| IR shared between Opcode and Operand   | Yes       | No         | No            |
+| Bit IR for Opcode                      | 4         | 8          | 8             |
+| Bit IR for Operando                    | 4         | 0          | 0             |
+| Bus width from RC to EEPROM (bits)     | 3         | 3          | 4             |
+| Maximum number of Steps (RC)           | 5         | 8          | 16            |
+| Bus width from IR to EEPROM (bits)     | 4         | 8          | 8             |
+| Maximum number of Instructions (IR)    | 16        | 256        | 256           |
+| Instructions implemented in Microcode  | ~ 10      | 120        | > 110         |
+| Variable Instruction Length            | No        | Yes        | Yes           |
+| Buffered IR                            | No        | No\*       | Yes           |
+| IR load on Rising or Falling Edge      | Rising    | Rising     | Falling       |
+| RC load on Rising or Falling Edge      | Falling   | Falling    | Falling       |
 | EEPROM                                 | 2x 28C16  | 4x 28C256  | 4x 28C256     |
 | EEPROM (Kb)                            | 2x 16     | 4x 256     | 4x 256        |
-| Dimensione Control Word (bit)          | 16        | 32         | 32            |
-| RAM (byte)                             | 16        | 256        | 256           |
+| Control Word size (bits)               | 16        | 32         | 32            |
+| RAM (bytes)                            | 16        | 256        | 256           |
 
-Legenda: IR = Instruction Register; RC = Ring Counter
+\* The buffered IR was developed by Tom for the NQSAP-PCB, which inspired me to include this feature.
 
-Alcune note propedeutiche:
+Legend: IR = Instruction Register; RC = Ring Counter
 
-1. Nel computer SAP-1 di Ben Eater, la denominazione dei segnali di controllo è "modulo-centrica", riflettendo la funzione specifica di ciascun modulo: ad esempio, il segnale RO (RAM Out) esporta il contenuto della RAM sul bus, mentre AI (A Input) carica il registro A. Nel computer NQSAP di Tom Nisbet e nel BEAM, invece, la nomenclatura è "computer-centrica", adottando un punto di vista a livello di bus: per esempio, RO diventa RR (RAM Read) e AI diventa WA (Write A).
+Some preliminary notes:
 
-2. Nell'NQSAP e nel BEAM l'Instruction Register (IR) è incluso nello schema della Control Logic, mentre negli schemi del SAP-1 stava su un foglio separato.
+1. In Ben Eater's SAP-1 computer, the naming of control signals is "module-centric", reflecting the specific function of each module: for example, the signal RO (RAM Out) exports the contents of the RAM onto the bus, while AI (A Input) loads register A. In Tom Nisbet's NQSAP and in the BEAM computers, on the other hand, the nomenclature is "computer-centric", adopting a bus-level point of view: for example, RO becomes RR (RAM Read) and AI becomes WA (Write A).
 
-[![Schema della Control Logic dell'NQSAP](../../assets/control/40-control-logic-schema-nqsap.png "Schema della Control Logic dell'NQSAP"){:width="100%"}](../../assets/control/40-control-logic-schema-nqsap.png)
+2. In the NQSAP and in the BEAM the Instruction Register (IR) is included in the Control Logic schematic, whereas in the SAP-1 schematics it was on a separate sheet.
 
-*Schema della Control Logic dell'NQSAP, leggermente modificato al solo scopo di migliorarne la leggibilità.*
+[![Schematic of the NQSAP Control Logic](../../../assets/control/40-control-logic-schema-nqsap.png "Schematic of the NQSAP Control Logic"){:width="100%"}](../../../assets/control/40-control-logic-schema-nqsap.png)
 
-## Instruction Register and Instructions
+*Schematic of the NQSAP Control Logic, slightly modified for the sole purpose of improving its readability.*
 
-Il ruolo dell'Instruction Register è di memorizzare l'istruzione corrente prelevandola dalla memoria.
+## Instruction Register (Part 1) and Instructions
 
-L'Instruction Register del SAP-1 presentava una dimensione di un byte, all'interno del quale erano contenuti sia l'istruzione che l'operando:
+The role of the Instruction Register is to store the current instruction by fetching it from memory.
 
-- i 4 bit più significativi erano dedicati all'istruzione;
-- i 4 bit meno significativi erano riservati a un operando o a un indirizzo opzionali.
+The SAP-1 Instruction Register was one byte in size, within which both the instruction and the operand were contained:
 
-Se i bit meno significativi contenevano un operando (ad esempio, un valore immediato da utilizzare in un'operazione aritmetica), questo valore veniva caricato in un registro per l'esecuzione dell'istruzione; se i bit meno significativi contenevano un indirizzo di memoria, questo indirizzo veniva caricato nel Memory Address Register (MAR), che puntava così alla posizione di memoria da cui leggere o scrivere dati.
+- the 4 most significant bits were dedicated to the instruction;
+- the 4 least significant bits were reserved for an optional operand or address.
 
-Nell'immagine seguente, tratta dal video <a href="https://youtu.be/JUVt_KYAp-I?t=1837" target="_blank">Reprogramming CPU microcode with an Arduino</a> di Ben Eater, si vede come ogni byte di un semplice programma di somma e sottrazione includa sia l'operazione sia l'operando:
+If the least significant bits contained an operand (for example, an immediate value to be used in an arithmetic operation), this value was loaded into a register for the execution of the instruction; if the least significant bits contained a memory address, this address was loaded into the Memory Address Register (MAR), which thus pointed to the memory location from which to read or write data.
 
-![Somma e sottrazione nel SAP](../../assets/control/40-lda-15-add-14.png "Somma e sottrazione nel SAP"){:width="50%"}
+In the following image, taken from Ben Eater's video <a href="https://youtu.be/JUVt_KYAp-I?t=1837" target="_blank">Reprogramming CPU microcode with an Arduino</a>, one can see how each byte of a simple addition and subtraction program includes both the operation and the operand:
 
-Ad esempio:
+![Addition and subtraction in the SAP](../../../assets/control/40-lda-15-add-14.png "Addition and subtraction in the SAP"){:width="50%"}
 
-- L'istruzione LDA 15 all'indirizzo di memoria 0000 è composta dai 4 bit più significativi (MSB) 0001 (che nel microcode definiscono un'operazione di caricamento accumulatore) e dai 4 bit meno significativi (LSB) 1111, che indicano l'indirizzo di memoria 15, nel quale è presente il valore 5 da caricare nell'accumulatore A.
-- L'istruzione ADD 14 all'indirizzo di memoria 0001 è composta dai 4 bit MSB 0010 (che nel microcode definiscono un'operazione di somma) e dai 4 bit LSB 1110, che indicano l'indirizzo di memoria 14, nel quale è presente il valore 6 da sommare al valore già presente nell'accumulatore A.
-- L'istruzione OUT non necessita di operando: espone il contenuto di A sul modulo di Output, pertanto i 4 LSB sono irrilevanti.
+For example:
 
-| Mnemonico | Indirizzo | Istruzione.Operando |
+- The instruction LDA 15 at memory address 0000 is composed of the 4 most significant bits (MSB) 0001 (which in the microcode define an accumulator load operation) and the 4 least significant bits (LSB) 1111, which indicate memory address 15, in which the value 5 to be loaded into accumulator A is present.
+- The instruction ADD 14 at memory address 0001 is composed of the 4 MSB bits 0010 (which in the microcode define an addition operation) and the 4 LSB bits 1110, which indicate memory address 14, in which the value 6 to be added to the value already present in accumulator A is present.
+- The OUT instruction does not require an operand: it exposes the contents of A on the Output module, therefore the 4 LSBs are irrelevant.
+
+| Mnemonic  | Address   | Instruction.Operand |
 | -         | -         | -                   |
 | -         | -         | -                   |
 | LDA 15    | 0000      |       0001.1111     |
@@ -83,60 +85,60 @@ Ad esempio:
 | 6         | 1110      |       0000.0110     |
 | 5         | 1111      |       0000.0101     |
 
-*Rappresentazione di un programma di somma, sottrazione e output caricato nei 16 byte della memoria del SAP.*
+*Representation of an addition, subtraction and output program loaded into the 16 bytes of the SAP memory.*
 
-In conseguenza del numero di bit utilizzato per l'istruzione, la connessione tra Instruction Register del SAP-1 ed EEPROM contenenti il microcode poteva avere una ampiezza di soli 4 bit, come visibile in figura:
+As a consequence of the number of bits used for the instruction, the connection between the SAP-1 Instruction Register and the EEPROMs containing the microcode could only be 4 bits wide, as shown in the figure:
 
-[![Schema della Control Logic e dell'Instruction Register del SAP](../../assets/control/40-control-logic-schema-SAP.png "Schema della Control Logic e dell'Instruction Register del SAP"){:width="100%"}](../../assets/control/40-control-logic-schema-SAP.png)
+[![Schematic of the SAP Control Logic and Instruction Register](../../../assets/control/40-control-logic-schema-SAP.png "Schematic of the SAP Control Logic and Instruction Register"){:width="100%"}](../../../assets/control/40-control-logic-schema-SAP.png)
 
-*Schema della Control Logic e dell'Instruction Register del SAP.*
+*Schematic of the SAP Control Logic and Instruction Register.*
 
-Una fondamentale differenza tra l'IR del SAP-1 e quello dell'NQSAP e del BEAM è la dimensione. Il 6502 ha un set di istruzioni *relativamente* piccolo, composto da 56 istruzioni di base; tuttavia, queste istruzioni possono essere utilizzate con diverse modalità di <a href="https://www.masswerk.at/6502/6502_instruction_set.html#modes" target="_blank">indirizzamento</a>, il che porta il numero totale di combinazioni possibili a circa 150.
+A fundamental difference between the IR of the SAP-1 and that of the NQSAP and BEAM is the size. The 6502 has a relatively small instruction set, composed of 56 basic instructions; however, these instructions can be used with different <a href="https://www.masswerk.at/6502/6502_instruction_set.html#modes" target="_blank">addressing</a> modes, which brings the total number of possible combinations to approximately 150.
 
-Per poter gestire queste combinazioni ed emulare così il set di istruzioni del 6502, la dimensione dell'opcode deve essere di un intero byte e l'architettura del sistema deve gestire istruzioni di lunghezza variabile:
+In order to handle these combinations and thus emulate the 6502 instruction set, the opcode size must be a full byte and the system architecture must handle variable-length instructions:
 
-- a un solo byte per quelle con indirizzamento Implicito e Accumulatore e che, dunque, non hanno un operando;
-- a due o tre\* byte per tutte le altre, che fanno invece uso di un operando:
-  - a due byte quando l'operando è un valore (indirizzamento Immediato e Relativo);
-  - a due byte quando l'operando è un indirizzo di pagina zero (entro i primi 256 byte del computer);
-  - a tre* byte quando l'operando è un indirizzo entro i 64K indirizzabili dal 6502.
+- one byte long for those with Implied and Accumulator addressing, which therefore have no operand;
+- two or three\* bytes long for all others, which instead make use of an operand:
+  - two bytes when the operand is a value (Immediate and Relative addressing);
+  - two bytes when the operand is a zero page address (within the first 256 bytes of the computer);
+  - three\* bytes when the operand is an address within the 64K addressable by the 6502.
 
-\* Un computer con 256 byte di RAM non necessita di istruzioni a 3 byte, perché un operando della lunghezza di un singolo byte è in grado di indirizzare tutta la memoria del computer, come brevemente discusso anche nella sezione [Indirizzamenti](../alu/#indirizzamenti) della pagina dedicata all'ALU.
+\*A computer with 256 bytes of RAM does not need 3-byte instructions, because an operand of a single byte length is able to address all of the computer's memory, as also briefly discussed in the [Addressing Modes](../alu/#addressing-modes) section of the page dedicated to the ALU.
 
-[![Schemi dell'Instruction Register dell'NQSAP e del BEAM](../../assets/control/40-cl-ir-beam-nqsap.png "Schemi dell'Instruction Register dell'NQSAP e del BEAM"){:width="100%"}](../../assets/control/40-cl-ir-beam-nqsap.png)
+[![Schematics of the NQSAP and BEAM Instruction Register](../../../assets/control/40-cl-ir-beam-nqsap.png "Schematics of the NQSAP and BEAM Instruction Register"){:width="100%"}](../../../assets/control/40-cl-ir-beam-nqsap.png)
 
-*Schemi dell'Instruction Register dell'NQSAP e del BEAM.*
+*Schematics of the NQSAP and BEAM Instruction Register.*
 
-Tirando le fila, per un computer come l'NQSAP o il BEAM:
+Pulling it all together, for a computer like the NQSAP or the BEAM:
 
-- l'Instruction Register deve essere dedicato alle sole istruzioni ed avere dimensione di un byte;
-- la connessione tra IR ed EEPROM deve avere un'ampiezza di 8 bit e non più di soli 4 bit come nel SAP;
-- sono necessarie EEPROM con 13 (NQSAP, 2^13 = 64Kb) o 14 (BEAM, 2^14 = 128Kb) pin di indirizzamento:
-  - 8 pin per le istruzioni (2^8 = 256 istruzioni);
-  - 3 o 4 pin per le microistruzioni (NQSAP, 2^3 = 8 step; BEAM, 2^4 = 16 step), delle quali si parla nella sezione dedicata al [Ring Counter](#ring-counter-e-microistruzioni);
-  - 2 pin per la selezione delle EEPROM.
+- the Instruction Register must be dedicated solely to instructions and be one byte in size;
+- the connection between the IR and the EEPROMs must be 8 bits wide and no longer just 4 bits as in the SAP;
+- EEPROMs with 13 (NQSAP, 2^13 = 64Kb) or 14 (BEAM, 2^14 = 128Kb) addressing pins are required:
+  - 8 pins for instructions (2^8 = 256 instructions);
+  - 3 or 4 pins for microinstructions (NQSAP, 2^3 = 8 steps; BEAM, 2^4 = 16 steps), which are discussed in the section dedicated to the [Ring Counter](#ring-counter-and-microinstructions);
+  - 2 pins for EEPROM selection.
 
-Per l'NQSAP, Tom ha deciso di utilizzare comunque EEPROM da 256Kb anziché da 64Kb; il BEAM richiede invece obbligatoriamente EEPROM da 256Kb (non sono disponibili in commercio <a href="https://eu.mouser.com/c/semiconductors/memory-ics/eeprom/?interface%20type=Parallel" target="_blank">EEPROM da 128Kb con interfaccia parallela</a>).
+For the NQSAP, Tom decided to use 256Kb EEPROMs anyway instead of 64Kb ones; the BEAM instead mandatorily requires 256Kb EEPROMs (no <a href="https://eu.mouser.com/c/semiconductors/memory-ics/eeprom/?interface%20type=Parallel" target="_blank">128Kb parallel interface EEPROMs</a> are commercially available).
 
-Come si vedrà in seguito parlando del Ring Counter, un aspetto importante del caricamento dei registri è il [*momento*](#clock-glitching-delle-eeprom-e-instruction-register-parte-2) in cui vengono caricati: al Falling Edge\* del clock, oppure al Rising Edge\*: il caricamento dell'Instruction Register del SAP-1 e dell'NQSAP avviene al Rising Edge, mentre quello del BEAM avviene al Falling Edge.
+As will be seen later when discussing the Ring Counter, an important aspect of register loading is the [*instant*](#clock-eeprom-glitching-and-instruction-register-part-2) at which they are loaded: at the Falling Edge\* of the clock, or at the Rising Edge\*: the loading of the SAP-1 and NQSAP Instruction Register occurs at the Rising Edge, while that of the BEAM occurs at the Falling Edge
 
-\* Questa pagina utilizza sempre i termini Rising Edge e Falling Edge in riferimento al clock normale (CLK). Alcuni componenti ricevono un segnale di clock invertito (/CLK), che in alcuni grafici è rappresentato solo per evidenziare visivamente la fase del segnale effettivamente ricevuto.
+\* This page always uses the terms Rising Edge and Falling Edge in reference to the normal clock (CLK). Some components receive an inverted clock signal (/CLK), which in some diagrams is represented only to visually highlight the phase of the signal actually received.
 
-Prima di approfondire l'argomento, è opportuno iniziare a parlare anche del Ring Counter, che ha un ruolo primario nel caricamento di tutti i registri, IR compreso.
+Before delving deeper into the topic, it is appropriate to also begin discussing the Ring Counter, which plays a primary role in the loading of all registers, including the IR.
 
 ## Ring Counter and Microinstructions
 
-Per capire il funzionamento del Ring Counter, è necessario fare proprio il concetto di microistruzione: le *istruzioni* di un microprocessore sono composte da un certo numero di step, più precisamente chiamati *microistruzioni*.
+To understand the operation of the Ring Counter, it is necessary to grasp the concept of microinstruction: the *instructions* of a microprocessor are composed of a certain number of steps, more precisely called *microinstructions*.
 
-Infatti, ogni istruzione di un microprocessore (ad esempio, "carica un valore nel registro X", "incrementa il contenuto della locazione $E5" o "esegui uno scorrimento a destra dell'accumulatore") è composta da una sequenza di microistruzioni elementari, che corrispondono ai singoli passi (step) necessari per completare l'operazione voluta.
+In fact, every instruction of a microprocessor (for example, "load a value into register X", "increment the contents of location $E5" or "perform a right shift of the accumulator") is composed of a sequence of elementary microinstructions, which correspond to the individual steps needed to complete the desired operation.
 
-Il Ring Counter (RC) tiene traccia dello stato di avanzamento delle microistruzioni. Ogni stato del RC corrisponde a un particolare step nel ciclo di esecuzione di un'istruzione, quindi può essere visto come un meccanismo che avanza attraverso le diverse microistruzioni necessarie per eseguire un'istruzione completa della CPU.
+The Ring Counter (RC) keeps track of the progress of the microinstructions. Each state of the RC corresponds to a particular step in the execution cycle of an instruction, so it can be seen as a mechanism that advances through the different microinstructions needed to execute a complete CPU instruction.
 
-Nel BEAM, ad esempio, l'istruzione LDA #$94 (che nel linguaggio mnemonico del 6502 si traduce in "carica nell'accumulatore il valore esadecimale $94") è composta dai seguenti quattro step / microistruzioni:
+In the BEAM, for example, the instruction LDA #$94 (which in 6502 mnemonic language translates to "load the hexadecimal value $94 into the accumulator") is composed of the following four steps / microinstructions:
 
 ~~~text
 | ---- | -------------------------- |
-| Step | Microistruzione            |
+| Step | Microinstruction           |
 | ---- | -------------------------- |
 | 0*   | RPC | WM                   |
 | 1*   | RR  | WIR | PCI            |
@@ -145,61 +147,64 @@ Nel BEAM, ad esempio, l'istruzione LDA #$94 (che nel linguaggio mnemonico del 65
 | ---- | -------------------------- |
 ~~~
 
-*Scomposizione dell'istruzione LDA Immediato nelle sue quattro microistruzioni elementari*.
+*Breakdown of the LDA Immediate instruction into its four elementary microinstructions*.
 
-1. Il primo step carica l'indirizzo dell'istruzione corrente nel Memory Address Register:
-    - RPC, Read Program Counter - espone l'indirizzo del PC sul bus
-    - WM, Write Memory Address Register - carica l'indirizzo dell'istruzione nel MAR
-2. Il secondo step carica l'opcode dell'istruzione nell'IR e incrementa il PC per farlo puntare alla locazione di memoria successiva (che nel caso dell'istruzione LDA contiene l'operando):
-    - RR, Read RAM - espone sul bus l'opcode dell'istruzione
-    - WIR, Write Instruction Register - carica l'opcode nell'IR\*
-    - PCI, Program Counter Increment - incrementa il PC
-3. Il terzo step carica nel Memory Address Register l'indirizzo del Program Counter, che ora punta all'operando:
-    - RPC, Read Program Counter - espone l'indirizzo del PC sul bus
-    - WM, Write Memory Address Register - carica l'indirizzo dell'operando nel MAR
-4. Il quarto ed ultimo step carica l'operando nell'accumulatore, incrementa il PC per farlo puntare alla istruzione successiva e resetta il Ring Counter
-    - RR, Read RAM - espone l'operando sul bus
-    - FNZ, Flag N & Z - aggiorna i Flag N e Z
-    - WAH, Write A & H - carica l'operando in A e H\*\*
-    - PCI, Program Counter Increment - incrementa il PC
-    - NI, Next Instruction - resetta il Ring Counter\*\*\*
+1. The first step loads the address of the current instruction into the Memory Address Register:
+    - RPC, Read Program Counter - exposes the PC address on the bus
+    - WM, Write Memory Address Register - loads the instruction address into the MAR
 
-\* Non bisogna trascurare il fatto che i primi due step di *tutte* le istruzioni sono *sempre* identici. Alla fine del secondo step, l'Instruction Register contiene l'opcode dell'istruzione, che, insieme alle microistruzioni, definisce le operazioni che gli step successivi devono eseguire. Questo vale per qualsiasi istruzione, compresa la prima che una CPU esegue all'accensione. Prima di costruire il SAP-1 di Ben Eater, non riuscivo a immaginare quale meccanismo permettesse ad una CPU di sapere cosa dovesse fare una volta accesa; l'averlo compreso è stato piuttosto appagante.
+2. The second step loads the instruction opcode into the IR and increments the PC to make it point to the next memory location (which in the case of the LDA instruction contains the operand):
+    - RR, Read RAM - exposes the instruction opcode on the bus
+    - WIR, Write Instruction Register - loads the opcode into the IR\*
+    - PCI, Program Counter Increment - increments the PC
 
-\*\* Perché anche H? Si veda la sezione dedicata alla spiegazione del [registro H](../alu/#il-registro-h) nella pagina dell'ALU.
+3. The third step loads the Program Counter address into the Memory Address Register, which now points to the operand:
+    - RPC, Read Program Counter - exposes the PC address on the bus
+    - WM, Write Memory Address Register - loads the operand address into the MAR
 
-\*\*\* Approfondimenti in merito nella sezione [Lunghezza delle istruzioni](#lunghezza-delle-istruzioni) in questa stessa pagina.
+4. The fourth and final step loads the operand into the accumulator, increments the PC to make it point to the next instruction and resets the Ring Counter:
+    - RR, Read RAM - exposes the operand on the bus
+    - FNZ, Flag N & Z - updates the N and Z Flags
+    - WAH, Write A & H - loads the operand into A and H\*\*
+    - PCI, Program Counter Increment - increments the PC
+    - NI, Next Instruction - resets the Ring Counter\*\*\*
 
-Uno schema che mostra chiaramente gli step di alcune istruzioni del SAP-1 è visibile in questa immagine tratta dal video <a href="https://www.youtube.com/watch?v=dHWFpkGsxOs" target="_blank">8-bit CPU control logic: Part 3</a> di Ben Eater; gli step 000 e 001 sono comuni per tutte le istruzioni e compongono quella che viene chiamata **Fase Fetch**, evidenziata in giallo.
+\* One must not overlook the fact that the first two steps of *all* instructions are always identical. At the end of the second step, the Instruction Register contains the instruction opcode, which, together with the microinstructions, defines the operations that the subsequent steps must execute. This applies to any instruction, including the first one that a CPU executes at power-on. Before building Ben Eater's SAP-1, I could not imagine what mechanism would allow a CPU to know what to do once powered on; having understood it was rather satisfying.
 
-[![Microcode del SAP](../../assets/control/40-cl-ben-step-microcode.png "Microcode del SAP"){:width="100%"}](../../assets/control/40-cl-ben-step-microcode.png)
+\*\* Why H as well? See the dedicated section explaining the [H register](../alu/#the-h-register) on the ALU page.
 
-*Microcode del SAP.*
+\*\*\* Further details in the section [Instruction length](#instruction-length) on this same page.
 
-Per finalizzare l'analisi dell'istruzione LDA #$94, riepiloghiamo lo stato del computer alla fine del quarto step:
+A diagram that clearly shows the steps of some SAP-1 instructions is visible in this image taken from Ben Eater's video <a href="https://www.youtube.com/watch?v=dHWFpkGsxOs" target="_blank">8-bit CPU control logic: Part 3</a>; steps 000 and 001 are common to all instructions and make up what is called the Fetch Phase, highlighted in yellow.
 
-- il Flag Z non sarà attivo (il risultato dell'operazione di caricamento dell'accumulatore non è uguale a zero);
-- il Flag N sarà attivo (secondo il metodo di [rappresentazione dei numeri Signed](../math/#numeri-unsigned-e-numeri-signed) a 8 bit in Complemento a 2, $94 / 1001.0100 è un numero negativo, in quanto il bit più significativo è allo stato logico 1);
-- i Flag V e C non saranno modificati rispetto allo stato precedente;
-- l'accumulatore A e il registro H conterranno il valore $94 esadecimale.
+[![SAP Microcode](../../../assets/control/40-cl-ben-step-microcode.png "SAP Microcode"){:width="100%"}](../../../assets/control/40-cl-ben-step-microcode.png)
+
+*SAP Microcode.*
+
+To finalize the analysis of the LDA #$94 instruction, let us summarize the state of the computer at the end of the fourth step:
+
+- Flag Z will not be active (the result of the accumulator load operation is not equal to zero);
+- Flag N will be active (according to the 8-bit [Signed number representation method](../math/#unsigned-and-signed-numbers) in Two's Complement, $94 / 1001.0100 is a negative number, - since the most significant bit is at logic state 1);
+- Flags V and C will not be modified relative to their previous state;
+- Accumulator A and register H will contain the hexadecimal value $94.
 
 ### Phases
 
-Per garantire il corretto funzionamento del processore, la Control Logic deve impostare la giusta *Control Word* per ogni microistruzione. La Control Word è quella stringa di bit utilizzata per governare e coordinare il comportamento dei vari componenti del processore durante l'esecuzione di una microistruzione ed è definita nel microcode memorizzato nelle EEPROM; ad ogni bit / pin di output delle EEPROM corrisponde un segnale di controllo (come RPC, WM, PCI, RR eccetera).
+To ensure the correct operation of the processor, the Control Logic must set the right Control Word for each microinstruction. The Control Word is the string of bits used to govern and coordinate the behavior of the various processor components during the execution of a microinstruction and is defined in the microcode stored in the EEPROMs; each bit / output pin of the EEPROMs corresponds to a control signal (such as RPC, WM, PCI, RR and so on).
 
-Le operazioni di una CPU passano per diverse fasi, che possiamo riassumere in:
+The operations of a CPU go through several phases, which we can summarize as:
 
-1. "Fetch" (prelievo), che preleva l'istruzione dalla locazione di memoria puntata dal PC e la memorizza nell'IR.
-2. "Decode" (decodifica), che interpreta il contenuto dell'IR per determinare quale istruzione debba essere eseguita.
-3. "Execute" (esecuzione), che include tutte le microistruzioni che realizzano effettivamente quanto deve essere svolto dall'istruzione (ad esempio: "incrementa il registro X").
+1. "Fetch", which fetches the instruction from the memory location pointed to by the PC and stores it in the IR.
+2. "Decode", which interprets the contents of the IR to determine which instruction must be executed.
+3. "Execute", which includes all the microinstructions that actually carry out what the instruction is supposed to do (for example: "increment register X").
 
-La fase di prelievo è stata accennata nella [sezione precedente](#ring-counter-e-microistruzioni) ed è fondamentale che le microistruzioni di questa fase siano identiche per tutte le istruzioni implementate.
+The fetch phase was mentioned in the [previous section](#ring-counter-and-microinstructions) and it is fundamental that the microinstructions of this phase are identical for all implemented instructions.
 
-Seguiamo passo dopo passo quanto accade nell'istruzione più semplice tra quelle implementate nel BEAM, la NOP - No Operation:
+Let us follow step by step what happens in the simplest instruction implemented in the BEAM, the NOP - No Operation:
 
 ~~~text
 | ---- | ---------------------|
-| Step | Microistruzione      |
+| Step | Microinstruction     |
 | ---- | ---------------------|
 | 0    | RPC | WM             |
 | 1    | RR  | WIR | PCI      |
@@ -207,153 +212,153 @@ Seguiamo passo dopo passo quanto accade nell'istruzione più semplice tra quelle
 | ---- | ---------------------|
 ~~~
 
-*Scomposizione dell'istruzione NOP nelle sue tre microistruzioni elementari*.
+*Breakdown of the NOP instruction into its three elementary microinstructions*.
 
-1. Il primo step carica l'indirizzo dell'istruzione corrente nel Memory Address Register:
-    - RPC, Read Program Counter - espone l'indirizzo del PC sul bus
-    - WM, Write Memory Address Register - carica l'indirizzo dell'istruzione nel MAR
-2. Il secondo step carica l'opcode dell'istruzione nell'IR e incrementa il PC per farlo puntare alla locazione di memoria successiva (che nel caso dell'istruzione NOP, lunga un solo byte, sarà la prossima istruzione):
-    - RR, Read RAM - espone sul bus l'opcode dell'istruzione
-    - WIR, Write Instruction Register - carica l'opcode nell'IR\*
-    - PCI, Program Counter Increment - incrementa il PC
-3. Il terzo step riporta il Ring Counter a 0:
-    - NI, Next Instruction - resetta il Ring Counter
+1. The first step loads the address of the current instruction into the Memory Address Register:
+    - RPC, Read Program Counter - exposes the PC address on the bus
+    - WM, Write Memory Address Register - loads the instruction address into the MAR
+2. The second step loads the instruction opcode into the IR and increments the PC to make it point to the next memory location (which in the case of the NOP instruction, one byte long, will be the next instruction):
+    - RR, Read RAM - exposes the instruction opcode on the bus
+    - WIR, Write Instruction Register - loads the opcode into the IR\*
+    - PCI, Program Counter Increment - increments the PC
+3. The third step resets the Ring Counter to 0:
+    - NI, Next Instruction - resets the Ring Counter
 
-Nel primo step, il MAR viene caricato con il valore del PC. Il RC viene incrementato portandoci allo step successivo.
+In the first step, the MAR is loaded with the value of the PC. The RC is incremented bringing us to the next step.
 
-Nel secondo step l'IR viene caricato e il PC viene incrementato, puntando così alla prossima locazione di memoria. Notare che il nuovo valore del PC non influisce sull'istruzione correntemente in esecuzione, poiché il PC non indirizza le EEPROM contenenti il microcodice. Il RC viene incrementato portandoci allo step successivo.
+In the second step the IR is loaded and the PC is incremented, thus pointing to the next memory location. Note that the new value of the PC does not affect the instruction currently being executed, since the PC does not address the EEPROMs containing the microcode. The RC is incremented bringing us to the next step.
 
-Nel terzo step, il segnale di controllo NI riporta il RC al valore iniziale 0.
+In the third step, the NI control signal resets the RC to its initial value of 0.
 
-Inizia ora l'esecuzione della prossima istruzione, ma l'*IR contiene ancora l'opcode dell'istruzione NOP*: l'IR, infatti, non è stato modificato. Poiché i primi due step di tutte le istruzioni sono identici, non c'è alcun problema: anche se stiamo iniziando la prossima istruzione, eseguiamo i primi due step dell'istruzione NOP tuttora presente nell'IR.
+The execution of the next instruction now begins, but the IR *still contains the opcode of the NOP instruction*: the IR, in fact, has not been modified. Since the first two steps of all instructions are identical, there is no issue: even though we are starting the next instruction, we execute the first two steps of the NOP instruction still present in the IR.
 
-In altre parole, con il reset del RC stiamo avviando l'esecuzione della prossima istruzione, ma il valore dell'IR non è ancora cambiato. Di conseguenza, i primi due step dell'istruzione successiva sono eseguiti utilizzando il microcode dell'istruzione precedente. È per questo motivo che è fondamentale che il microcode dei primi due step sia identico per tutte le istruzioni.
+In other words, by resetting the RC we are starting the execution of the next instruction, but the value of the IR has not yet changed. Consequently, the first two steps of the next instruction are executed using the microcode of the previous instruction. This is why it is fundamental that the microcode of the first two steps be identical for all instructions.
 
-Ora, nel primo step della "prossima" istruzione, il valore aggiornato del PC viene messo nel MAR, ed è a questo punto che il nuovo valore del PC inizia a essere rilevante. Nel secondo step, l'istruzione viene caricata nell'IR e, da questo momento in poi, il computer inizia a eseguire gli step specifici di decodifica ed esecuzione della nuova istruzione.
+Now, in the first step of the "next" instruction, the updated value of the PC is placed in the MAR, and it is at this point that the new value of the PC begins to be relevant. In the second step, the instruction is loaded into the IR and, from this moment on, the computer begins to execute the specific decode and execute steps of the new instruction.
 
-La fase di decodifica avviene grazie al microcodice memorizzato nelle EEPROM: l'istruzione caricata nell'IR ha un proprio opcode specifico (ad esempio, 0100.0110), che viene presentato agli ingressi delle EEPROM assieme agli output del Ring Counter. Questa combinazione indirizza una locazione di memoria specifica nelle EEPROM, che emettono in uscita i bit della Control Word e che, a loro volta, attivano i segnali di controllo necessari per eseguire la microistruzione corrente.
+The decode phase occurs thanks to the microcode stored in the EEPROMs: the instruction loaded into the IR has its own specific opcode (for example, 0100.0110), which is presented to the EEPROM inputs together with the Ring Counter outputs. This combination addresses a specific memory location in the EEPROMs, which output the bits of the Control Word and which, in turn, activate the control signals needed to execute the current microinstruction.
 
-Il legame tra decodifica ed esecuzione è molto stretto, perché in ogni momento la Control Word dipende sia dall'opcode (Decode), sia dalla microistruzione (Execute).
+The link between decode and execute is very tight, because at every moment the Control Word depends both on the opcode (Decode) and on the microinstruction (Execute)
 
-Si intuisce che una CPU deve conoscere in ogni momento quale istruzione sia attualmente in esecuzione (ne riceviamo indicazioni dall'Instruction Register) e quale sia lo step correntemente attivo, per conoscere il quale ci viene in aiuto il Ring Counter. SAP, NQSAP e BEAM sviluppano il Ring Counter attorno a un contatore <a href="https://www.ti.com/lit/ds/symlink/sn54ls161a-sp.pdf" target="_blank">74LS161</a>, in grado di contare da 0 a 15, e a un demultiplexer <a href="https://www.ti.com/lit/ds/symlink/sn74ls138.pdf" target="_blank">74LS138</a>, che ci aiuta ad avere riscontro visivo della microistruzione in esecuzione.
+One can intuit that a CPU must know at every moment which instruction is currently being executed (we receive this information from the Instruction Register) and which step is currently active, for which the Ring Counter comes to our aid. SAP, NQSAP and BEAM develop the Ring Counter around a <a href="https://www.ti.com/lit/ds/symlink/sn54ls161a-sp.pdf" target="_blank">74LS161</a> counter, capable of counting from 0 to 15, and a <a href="https://www.ti.com/lit/ds/symlink/sn74ls138.pdf" target="_blank">74LS138</a> demultiplexer, which helps us have visual feedback of the microinstruction being executed.
 
-Come detto poc’anzi, la combinazione dell'opcode contenuto nell’Instruction Register e dallo step fornito dal Ring Counter indirizza una locazione di memoria specifica nelle EEPROM: tale locazione di memoria contiene la Control Word.
+As just mentioned, the combination of the opcode contained in the Instruction Register and the step provided by the Ring Counter addresses a specific memory location in the EEPROMs: this memory location contains the Control Word.
 
-[![Output di IR ed RC e input delle EEPROM del BEAM](../../assets/control/40-cl-ir-cr-beam.png "Output di IR ed RC e input delle EEPROM del BEAM"){:width="100%"}](../../assets/control/40-cl-ir-cr-beam.png)
+[![IR and RC outputs and BEAM EEPROM inputs](../../../assets/control/40-cl-ir-cr-beam.png "IR and RC outputs and BEAM EEPROM inputs"){:width="100%"}](../../../assets/control/40-cl-ir-cr-beam.png)
 
-*Output di IR ed RC e input delle EEPROM del BEAM*.
+*IR and RC outputs and BEAM EEPROM inputs*.
 
-Nello schema si evidenzia che le uscite del Ring Counter controllano 4 indirizzi delle EEPROM, mentre altri 8 indirizzi sono controllati dall'Instruction Register.
+The schematic highlights that the Ring Counter outputs control 4 EEPROM addresses, while another 8 addresses are controlled by the Instruction Register.
 
-Utilizzando una logica combinatoria, è possibile costruire il microcode da caricare nelle EEPROM, che emetteranno gli opportuni segnali di output (Control Word) per ogni step di ogni istruzione.
+Using combinational logic, it is possible to build the microcode to be loaded into the EEPROMs, which will emit the appropriate output signals (Control Word) for each step of each instruction.
 
-Nell'immagine si può osservare che le uscite del contatore controllano anche il demultiplexer, che viene utilizzato per visualizzare lo stato dell'RC. Anziché impiegare 16 LED (e due '138), un singolo LED "esteso" è pilotato dal pin più significativo del '161, che ha un valore pari ad 8: lo step correntemente in esecuzione sarà indicato dal LED acceso dal '138, al quale sommare 8 se il LED "esteso" è acceso.
+In the image it can be observed that the counter outputs also control the demultiplexer, which is used to display the RC state. Rather than using 16 LEDs (and two '138s), a single "extended" LED is driven by the most significant pin of the '161, which has a value of 8: the currently executing step will be indicated by the LED lit by the '138, to which 8 should be added if the "extended" LED is on.
 
 ### Clock, EEPROM "glitching" and Instruction Register (part 2)
 
-In generale, i momenti essenziali di un ciclo di clock in un computer sono due: il Rising Edge ↗ (passaggio del segnale dallo stato logico LO allo stato logico HI) e il Falling Edge ↘ (viceversa).
+In general, the essential moments of a clock cycle in a computer are two: the Rising Edge ↗ (transition of the signal from logic state LO to logic state HI) and the Falling Edge ↘ (the opposite).
 
-- Rising Edge: la maggior parte dei componenti sequenziali* (quali contatori, registri, flip-flop) modifica il proprio stato durante la transizione del segnale di clock dallo stato logico LO allo stato logico HI; le azioni di caricamento di tutti i moduli del computer (PC, MAR, RAM, A, B, H, Registri Indice, Flag, SP, O) avvengono in questo momento, con qualche eccezione.
+- Rising Edge: most sequential components\* (such as counters, registers, flip-flops) change their state during the transition of the clock signal from logic state LO to logic state HI; the loading actions of all computer modules (PC, MAR, RAM, A, B, H, Index Registers, Flags, SP, O) occur at this moment, with some exceptions.
 
-- Falling Edge: poiché ad ogni Rising Edge i componenti sequenziali caricano i dati in ingresso, si intuisce che è necessario trovare un momento *antecedente*, durante il quale impostare la Control Word di tutti i moduli del sistema in modo che i dati siano presenti agli ingressi dei componenti col dovuto anticipo. Il Falling Edge si configura come il momento migliore per settare la Control Word; invertendo la fase del clock inviato al Ring Counter, si esegue la configurazione della Control Word - e dunque della microistruzione - proprio in corrispondenza del Falling Edge.
+- Falling Edge: since at every Rising Edge the sequential components load the input data, it is intuitive that it is necessary to find a *preceding* moment, during which to set the Control Word of all system modules so that the data is present at the component inputs with adequate advance. The Falling Edge is the best moment to set the Control Word; by inverting the phase of the clock sent to the Ring Counter, the configuration of the Control Word — and therefore of the microinstruction — is performed precisely at the Falling Edge.
 
-\* I componenti sequenziali producono un output che dipende non solo dagli ingressi attuali, ma anche dallo stato precedente, a differenza dei circuiti combinatori che dipendono esclusivamente dagli ingressi presenti.
+\* Sequential components produce an output that depends not only on the current inputs, but also on the previous state, unlike combinational circuits which depend exclusively on the present inputs.
 
-Per quale motivo si parla di eccezioni? Sicuramente il Ring Counter è una di queste, per il motivo spiegato al punto precedente; l'Instruction Register *può* essere un'altra eccezione.
+Why are exceptions mentioned? The Ring Counter is certainly one of these, for the reason explained in the previous point; the Instruction Register *can* be another exception.
 
-In effetti, nel SAP-1 il caricamento dell'IR è sincrono con il Rising Edge del clock:
+In fact, in the SAP-1 the loading of the IR is synchronous with the Rising Edge of the clock:
 
-[![Dettaglio Instruction Register del SAP](../../assets/control/40-cl-sap-ir-detail.png "Dettaglio Instruction Register del SAP"){:width="66%"}](../../assets/control/40-cl-sap-ir-detail.png)
+[![SAP Instruction Register detail](../../../assets/control/40-cl-sap-ir-detail.png "SAP Instruction Register detail"){:width="66%"}](../../../assets/control/40-cl-sap-ir-detail.png)
 
-Tale sincronia si ritrova anche nell'NQSAP:
+This synchrony is also found in the NQSAP:
 
-[![Dettaglio Instruction Register dell'NQSAP](../../assets/control/40-cl-nqsap-ir-detail.png "Dettaglio Instruction Register dell'NQSAP"){:width="66%"}](../../assets/control/40-cl-nqsap-ir-detail.png)
+[![NQSAP Instruction Register detail](../../../assets/control/40-cl-nqsap-ir-detail.png "NQSAP Instruction Register detail"){:width="66%"}](../../../assets/control/40-cl-nqsap-ir-detail.png)
 
-Quali sono le possibili conseguenze del caricamento dell'IR al Rising Edge del clock?
+What are the possible consequences of loading the IR at the Rising Edge of the clock?
 
-Bisogna prendere in considerazione una proprietà delle EEPROM: quando l'indirizzo di ingresso cambia, le uscite possono diventare instabili, oscillando ("glitching", problema tecnico) tra gli stati logici prima di assestarsi definitivamente sul valore corretto. Se il fenomeno non viene gestito, possono verificarsi effetti collaterali indesiderati, quali impulsi di clock non voluti se si usano gate per gestire l'Enable nei chip che ne sono sprovvisti (come il [registro B](../alu/#lalu-dellnqsap) o i [registri D, X e Y](../dxy/) dell'NQSAP), oppure l'output contemporaneo di più moduli sul bus, generando contese e assorbimenti di corrente elevati.
+One must take into consideration a property of EEPROMs: when the input address changes, the outputs can become unstable, oscillating ("glitching", a technical issue) between logic states before finally settling on the correct value. If the phenomenon is not managed, undesired side effects can occur, such as unwanted clock pulses if gates are used to manage the Enable in chips that lack it (such as the [B register](../alu/#the-nqsap-alu) or the [D, X and Y registers](../dxy/) of the NQSAP), or the simultaneous output of multiple modules onto the bus, generating bus contention and high current absorption.
 
-Nelle EEPROM come la <a href="https://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" target="_blank">AT28C256</a>, il parametro che indica la durata dell'incertezza all'output è tipicamente chiamato "Address Access Time" o "t<sub>ACC</sub>" e indica il periodo che intercorre tra l'applicazione di un nuovo indirizzo di ingresso e il momento in cui i dati corretti sono disponibili sull'uscita, come visibile in figura:
+In EEPROMs such as the <a href="https://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" target="_blank">AT28C256</a>, the parameter that indicates the duration of output uncertainty is typically called "Address Access Time" or "t<sub>ACC</sub>" and indicates the period that elapses between the application of a new input address and the moment when the correct data is available at the output, as shown in the figure:
 
-[![AC Read Waveforms EEPROM AT28C256](../../assets/control/40-28C256-read-waveform.png "AC Read Waveforms EEPROM AT28C256"){:width="50%"}](../../assets/control/40-28C256-read-waveform.png)
+[![AC Read Waveforms EEPROM AT28C256](../../../assets/control/40-28C256-read-waveform.png "AC Read Waveforms EEPROM AT28C256"){:width="50%"}](../../../assets/control/40-28C256-read-waveform.png)
 
-Ad esempio, un <a href="https://www.reddit.com/r/beneater/comments/f7gcvx/glitches_on_eeprom_datalines_when_their_adress/" target="_blank">thread su Reddit</a> di rolf-electronics evidenzia il fenomeno nei primi 3 quadranti della seguente immagine, con i segnali di output che mostrano oscillazioni significative al momento del cambiamento degli input delle EEPROM:
+For example, a <a href="https://www.reddit.com/r/beneater/comments/f7gcvx/glitches_on_eeprom_datalines_when_their_adress/" target="_blank">Reddit thread</a> by rolf-electronics highlights the phenomenon in the first 3 quadrants of the following image, with the output signals showing significant oscillations at the moment of EEPROM input changes:
 
-[![Glitching nel SAP-1 di Rolf Electronics](../../assets/control/40-glitching-rolf.png "Glitching nel SAP-1 di Rolf Electronics"){:width="66%"}](../../assets/control/40-glitching-rolf.png)
+[![Glitching in Rolf Electronics' SAP-1](../../../assets/control/40-glitching-rolf.png "Glitching in Rolf Electronics' SAP-1"){:width="66%"}](../../../assets/control/40-glitching-rolf.png)
 
-Ora, qual è la relazione tra il glitching e il caricamento dell'Instruction Register al Rising Edge del clock?
+Now, what is the relationship between glitching and loading the Instruction Register at the Rising Edge of the clock?
 
-Il grafico seguente mostra i fronti di salita e di discesa dei soli segnali di controllo attivati nei quattro step dell'istruzione LDA del SAP. I colori indicano che il glitching è innescato da un cambiamento intenzionale, cioè dal microcode che modifica volutamente lo stato di un determinato segnale. Le aree grigie, invece, rappresentano il glitching dei segnali non modificati dalla microistruzione corrente.
+The following graph shows the rising and falling edges of only the control signals activated in the four steps of the SAP LDA instruction. The colors indicate that the glitching is triggered by an intentional change, i.e. by the microcode that deliberately modifies the state of a specific signal. The grey areas, on the other hand, represent the glitching of signals not modified by the current microinstruction.
 
-Il glitching dovuto alle variazioni degli indirizzi di ingresso delle EEPROM del SAP-1 (ma è così anche nell'NQSAP) avviene:
+The glitching due to variations in the input addresses of the SAP-1 EEPROMs (but it is the same in the NQSAP) occurs:
 
-- ad ogni Falling Edge del Clock come conseguenza del cambiamento delle uscite del Ring Counter (momenti 1, 5, 9, 13, 17)
-- al Rising Edge del Clock come conseguenza del caricamento dell'istruzione nell'Instruction Register (momento 7 nello step 1).
+- at every Falling Edge of the Clock as a consequence of the change in the Ring Counter outputs (moments 1, 5, 9, 13, 17)
+- at the Rising Edge of the Clock as a consequence of loading the instruction into the Instruction Register (moment 7 in step 1)
 
-Il fenomeno del glitching si manifesta su tutti i segnali di controllo gestiti dalle EEPROM, sia quelli variati di proposito, sia quelli che non vengono modificati nello step corrente. Come nota a latere, bisogna segnalare che *tutti* i segnali di controllo del computer sono soggetti a questo fenomeno, anche se non indicati nel grafico.
+The glitching phenomenon manifests itself on all control signals managed by the EEPROMs, both those intentionally changed and those that are not modified in the current step. As a side note, it should be pointed out that all computer control signals are subject to this phenomenon, even if not indicated in the graph.
 
-[![SAP computer - istruzione LDA](../../assets/control/40-wavedrom-sap-lda.png "SAP computer - istruzione LDA"){:width="100%"}](../../assets/control/40-wavedrom-sap-lda.png)
+[![SAP computer - LDA instruction](../../../assets/control/40-wavedrom-sap-lda.png "SAP computer - LDA instruction"){:width="100%"}](../../../assets/control/40-wavedrom-sap-lda.png)
 
-*SAP computer - istruzione LDA*.
+*SAP computer - LDA instruction*.
 
-Prima di continuare, è interessante esaminare gli step di questa istruzione e ricollegarsi alla spiegazione dell'istruzione [LDA #$94](#ring-counter-e-microistruzioni) dell'NQSAP per vedere le similitudini:
+Before continuing, it is interesting to examine the steps of this instruction and connect back to the explanation of the [LDA #$94](#ring-counter-and-microinstructions) instruction of the NQSAP to see the similarities:
 
-1. PC esposto sul bus (CO, Counter Out) e caricamento del MAR (MI, Memory Address Register In)
-2. RAM esposta sul bus (RO, RAM Out), caricamento dell'IR (II, Instruction Register In) e incremento del PC (CE, Counter Enable)
-3. IR esposto sul bus (IO, Instruction Register Out), caricamento del MAR (MI, Memory Address Register In)
-4. RAM esposta sul bus (RO, RAM Out), caricamento di A (AI, A In)
+1. PC exposed on the bus (CO, Counter Out) and loading of the MAR (MI, Memory Address Register In)
+2. RAM exposed on the bus (RO, RAM Out), loading of the IR (II, Instruction Register In) and incrementing of the PC (CE, Counter Enable)
+3. IR exposed on the bus (IO, Instruction Register Out), loading of the MAR (MI, Memory Address Register In)
+4. RAM exposed on the bus (RO, RAM Out), loading of A (AI, A In)
 
-Dopo questa breve digressione, ritorniamo al discorso principale.
+After this brief digression, let us return to the main discussion
 
-Tutti questi segnali spuri generalmente non sono un problema per il SAP, perché le microistruzioni scrivono su registri tipo D <a href="https://www.ti.com/lit/ds/sdls067a/sdls067a.pdf" target="_blank">74LS173</a> attivati al Rising Edge del clock, cioè quando i segnali di controllo sono stabili. Ad esempio, il glitching di MI al momento 7 non è fonte di problemi, perché il '173 del MAR memorizza nuovi valori solo col segnale di Enable attivo ***e*** il Rising Edge del clock: in quel momento, il segnali MI si trova in uno stato stabile e non c'è rischio di caricare dati non corretti.
+All these spurious signals are generally not an issue for the SAP, because the microinstructions write to D-type registers <a href="https://www.ti.com/lit/ds/sdls067a/sdls067a.pdf" target="_blank">74LS173</a> activated at the Rising Edge of the clock, i.e. when the control signals are stable. For example, the glitching of MI at moment 7 is not a source of problems, because the '173 of the MAR stores new values only with the Enable signal active and the Rising Edge of the clock: at that moment, the MI signal is in a stable state and there is no risk of loading incorrect data.
 
-Vi è un'eccezione durante il caricamento dei Flag: poiché questi sono mappati direttamente sugli ingressi delle EEPROM, ogni variazione di C o F provoca glitching a ogni Rising Edge che li modifica. Per semplicità, il grafico precedente non include la rappresentazione di questo momento di instabilità.
+There is an exception during the loading of the Flags: since these are mapped directly onto the EEPROM inputs, any change in C or F causes glitching at every Rising Edge that modifies them. For simplicity, the previous graph does not include the representation of this moment of instability.
 
-Possiamo ora riprendere la domanda fatta in precedenza in questa sezione: "Quali sono le possibili conseguenze del caricamento dell'IR al Rising Edge del clock?"
+We can now return to the question asked earlier in this section: "What are the possible consequences of loading the IR at the Rising Edge of the clock?"
 
-Se nel computer sono presenti registri privi di un segnale di Enable, il loro caricamento può essere effettuato implementando una logica combinatoria tra il clock e il segnale di controllo dedicato. Ad esempio, nell'NQSAP i [registri D, X e Y](../dxy) e il [registro B](../alu/#lalu-dellnqsap) sono realizzati con <a href="https://www.onsemi.com/pdf/datasheet/74vhc574-d.pdf" target="_blank">74LS574</a> e porte NOR.
+If the computer contains registers lacking an Enable signal, their loading can be implemented by implementing combinational logic between the clock and the dedicated control signal. For example, in the NQSAP the [D, X and Y registers](../dxy) and the [B register](../alu/#the-nqsap-alu) are implemented with <a href="https://www.onsemi.com/pdf/datasheet/74vhc574-d.pdf" target="_blank">74LS574</a> and NOR gates.
 
-[![Registro Y dell'NQSAP](../../assets/control/40-NQSAP-dxy-y.png "Registro Y dell'NQSAP"){:width="75%"}](../../assets/control/40-NQSAP-dxy-y.png)
+[![NQSAP Y register](../../../assets/control/40-NQSAP-dxy-y.png "NQSAP Y register"){:width="75%"}](../../../assets/control/40-NQSAP-dxy-y.png)
 
-*Registro Y dell'NQSAP*.
+*NQSAP Y register*.
 
-La risposta alla domanda è che il caricamento dell'Instruction Register al momento 7 genera un glitch sul segnale /WY, che può causare un caricamento indesiderato di Y. L'Enable del '574 dipende infatti dall'operazione NOR tra il clock invertito e /WY. Se quest'ultimo è instabile, potrebbe verificarsi una scrittura non voluta del registro.
+The answer to the question is that the loading of the Instruction Register at moment 7 generates a glitch on the /WY signal, which can cause an unwanted loading of Y. The Enable of the '574 in fact depends on the NOR operation between the inverted clock and /WY. If the latter is unstable, an unwanted write to the register could occur.
 
-[![Glitching all'istruzione LDY nell'NQSAP](../../assets/control/40-nqsap-ldy.png "Glitching all'istruzione LDY nell'NQSAP"){:width="100%"}](../../assets/control/40-nqsap-ldy.png)
+[![Glitching at the LDY instruction in the NQSAP](../../../assets/control/40-nqsap-ldy.png "Glitching at the LDY instruction in the NQSAP"){:width="100%"}](../../../assets/control/40-nqsap-ldy.png)
 
-*Glitching all'istruzione LDY nell'NQSAP*.
+*Glitching at the LDY instruction in the NQSAP*.
 
-E' dalla necessità di indirizzare il problema del glitching che prende forma il design dell'Instruction Register dell'<a href="https://tomnisbet.github.io/nqsap-pcb/" target="_blank">NQSAP-PCB</a>, evoluzione dell'NQSAP.
+It is from the need to address the glitching problem that the design of the Instruction Register of the <a href="https://tomnisbet.github.io/nqsap-pcb/" target="_blank">NQSAP-PCB</a>, the evolution of the NQSAP, takes shape.
 
-Per risolvere i problemi di glitching, Tom ha ridisegnato l'IR sostituendo i 74LS173 con due registri tipo D <a href="https://www.ti.com/lit/ds/symlink/sn74ls377.pdf" target="_blank">74LS377</a> in cascata. Il primo si aggiorna come di consueto durante il normale caricamento dell'IR, che avviene al Rising Edge del clock al momento 7 dello step 1 e mantiene inalterata l'operatività del computer. L'output del primo registro viene portato come input al secondo '377, che viene aggiornato al Falling Edge in contemporanea all'incremento del Ring Counter. In questo modo, tutti gli ingressi delle EEPROM vengono aggiornati simultaneamente al Falling Edge del clock, garantendo che i segnali di controllo in uscita siano ormai stabili quando i registri del computer vengono aggiornati al successivo Rising Edge.
+To resolve the glitching problems, Tom redesigned the IR by replacing the 74LS173s with two cascaded D-type registers <a href="https://www.ti.com/lit/ds/symlink/sn74ls377.pdf" target="_blank">74LS377</a>. The first updates as usual during the normal loading of the IR, which occurs at the Rising Edge of the clock at moment 7 of step 1 and maintains the computer's operation unchanged. The output of the first register is fed as input to the second '377, which is updated at the Falling Edge simultaneously with the Ring Counter increment. In this way, all EEPROM inputs are updated simultaneously at the Falling Edge of the clock, ensuring that the control signals at the output are already stable when the computer's registers are updated at the subsequent Rising Edge
 
-Questa miglioria è stata recepita nel BEAM, che nel suo design cerca di includere anche gli aspetti positivi dell'NQSAP-PCB.
+This improvement has been incorporated into the BEAM, which in its design seeks to include the positive aspects of the NQSAP-PCB as well.
 
-[![Schemi dell'Instruction Register dell'NQSAP e del BEAM](../../assets/control/40-cl-ir-beam-nqsap.png "Schemi dell'Instruction Register dell'NQSAP e del BEAM"){:width="100%"}](../../assets/control/40-cl-ir-beam-nqsap.png)
+[![Schematics of the NQSAP and BEAM Instruction Register](../../../assets/control/40-cl-ir-beam-nqsap.png "Schematics of the NQSAP and BEAM Instruction Register"){:width="100%"}](../../../assets/control/40-cl-ir-beam-nqsap.png)
 
-*Schemi dell'Instruction Register dell'NQSAP e del BEAM.*
+*Schematics of the NQSAP and BEAM Instruction Register.*
 
-Peraltro, *tutti* i registri a 8 bit del BEAM sono realizzati con componenti dotati di Enable e Clock separati. Conseguentemente, non si possono verificare caricamenti indesiderati poiché, al Rising Edge del clock, i segnali di controllo sono sempre stabili.
+Moreover, *all* 8-bit registers of the BEAM are implemented with components equipped with separate Enable and Clock inputs. Consequently, unwanted loadings cannot occur since, at the Rising Edge of the clock, the control signals are always stable.
 
-Risulta comunque interessante visualizzare il comportamento dei segnali di controllo al momento 7, durante il quale - come ormai assodato - l'unico registro aggiornato è l'IR:
+It is nonetheless interesting to visualize the behavior of the control signals at moment 7, during which — as now established — the only register updated is the IR:
 
-[![Nessun glitching sul BEAM al momento 7 nello step 1](../../assets/control/40-beam-ldy.png "Nessun glitching sul BEAM al momento 7 nello step 1"){:width="100%"}](../../assets/control/40-beam-ldy.png)
+[![No glitching on the BEAM at instant 7 in step 1](../../../assets/control/40-beam-ldy.png "No glitching on the BEAM at instant 7 in step 1"){:width="100%"}](../../../assets/control/40-beam-ldy.png)
 
-*Nessun glitching sul BEAM al momento 7 nello step 1*.
+*No glitching on the BEAM at instant 7 in step 1*.
 
-Il primo dei due '377 si aggiorna al Rising Edge al momento 7, senza causare glitching nelle EEPROM, poiché i loro ingressi non vengono modificati. Le uscite di questo primo registro vengono quindi inviate come input al secondo '377, che si aggiorna al Falling Edge del clock al momento 9, contemporaneamente all'incremento del RC. Solo ora tutti gli ingressi delle EEPROM vengono aggiornati simultaneamente, consentendo ai segnali di controllo di stabilizzarsi in attesa del momento 11, quando i registri vengono caricati secondo le microistruzioni impostate nello step 2.
+The first of the two '377s updates at the Rising Edge at moment 7, without causing glitching in the EEPROMs, since their inputs are not modified. The outputs of this first register are then sent as input to the second '377, which updates at the Falling Edge of the clock at moment 9, simultaneously with the RC increment. Only now are all EEPROM inputs updated simultaneously, allowing the control signals to stabilize in anticipation of moment 11, when the registers are loaded according to the microinstructions set in step 2.
 
-Come possiamo essere certi che l'eliminazione del glitching nel BEAM derivi effettivamente dalla doppia bufferizzazione del Program Counter? Tutti i registri a 8 bit realizzati con componenti dotati di Enable e Clock separati sono immuni al fenomeno, ma alcuni altri registri sono privi di tale ingresso, come il Flip-Flop 74LS74 utilizzato per memorizzare i Flag. Una porta AND consente di realizzare un segnale di Enable artificiale, similarmente allo schema del *Registro Y dell’NQSAP*.
+How can we be certain that the elimination of glitching in the BEAM actually derives from the double buffering of the Program Counter? All 8-bit registers implemented with components equipped with separate Enable and Clock inputs are immune to the phenomenon, but some other registers lack such an input, such as the 74LS74 Flip-Flop used to store the Flags. An AND gate allows an artificial Enable signal to be created, similarly to the schematic of the *NQSAP Y Register*.
 
-![Registro Flag C del BEAM](../../assets/control/40-beam-c-flag.png "Registro Flag C del BEAM"){:width="66%"}
+![BEAM Flag C Register](../../../assets/control/40-beam-c-flag.png "BEAM Flag C Register"){:width="66%"}
 
-*Registro Flag C del BEAM*.
+*BEAM Flag C Register*.
 
-Esaminiamo la semplice istruzione SEC, che imposta il Carry.
+Let us examine the simple SEC instruction, which sets the Carry.
 
 ~~~text
 | ---- | ---------------------|
-| Step | Microistruzione      |
+| Step | Microinstruction     |
 | ---- | ---------------------|
 | 0*   | RPC | WM             |
 | 1*   | RR  | WIR | PCI      |
@@ -361,276 +366,276 @@ Esaminiamo la semplice istruzione SEC, che imposta il Carry.
 | ---- | ---------------------|
 ~~~
 
-*Scomposizione dell'istruzione SEC nelle sue tre microistruzioni elementari*.
+*Breakdown of the SEC instruction into its three elementary microinstructions*.
 
-1. Il primo step carica l'indirizzo dell'istruzione corrente nel Memory Address Register:
-    - RPC, Read Program Counter - espone l'indirizzo del PC sul bus
-    - WM, Write Memory Address Register - carica l'indirizzo dell'istruzione nel MAR
-2. Il secondo step carica l'opcode dell'istruzione nell'IR e incrementa il PC per farlo puntare alla locazione di memoria successiva (che nel caso dell'istruzione SEC, lunga un solo byte, sarà la prossima istruzione):
-    - RR, Read RAM - espone sul bus l'opcode dell'istruzione
-    - WIR, Write Instruction Register - carica l'opcode nell'IR\*
-    - PCI, Program Counter Increment - incrementa il PC
-3. Il terzo step scrive 1 sul registro C del 74LS74:
-    - CC, Clear Carry - imposta l'ingresso ALU-Cin dell'ALU (ricordare che il Carry del '181 è [invertito](../alu/#funzioni-logiche-e-operazioni-aritmetiche): stato HI = inattivo)
-    - FC, Flag C - predispone il caricamento del Flag C
-    - RL, Read ALU - espone sul bus il contenuto dell'ALU
-    - NI, Next Instruction - resetta il Ring Counter
+1. The first step loads the address of the current instruction into the Memory Address Register:
+    RPC, Read Program Counter - exposes the PC address on the bus
+    WM, Write Memory Address Register - loads the instruction address into the MAR
+2. The second step loads the instruction opcode into the IR and increments the PC to make it point to the next memory location (which in the case of the SEC instruction, one byte long, will be the next instruction):
+    RR, Read RAM - exposes the instruction opcode on the bus
+    WIR, Write Instruction Register - loads the opcode into the IR\*
+    PCI, Program Counter Increment - increments the PC
+3. The third step writes 1 to the C register of the 74LS74:
+    CC, Clear Carry - sets the ALU-Cin input of the ALU (remember that the '181 Carry is [inverted](../alu/#logic-functions-and-arithmetic-operations): HI state = inactive)
+    FC, Flag C - prepares the loading of Flag C
+    RL, Read ALU - exposes the ALU contents on the bus
+    NI, Next Instruction - resets the Ring Counter
 
-\* I primi due step di *tutte* le istruzioni sono *sempre* identici.
+\* The first two steps of *all* instructions are *always* identical.
 
-CC attivo al momento 9 invia un segnale HI al pin ALU-Cin e l'[opcode 03](..alu/#relazione-diretta-hardwired-tra-instruction-register-e-alu), senza Carry, configura l'ALU per emettere un output di tutti 1 sul bus.
+CC active at instant 9 sends a HI signal to the ALU-Cin pin and [opcode 03](../alu/#direct-hardwired-relationship-between-instruction-register-and-alu), without Carry, configures the ALU to emit an output of all 1s on the bus.
 
-[![Nessun glitching sul BEAM al caricamento del Flag C](../../assets/control/40-beam-sec.png "Nessun glitching sul BEAM al caricamento del Flag C"){:width="100%"}](../../assets/control/40-beam-sec.png)
+[![No glitching on the BEAM at Flag C loading](../../../assets/control/40-beam-sec.png "No glitching on the BEAM at Flag C loading"){:width="100%"}](../../../assets/control/40-beam-sec.png)
 
-*Nessun glitching sul BEAM al caricamento del Flag C*.
+*No glitching on the BEAM at Flag C loading*.
 
- Al Rising Edge del clock, il valore 1 presente al pin D del Flip-Flop viene caricato e mantenuto, impostando cosi il Flag di Carry: al momento 11 il segnale FC è stabile e il Flip-Flop che contiene il Flag C viene aggiornato senza effetti collaterali.
+ At the Rising Edge of the clock, the value 1 present at the D pin of the Flip-Flop is loaded and retained, thus setting the Carry Flag: at moment 11 the FC signal is stable and the Flip-Flop containing Flag C is updated without side effects.
 
 ---
 
-Concludendo la sezione, è importante ricordare che tutti i segnali di una microistruzione sono attivati contemporaneamente, ma che le operazioni di lettura e scrittura impostate dalla Control Word vengono eseguite secondo tempistiche diverse. Al Falling Edge del clock:
+Concluding the section, it is important to remember that all signals of a microinstruction are activated simultaneously, but that the read and write operations set by the Control Word are executed according to different timings. At the Falling Edge of the clock:
 
-- I segnali di lettura impostati dalla Control Word attivano immediatamente l'eventuale modulo interessato da una Read, il quale presenta subito il suo output sul bus; ad esempio, l'attivazione di un bus transceiver <a href="https://www.mouser.com/datasheet/2/308/74LS245-1190460.pdf" target="_blank">74LS245</a> è immediata.
-- Viceversa, i segnali di caricamento preparano i moduli interessati, ma le operazioni di Write vengono eseguite solo al successivo Rising Edge del clock, assicurando così che i registri da aggiornare ricevano segnali già stabilizzati. Un esempio è il registro tipo D 74LS377 citato in precedenza.
+- The read signals set by the Control Word immediately activate any module involved in a Read operation, which immediately presents its output on the bus; for example, the activation of a bus transceiver <a href="https://www.mouser.com/datasheet/2/308/74LS245-1190460.pdf" target="_blank">74LS245</a> is immediate.
+- Conversely, the loading signals prepare the involved modules, but the Write operations are executed only at the subsequent Rising Edge of the clock, thus ensuring that the registers to be updated receive already stabilized signals. An example is the D-type register 74LS377 mentioned earlier.
 
-## Lunghezza delle istruzioni
+## Instruction length
 
-Altro aspetto importante da prendere in considerazione è il numero di microistruzioni che possono comporre ogni istruzione.
+Another important aspect to consider is the number of microinstructions that can make up each instruction.
 
-Il SAP-1 prevedeva un numero fisso di 5 step; conseguentemente, tutte le istruzioni avevano la stessa durata, indipendentemente dalla loro complessità. Tuttavia, nel microcode che segue possiamo vedere che in realtà l'istruzione di caricamento immediato LDA potrebbe essere eseguita in soli tre step, mentre somma e sottrazione necessitano di cinque step:
+The SAP-1 provided a fixed number of 5 steps; consequently, all instructions had the same duration, regardless of their complexity. However, in the microcode that follows we can see that in reality the immediate load instruction LDA could be executed in just three steps, while addition and subtraction require five steps:
 
-[![Microcode del computer SAP](../../assets/control/40-cl-sap-microcode.png "Microcode del computer SAP"){:width="66%"}](../../assets/control/40-cl-sap-microcode.png)
+[![SAP computer Microcode](../../../assets/control/40-cl-sap-microcode.png "SAP computer Microcode"){:width="66%"}](../../../assets/control/40-cl-sap-microcode.png)
 
-*Microcode del computer SAP.*
+*SAP computer Microcode.*
 
-Nello schema del *Ring Counter del SAP-1* si nota che il contatore '161 presenta le sue uscite agli ingressi di selezione del demultiplexer '138, che attiva in sequenza le uscite invertite (active = LO) da 00 a 05: ad ogni attivazione di quest'ultima, le due NAND attivano l'ingresso di Reset /MR del '161, che riporta il conteggio degli step allo zero iniziale, cominciando così una nuova istruzione.
+In the schematic of the SAP-1 Ring Counter it can be noted that the '161 counter presents its outputs to the selection inputs of the '138 demultiplexer, which sequentially activates the inverted outputs (active = LO) from 00 to 05: at every activation of the latter, the two NAND gates activate the Reset input /MR of the '161, which resets the step count to the initial zero, thus beginning a new instruction.
 
-E' facile notare come questa architettura comporti uno spreco di cicli di elaborazione durante l'esecuzione di istruzioni che richiedono pochi passaggi, in quanto il RC deve comunque attendere l'attivazione dell'ultima uscita 05 per essere resettato.
+It is easy to notice how this architecture results in a waste of processing cycles during the execution of instructions that require few steps, since the RC must in any case wait for the activation of the last output 05 before being reset.
 
-[![Ring Counter del SAP](../../assets/control/40-control-sap-rc.png "Ring Counter del SAP"){:width="50%"}](../../assets/control/40-control-sap-rc.png)
+[![SAP Ring Counter](../../../assets/control/40-control-sap-rc.png "SAP Ring Counter"){:width="50%"}](../../../assets/control/40-control-sap-rc.png)
 
-*Ring Counter del SAP.*
+*SAP Ring Counter.*
 
-L'NQSAP di Tom prevede un accorgimento molto furbo (tra gli altri) e migliora le prestazioni del computer introducendo la durata variabile delle istruzioni; infatti, l'ultima microistruzione di ogni istruzione include un segnale N (NI nel BEAM), che attiva il pin di caricamento parallelo del '161: poiché tutti gli input del contatore sono impostati sullo 0, il conteggio ritorna allo zero iniziale.
+Tom's NQSAP includes a very clever feature (among others) and improves the computer's performance by introducing variable instruction length; in fact, the last microinstruction of each instruction includes a signal N (NI in the BEAM), which activates the parallel load pin of the '161: since all counter inputs are set to 0, the count returns to the initial zero.
 
-In altre parole, si mette anticipatamente fine ad ogni istruzione inserendo nell'ultimo step del microcode un segnale di Load del RC, così da non dover attendere l'esecuzione di tutti gli step vuoti; il vantaggio nell'operare questa scelta aumenta man mano che si desidera implementare istruzioni sempre più complesse che necessitano di un numero massimo di step sempre maggiore. Ad esempio, nel BEAM la lunghezza massima possibile di un'istruzione è di 16 step, ma un'istruzione semplice come TXA può essere eseguita in soli 3 step, senza sprecare gli altri 13 cicli.
+In other words, each instruction is ended early by inserting an RC Load signal in the last microcode step, so as not to have to wait for the execution of all empty steps; the advantage of making this choice increases as one wishes to implement increasingly complex instructions that require an ever greater maximum number of steps. For example, in the BEAM the maximum possible length of an instruction is 16 steps, but a simple instruction like TXA can be executed in just 3 steps, without wasting the other 13 cycles.
 
-Il momento del caricamento del contatore è visibile a pagina 11 del <a href="https://www.ti.com/lit/ds/symlink/sn54ls161a-sp.pdf" target="_blank">datasheet</a>: con /Load allo stato LO*, al successivo Rising Edge** del clock le uscite QA-QD assumono gli stati LO presenti agli ingressi A-D (istante Preset nella ascissa).
+The instant of counter loading is visible on page 11 of the <a href="https://www.ti.com/lit/ds/symlink/sn54ls161a-sp.pdf" target="_blank">datasheet</a>: with /Load at LO state\*, at the subsequent Rising Edge\*\* of the clock the QA-QD outputs assume the LO states present at the A-D inputs (Preset instant on the x-axis).
 
-In pratica, il Ring Counter ritorna allo step iniziale.
+In practice, the Ring Counter returns to the initial step.
 
-[![Segnale Next Instruction nel Ring Counter del BEAM](../../assets/control/40-beam-ni.png "Segnale Next Instruction nel Ring Counter del BEAM"){:width="66%"}](../../assets/control/40-beam-ni.png)
+[![Next Instruction signal in the BEAM Ring Counter](../../../assets/control/40-beam-ni.png "Next Instruction signal in the BEAM Ring Counter"){:width="66%"}](../../../assets/control/40-beam-ni.png)
 
-*Segnale Next Instruction nel Ring Counter del BEAM.*
+*Next Instruction signal in the BEAM Ring Counter.*
 
-Potrebbe sorgere una domanda: perché non collegare il segnale N del microcode direttamente al pin di Reset del contatore?
+A question might arise: why not connect the N signal of the microcode directly to the Reset pin of the counter?
 
-Il reset del '161 è *asincrono*, che significa che è indipendente dal clock: di conseguenza, il contatore verrebbe resettato al Falling Edge del clock nel momento stesso dell'impostazione della Control Word, non permettendo il completamento dello step al Rising Edge!
+The reset of the '161 is *asynchronous*, meaning that it is independent of the clock: consequently, the counter would be reset at the Falling Edge of the clock at the very moment the Control Word is set, not allowing the step to complete at the Rising Edge!
 
-In realtà, fa notare Tom, sarebbe comunque possibile utilizzare il Reset asincrono del '161 collegato direttamente al segnale N, ma questo significherebbe dover aggiungere uno step dedicato al reset come ultima microistruzione di ogni istruzione. Utilizzando invece il caricamento sincrono, non è necessario uno step di reset dedicato.
+In fact, Tom points out, it would still be possible to use the asynchronous Reset of the '161 connected directly to the N signal, but this would mean having to add a dedicated reset step as the last microinstruction of every instruction. By using synchronous loading instead, no dedicated reset step is necessary.
 
-\* e \*\*: ricordando quanto esposto alla fine della sezione precedente in relazione all'impostazione della Control Word e ai momenti di caricamento dei registri, troviamo qui un primo esempio concreto: il segnale /Load viene settato dalla Control Word durante il Falling Edge del clock, mentre l'effettivo caricamento del registro avviene in concomitanza con il Rising Edge.
+\* and \*\*: recalling what was described at the end of the previous section regarding the Control Word setting and register loading moments, we find here a first concrete example: the /Load signal is set by the Control Word during the Falling Edge of the clock, while the actual loading of the register occurs in conjunction with the Rising Edge.
 
-Come indicato anche nella sezione [Differenze](.../alu/#differenze-tra-moduli-alu-dellnqsap-e-del-beam) della pagina dell'ALU, bisogna notare che il computer NQSAP prevede solo 8 step per le microistruzioni. Per emulare alcune istruzioni del 6502 di scorrimento e rotazione servono più step, pertanto, sul computer BEAM ne sono stati previsti 16.
+As also indicated in the [Differences](../alu/#differences-between-nqsap-and-beam-alu-modules) section of the ALU page, it should be noted that the NQSAP computer provides only 8 steps for microinstructions. To emulate some 6502 shift and rotate instructions more steps are needed, therefore 16 have been provided on the BEAM computer.
 
-## I 74LS138 per la gestione dei segnali
+## The 74LS138s for signal management
 
-La complessità dell'NQSAP è tale per cui i soli 16 segnali di controllo disponibili nella Control Logic del SAP-1 non sarebbero stati sufficienti per pilotare moduli complessi come ad esempio l'ALU e il registro dei Flag; in conseguenza di questo, diventava necessario ampliare in maniera considerevole il numero di linee di controllo utilizzabili.
+The complexity of the NQSAP is such that the mere 16 control signals available in the SAP-1 Control Logic would not have been sufficient to drive complex modules such as the ALU and the Flag register; as a consequence of this, it became necessary to considerably expand the number of usable control lines.
 
-L'aumento del numero di EEPROM e l'inserimento di quattro demultiplexer <a href="https://www.ti.com/lit/ds/symlink/sn74ls138.pdf" target="_blank">74LS138</a> consente di gestire l'elevato numero di segnali richiesti dall'NQSAP e dal BEAM.
+The increase in the number of EEPROMs and the insertion of four <a href="https://www.ti.com/lit/ds/symlink/sn74ls138.pdf" target="_blank">74LS138</a> demultiplexers allows the high number of signals required by the NQSAP and the BEAM to be managed.
 
-Come visibile nello schema, ogni '138 presenta 8 pin di output, 3 pin di selezione e 3 pin di Enable; connettendo opportunamente i pin di selezione ed Enable, è possibile pilotare ben quattro '138 (per un totale di 32 segnali di output) usando solo 8 segnali in uscita da una singola EEPROM. In altre parole, i '138 fungono da *demoltiplicatori* e permettono di indirizzare un numero elevato di segnali a partire da un numero limitato di linee in ingresso.
+As visible in the schematic, each '138 has 8 output pins, 3 selection pins and 3 Enable pins; by appropriately connecting the selection and Enable pins, it is possible to drive four '138s (for a total of 32 output signals) using only 8 signals from a single EEPROM output. In other words, the '138s act as demultiplexers and allow a large number of signals to be addressed from a limited number of input lines.
 
-[![Demultiplexer 74LS138 nel BEAM](../../assets/control/40-cl-beam-eeprom-138.png "Demultiplexer 74LS138 nel BEAM"){:width="100%"}](../../assets/control/40-cl-beam-eeprom-138.png)
+[![74LS138 demultiplexer in the BEAM](../../../assets/control/40-cl-beam-eeprom-138.png "74LS138 demultiplexer in the BEAM"){:width="100%"}](../../../assets/control/40-cl-beam-eeprom-138.png)
 
-*Demultiplexer 74LS138 nel BEAM.*
+*74LS138 demultiplexer in the BEAM.*
 
-Quando attive, le uscite dei '138 presentano uno stato LO; questa circostanza risulta molto comoda per la gestione dei segnali del computer, in quanto molti dei chip presenti nei vari moduli utilizzano ingressi di Enable invertiti (ad esempio i transceiver 74LS245 e i registri tipo D <a href="https://www.ti.com/lit/ds/symlink/sn74ls377.pdf" target="_blank">74LS377</a>).
+When active, the outputs of the '138s present a LO state; this circumstance is very convenient for managing the computer's signals, since many of the chips present in the various modules use inverted Enable inputs (for example the 74LS245 transceivers and the D-type registers <a href="https://www.ti.com/lit/ds/symlink/sn74ls377.pdf" target="_blank">74LS377</a>).
 
-I '138 presentano un solo output attivo alla volta; la configurazione dei pin di selezione ed Enable adottata nello schema permette di creare due coppie di '138, ognuna delle quali presenta un solo output attivo alla volta:
+The '138s present only one active output at a time; the configuration of the selection and Enable pins adopted in the schematic allows two pairs of '138s to be created, each of which presents only one active output at a time:
 
-- una coppia dedicata ai segnali di lettura dai registri;
-- una coppia dedicata ai segnali di scrittura sui registri.
+- one pair dedicated to read signals from registers;
+- one pair dedicated to write signals to registers.
 
-Un effetto collaterale positivo in questo tipo di gestione sta nel fatto che risulterà impossibile attivare più letture contemporanee, prevenendo così il rischio di cortocircuiti involontari tra uscite allo stato HI e uscite allo stato LO di moduli diversi.
+A positive side effect of this type of management is that it will be impossible to activate multiple simultaneous reads, thus preventing the risk of inadvertent short circuits between HI state outputs and LO state outputs of different modules.
 
-Il ragionamento per le operazioni di scrittura è diverso, poiché è effettivamente necessario poter scrivere su più registri contemporaneamente. Un operazione di questo tipo non causa conflitti sul bus ed è utilizzata, ad esempio, dall'istruzione di somma ADC, che prevede uno step in cui i dati vengono scritti simultaneamente sia nel registro A sia nel registro dei Flag.
+The reasoning for write operations is different, since it is effectively necessary to be able to write to multiple registers simultaneously. An operation of this type does not cause bus conflicts and is used, for example, by the ADC addition instruction, which includes a step in which data is written simultaneously to both register A and the Flag register.
 
-Nello schema si può notare che tutti i registri del computer che *non hanno tra loro* la necessità di essere attivi contemporaneamente - tanto in lettura quanto in scrittura - sono indirizzati con i demultiplexer.
+In the schematic it can be noted that all computer registers that *do not need* to be active simultaneously — both for reading and writing — are addressed with the demultiplexers.
 
-Sono invece indispensabili segnali di controllo provenienti direttamente dalle EEPROM in tre casi:
+Direct control signals from the EEPROMs are instead indispensable in three cases:
 
-- quando un registro presenta più segnali di ingresso che possono essere attivi contemporaneamente (ad esempio il registro dei [Flag](../flags/#componenti-e-funzionamento), oppure il registro [H](../alu/#il-registro-h));
-- quando è necessario poter scrivere su più registri contemporaneamente (ad esempio A e H, oppure Flag e A, oppure Flag e H*);
-- quando occorrono altri segnali di controllo totalmente indipendenti (ad esempio per lo Stack, oppure per la gestione del [Carry Input](../flags/#il-carry-e-i-registri-h-e-alu) per ALU ed H).
+- when a register has multiple input signals that can be active simultaneously (for example the [Flags register](../flags/#components-and-operation), or the [H register](../alu/#the-h-register));
+- when it is necessary to be able to write to multiple registers simultaneously (for example A and H, or Flag and A, or Flag and H\*);
+- when other completely independent control signals are needed (for example for the Stack, or for managing the [Carry Input](../flags/#the-carry-and-the-h-and-alu-registers) for ALU and H).
 
-\* In questo secondo caso, i segnali provenienti direttamente dalle EEPROM vengono utilizzati per gestire altri registri che devono poter essere attivi contemporaneamente ad uno dei registri singolarmente indirizzabili dalla coppia di '138 adibiti ai segnali di scrittura.
+\* In this second case, the signals coming directly from the EEPROMs are used to manage other registers that must be able to be active simultaneously with one of the registers individually addressable by the pair of '138s assigned to write signals.
 
-Riassumendo:
+In summary:
 
-- una prima EEPROM gestisce quattro demultiplexer che pilotano i segnali di *lettura* di tutti i registri e i segnali di *caricamento* di tutti i registri (eccetto H e Flag);
-- altre tre EEPROM gestiscono tutti gli altri segnali, inclusi quelli che governano H e Flag.
+- a first EEPROM manages four demultiplexers that drive the *read* signals of all registers and the *load* signals of all registers (except H and Flag);
+- three other EEPROMs manage all other signals, including those that control H and Flag.
 
-Notare che i segnali di uscita dei '138 realmente utilizzabili sono 30 e non 32, perché il microcode deve prevedere situazioni in cui nessun registro pilotato deve essere attivo. Ad esempio, un output 0000.0000 della prima EEPROM attiverà i pin D0 del primo e del terzo demultiplexer: poiché entrambi i pin sono scollegati, sarà sufficiente impostare l'output sulla prima EEPROM a 0x00 per evitare l'attivazione di qualsiasi registro gestito dai '138.
+Note that the '138 output signals actually usable are 30 and not 32, because the microcode must account for situations in which no driven register should be active. For example, an output of 0000.0000 from the first EEPROM will activate the D0 pins of the first and third demultiplexer: since both pins are disconnected, it will be sufficient to set the output on the first EEPROM to 0x00 to avoid the activation of any register managed by the '138s.
 
-## Caricamento di un programma dal Loader
+## Loading a program from the Loader
 
-NQSAP e BEAM consentono di automatizzare il caricamento di un programma grazie alla presenza di un Loader basato su Arduino Nano.
+NQSAP and BEAM allow the automated loading of a program thanks to the presence of a Loader based on an Arduino Nano.
 
-Il Loader controlla alcuni segnali della Control Logic e del modulo di clock. Il segnale LDR-Active può inibire le prime due EEPROM e consente al Loader di sostituirsi nel controllo dei '138 utilizzando i segnali N0-N7. Inibendo il clock principale del computer, il Loader può iniettare un proprio clock ed utilizzarlo per caricare i registri MAR e RAM.
+The Loader controls some signals of the Control Logic and the clock module. The LDR-Active signal can inhibit the first two EEPROMs and allows the Loader to take over control of the '138s using the N0-N7 signals. By inhibiting the computer's main clock, the Loader can inject its own clock and use it to load the MAR and RAM registers.
 
-Una spiegazione più dettagliata è presente nella pagina dedicata al [Loader](../loader/).
+A more detailed explanation is available on the dedicated [Loader](../loader/) page.
 
-## Riepilogo segnali dell'NQSAP e del BEAM
+## NQSAP and BEAM signal summary
 
-La prima tabella riassume i segnali di controllo originati dalla Control Logic. La seconda tabella comprende una descrizione dei bus esistenti nel computer e la lista dei segnali di controllo non provenienti dalla Control Logic.
+The first table summarizes the control signals originating from the Control Logic. The second table includes a description of the existing buses in the computer and a list of control signals not originating from the Control Logic.
 
-La colonna "Ambito o direzione segnale" indica il contesto di un bus, oppure sorgente e destinazione di un segnale di controllo.
+The "Signal scope or direction" column indicates the context of a bus, or the source and destination of a control signal.
 
 ### Control Signals
 
-| NQSAP         | BEAM           | Ambito o direzione segnale | Descrizione                                                                                                  |
+| NQSAP         | BEAM           | Signal scope or direction  | Description                                                                                                  |
 | -----         | ----           | -------------------------- | -----------                                                                                                  |
-| N             | NI             | CL                         | Next Instruction; [spiegazione](#lunghezza-delle-istruzioni).                                                |
-| LF            | LF             | CL → ALU                   | ALU Force; [spiegazione 1](../alu/#istruzioni-di-comparazione) e [spiegazione 2](../alu/#riepilogo-sottrazioni-comparazioni-e-indirizzamenti).  |
-| HL-HR         | HL-HR          | CL → ALU                   | Definiscono l'operazione da eseguire sul registro H (caricamento parallelo, scorrimento / rotazione dx o sx).                                   |
-| IR-Q0 / IR-Q4 | IR-S0..3, IR-M | CL → ALU                   | Determinano l'operazione che l'ALU deve eseguire; [spiegazione](../alu/#funzioni-logiche-e-operazioni-aritmetiche).                             |
-| HLT           | HLT            | CL → Clock                 | Interrompe il programma in esecuzione; [spiegazione](../clock/#note-sul-microcode).                                                             |
-| DY-DZ         | DX/Y-DZ        | CL → DXY                   | DX/Y HI espone X agli adder, LO espone Y; DZ espone zero; [spiegazione](../dxy/#utilizzo-con-le-modalità-di-indirizzamento-indicizzate).        |
-| C0-C1         | C0-C1          | CL → Flag                  | Determinano se il Carry da salvare nel Flag C provenga dal Carry Output dell'ALU o da H (scorrimento e rotazione); [spiegazione](../flags/#carry).   |
-| CC-CS         | CC-CS          | CL → Flag                  | Selezionano quale Carry presentare agli input di ALU e H (quello reale, oppure 0 o 1 fissi); [spiegazione](../flags/#il-carry-e-i-registri-h-e-alu). |
-| FC            | FC             | CL → Flag                  | Caricamento del Flag C nel registro dei flag.                                                                                   |
-| FN            | FN             | CL → Flag                  | Caricamento del Flag N nel registro dei flag.                                                                                   |
-| FB            | FS             | CL → Flag                  | Origine dei Flag da caricare nel registro dei Flag (computo oppure bus); [spiegazione](../flags/#componenti-e-funzionamento).   |
-| FV            | FV             | CL → Flag                  | Caricamento del Flag V nel registro dei flag.                                                                |
-| FZ            | FZ             | CL → Flag                  | Caricamento del Flag Z nel registro dei flag.                                                                |
-| JE            | JE             | CL → Flag                  | Attiva le istruzioni di salto condizionale; [spiegazione](../flags/#i-salti-condizionali-e-incondizionati).  |
-| PI            | PCI            | CL → PC                    | Incrementa il Program Counter.                                                                               |
-| SCE\*         | SE             | CL → SP                    | Attiva incremento/decremento dello Stack Pointer.                                                            |
-| SPI\*         | SU/D           | CL → SP                    | Indica se lo Stack Pointer deve contare verso l'alto (HI) o verso il basso (LO).                             |
-| RA            | RA             | CL → ALU                   | Espone sul bus il contenuto dell'accumulatore A.                                                             |
-| RB            | RB             | CL → ALU                   | Espone sul bus il contenuto del registro B.                                                                  |
-| RD            | RD             | CL → DXY                   | Espone sul bus il contenuto del registro D.                                                                  |
-| RF            | RF             | CL → Flag                  | Espone sul bus il contenuto del registro dei Flag.                                                           |
-| RH            | RH             | CL → ALU                   | Espone sul bus il contenuto del registro H.                                                                  |
-| RL            | RL             | CL → ALU                   | Espone sul bus l'output della ALU.                                                                           |
-| RP            | RPC            | CL → PC                    | Espone sul bus il contenuto del Program Counter.                                                             |
-| RR            | RR             | CL → RAM                   | Espone sul bus il contenuto della RAM.                                                                       |
-| RX            | RX             | CL → DXY                   | Espone sul bus il contenuto del registro X.                                                                  |
-| RY            | RY             | CL → DXY                   | Espone sul bus il contenuto del registro Y.                                                                  |
-| RS            | RS             | CL → SP                    | Espone sul bus il valore dello Stack Pointer.                                                                |
-| WI            | WIR            | CL                         | Scrive il contenuto del bus nell'Instruction Register.                                                       |
-| WA            | WA             | CL → ALU                   | Scrive il contenuto del bus nell'accumulatore A.                                                             |
-| WB            | WB             | CL → ALU                   | Scrive il contenuto del bus nel registro B.                                                                  |
-| WD            | WD             | CL → DXY                   | Scrive il contenuto del bus nel registro D.                                                                  |
-| WX            | WX             | CL → DXY                   | Scrive il contenuto del bus nel registro X.                                                                  |
-| WY            | WY             | CL → DXY                   | Scrive il contenuto del bus nel registro Y.                                                                  |
-| WM            | WM             | CL → MAR                   | Scrive il contenuto del bus nel Memory Address Register.                                                     |
-| WO            | WO             | CL → Output                | Scrive il contenuto del bus nel registro di Output.                                                          |
-| WR            | WR             | CL → RAM                   | Scrive il contenuto del bus nella RAM.                                                                       |
-| WS            | WS             | CL → SP                    | Scrive il contenuto del bus nello Stack Pointer.                                                             |
-| WP            | WPC            | CL → PC                    | Scrive il contenuto del bus nel Program Counter.                                                             |
+| N             | NI             | CL                         | Next Instruction; [explanation](#instruction-length).                                                        |
+| LF            | LF             | CL → ALU                   | ALU Force; [explanation 1](../alu/#comparison-instructions) e [explanation 2](../alu/#summary-subtractions-comparisons-and-addressing-modes).   |
+| HL-HR         | HL-HR          | CL → ALU                   | Define the operation to be performed on the H register (parallel load, right or left shift / rotate).                                           |
+| IR-Q0 / IR-Q4 | IR-S0..3, IR-M | CL → ALU                   | Determine the operation that the ALU must perform; [explanation](../alu/#logic-functions-and-arithmetic-operations).                            |
+| HLT           | HLT            | CL → Clock                 | Halts the running program; [explanation](../clock/#the-hlt-instruction).                                                            |
+| DY-DZ         | DX/Y-DZ        | CL → DXY                   | DX/Y HI exposes X to the adders, LO exposes Y; DZ exposes zero; [explanation](../dxy/#use-with-indexed-addressing-modes).           |
+| C0-C1         | C0-C1          | CL → Flag                  | Determine whether the Carry to be saved in Flag C comes from the ALU Carry Output or from H (shift and rotate); [explanation](../flags/#carry).   |
+| CC-CS         | CC-CS          | CL → Flag                  | Select which Carry to present to the ALU and H inputs (the real one, or a fixed 0 or 1); [explanation](../flags/#the-carry-and-the-h-and-alu-registers). |
+| FC            | FC             | CL → Flag                  | Loading of Flag C into the flag register.                                                                                           |
+| FN            | FN             | CL → Flag                  | Loading of Flag N into the flag register.                                                                                           |
+| FB            | FS             | CL → Flag                  | Source of the Flags to be loaded into the Flag register (computation or bus); [explanation](../flags/#components-and-operation).    |
+| FV            | FV             | CL → Flag                  | Loading of Flag V into the flag register.                                                                   |
+| FZ            | FZ             | CL → Flag                  | Loading of Flag Z into the flag register.                                                                   |
+| JE            | JE             | CL → Flag                  | Activates conditional jump instructions; [explanation](../flags/#conditional-and-unconditional-jumps).      |
+| PI            | PCI            | CL → PC                    | Increments the Program Counter.                                                                             |
+| SCE\*         | SE             | CL → SP                    | Enables Stack Pointer increment/decrement.                                                                  |
+| SPI\*         | SU/D           | CL → SP                    | Indicates whether the Stack Pointer should count upward (HI) or downward (LO).                              |
+| RA            | RA             | CL → ALU                   | Exposes the contents of accumulator A on the bus.                               |
+| RB            | RB             | CL → ALU                   | Exposes the contents of register B on the bus.                                  |
+| RD            | RD             | CL → DXY                   | Exposes the contents of register D on the bus.                                  |
+| RF            | RF             | CL → Flag                  | Exposes the contents of the Flag register on the bus.                           |
+| RH            | RH             | CL → ALU                   | Exposes the contents of register H on the bus.                                  |
+| RL            | RL             | CL → ALU                   | Exposes the ALU output on the bus.                                              |
+| RP            | RPC            | CL → PC                    | Exposes the contents of the Program Counter on the bus.                         |
+| RR            | RR             | CL → RAM                   | Exposes the contents of the RAM on the bus.                                     |
+| RX            | RX             | CL → DXY                   | Exposes the contents of register X on the bus.                                  |
+| RY            | RY             | CL → DXY                   | Exposes the contents of register Y on the bus.                                  |
+| RS            | RS             | CL → SP                    | Exposes the Stack Pointer value on the bus.                                     |
+| WI            | WIR            | CL                         | Writes the contents of the bus into the Instruction Register.                   |
+| WA            | WA             | CL → ALU                   | Writes the contents of the bus into accumulator A.                              |
+| WB            | WB             | CL → ALU                   | Writes the contents of the bus into register B.                                 |
+| WD            | WD             | CL → DXY                   | Writes the contents of the bus into register D.                                 |
+| WX            | WX             | CL → DXY                   | Writes the contents of the bus into register X.                                 |
+| WY            | WY             | CL → DXY                   | Writes the contents of the bus into register Y.                                 |
+| WM            | WM             | CL → MAR                   | Writes the contents of the bus into the Memory Address Register.                |
+| WO            | WO             | CL → Output                | Writes the contents of the bus into the Output register.                        |
+| WR            | WR             | CL → RAM                   | Writes the contents of the bus into the RAM.                                    |
+| WS            | WS             | CL → SP                    | Writes the contents of the bus into the Stack Pointer.                          |
+| WP            | WPC            | CL → PC                    | Writes the contents of the bus into the Program Counter.                        |
 
-### Bus e altri segnali
+### Bus and other signals
 
-| NQSAP           | BEAM                      | Ambito o direzione segnale | Descrizione                                                |
+| NQSAP           | BEAM                      | Signal scope or direction  | Description                                                |
 | -----           | ----                      | -------------------------- | -----------                                                |
-| CLK             | CLK                       | Computer                   | Segnale di clock inviato a tutti i moduli del computer.    |
-| D0..7           | D0..7                     | Computer                   | Bus del computer.                                          |
-| MA0 - MA10      | A0..11                    | CL                         | Bus tra output di RC ed IR e input delle EEPROM; spiegazione in questa stessa pagina.                                                 |
-| IR-Q5 / IR-Q7   | IR-A0 / IR-A2             | CL → Flag                  | Ingressi di selezione dei salti condizionali del registro dei Flag; [spiegazione](../flags/#i-salti-condizionali-e-incondizionati).   |
-| ALU-to-register interconnect | H0..7, B0..7 | ALU                        | Bus tra output dei registri B e H e input dell'ALU; [spiegazione](../alu/#lalu-dellnqsap).                                            |
-| ALU output      | Q0..7                     | ALU                        | Bus tra output dell'ALU e transceiver di output al bus del computer; [spiegazione](../alu/#lalu-dellnqsap).                           |
-| Selector Inputs | X0..7, Y0..7              | DXY                        | Bus tra output di X e Y e input dei selettori X/Y; [spiegazione](../dxy/#utilizzo-con-le-modalità-di-indirizzamento-indicizzate).     |
-| Adder Inputs    | DQ0..7 XY0..7             | DXY                        | Bus tra output di D e selettori X/Y e input degli adder; [spiegazione](../dxy/#utilizzo-con-le-modalità-di-indirizzamento-indicizzate).                  |
-| Adder Outputs   | AQ0..7                    | DXY                        | Bus tra output degli adder e transceiver di output al bus del computer; [spiegazione](../dxy/#utilizzo-con-le-modalità-di-indirizzamento-indicizzate).   |
-| MC-RR0..3       | N0..3                     | Loader → CL                | Utilizzati dal Loader per impostare i '138 dei segnali di lettura; [spiegazione](#i-74ls138-per-la-gestione-dei-segnali).                                |
-| MC-RW0..3       | N4..7                     | Loader → CL                | Utilizzati dal Loader per impostare i '138 dei segnali di scrittura; [spiegazione](#i-74ls138-per-la-gestione-dei-segnali).                              |
-| PC-Load         | PCJ                       | Flag → PC                  | Controlla il caricamento del PC per i salti condizionali e incondizionati; [spiegazione](../flags/#i-salti-condizionali-e-incondizionati).               |
-| ?               | MA0-MA7                   | MAR → RAM                  | Bus tra output del MAR e input della RAM; [spiegazione](../ram/#design-dei-moduli-mar-e-ram).                                         |
-| PROG            | PROG                      | MAR → RAM                  | Selezione tra modalità di programmazione della RAM o di esecuzione del programma; [spiegazione](../ram/#mux-program-mode-e-run-mode). |
-| RST             | RST                       | Computer                   | Reset asincrono del computer; [spiegazione](../loader/#caricamento-di-un-programma).                                                  |
-| LDR-ACTIVE      | LDR-Active                | Loader → Clock e → CL      | Disattivazione clock e EEPROM Control Logic; [spiegazione](../loader/#caricamento-di-un-programma).                                   |
-| LDR-CLK         | LDR-CLK                   | Loader → Clock             | Iniezione del clock del Loader nel computer; [spiegazione](../loader/#caricamento-di-un-programma).                                   |
-| CLK-Start       | CLK-Start                 | Loader → Clock             | (Re-)Start del clock di sistema dopo il caricamento del programma in RAM; [spiegazione](../loader/#caricamento-di-un-programma).      |
-| ALU-Cin         | ALU-Cin                   | Flag → ALU                 | Selezione del Carry da inviare in input ai '181; [spiegazione](../flags/#il-carry-e-i-registri-h-e-alu).                              |
-| H-Cin           | H-Cin                     | Flag → ALU                 | Selezione del Carry da inviare in input ad H; [spiegazione 1](../flags/#il-carry-e-i-registri-h-e-alu) e [spiegazione 2](../alu/#il-registro-h).        |
-| ALU-Cout        | ALU-Cout                  | ALU → Flag                 | Carry output dell'ALU da inviare al registro dei Flag; [spiegazione Flag C](../flags/#carry).                    |
-| ALU-Q7          | ALU-Q7                    | ALU → Flag                 | MSB dell'ALU da inviare al registro dei Flag; [spiegazione Flag V](../flags/#overflow).                          |
-| B-Q7            | B-Q7                      | ALU → Flag                 | MSB di B da inviare al registro dei Flag; [spiegazione Flag V](../flags/#overflow).                              |
-| H-Q0\*          | H-Q0                      | ALU → Flag                 | LSB di H da inviare al registro dei Flag; [spiegazione Flag C](../flags/#carry).                                 |
-| H-Q7            | H-Q7                      | ALU → Flag                 | MSB di H da inviare al registro dei Flag; [spiegazione Flag V](../flags/#overflow) e [Flag C](../flags/#carry).  |
+| CLK             | CLK                       | Computer                   | Clock signal sent to all computer modules.                 |
+| D0..7           | D0..7                     | Computer                   | Computer bus.                                              |
+| MA0 - MA10      | A0..11                    | CL                         | Bus between RC and IR outputs and EEPROM inputs; explanation on this same page.                                            |
+| IR-Q5 / IR-Q7   | IR-A0 / IR-A2             | CL → Flag                  | Conditional jump selection inputs of the Flag register; [explanation](../flags/#conditional-and-unconditional-jumps).    |
+| ALU-to-register interconnect | H0..7, B0..7 | ALU                        | Bus between B and H register outputs and ALU inputs; [explanation](../alu/#the-nqsap-alu).                                |
+| ALU output      | Q0..7                     | ALU                        | Bus between ALU output and output transceiver to computer bus; [explanation](../alu/#the-nqsap-alu).                      |
+| Selector Inputs | X0..7, Y0..7              | DXY                        | Bus between X and Y outputs and X/Y selector inputs; [explanation](../dxy/#use-with-indexed-addressing-modes).                |
+| Adder Inputs    | DQ0..7 XY0..7             | DXY                        | Bus between D output and X/Y selectors and adder inputs; [explanation](../dxy/#use-with-indexed-addressing-modes).            |
+| Adder Outputs   | AQ0..7                    | DXY                        | Bus between adder outputs and output transceiver to computer bus; [explanation](../dxy/#use-with-indexed-addressing-modes).   |
+| MC-RR0..3       | N0..3                     | Loader → CL                | Used by the Loader to set the read signal '138s; [explanation](#the-74ls138s-for-signal-management).                        |
+| MC-RW0..3       | N4..7                     | Loader → CL                | Used by the Loader to set the write signal '138s; [explanation](#the-74ls138s-for-signal-management).                       |
+| PC-Load         | PCJ                       | Flag → PC                  | Controls PC loading for conditional and unconditional jumps; [explanation](../flags/#conditional-and-unconditional-jumps).   |
+| ?               | MA0-MA7                   | MAR → RAM                  | Bus between MAR output and RAM input; [explanation](../ram/#design-of-the-mar-and-ram-modules).                                      |
+| PROG            | PROG                      | MAR → RAM                  | Selection between RAM programming mode and program execution mode; [explanation](../ram/#mux-program-mode-and-run-mode).         |
+| RST             | RST                       | Computer                   | Asynchronous computer reset; [explanation](../loader/#program-loading).                                            |
+| LDR-ACTIVE      | LDR-Active                | Loader → Clock e → CL      | Clock and Control Logic EEPROM deactivation; [explanation](../loader/#program-loading).                            |
+| LDR-CLK         | LDR-CLK                   | Loader → Clock             | Injection of Loader clock into the computer; [explanation](../loader/#program-loading).                            |
+| CLK-Start       | CLK-Start                 | Loader → Clock             | (Re-)Start of system clock after program loading into RAM; [explanation](../loader/#program-loading).              |
+| ALU-Cin         | ALU-Cin                   | Flag → ALU                 | Selection of Carry to send as input to the '181s; [explanation](../flags/#the-carry-and-the-h-and-alu-registers).                      |
+| H-Cin           | H-Cin                     | Flag → ALU                 | Selection of Carry to send as input to H; [explanation 1](../flags/#the-carry-and-the-h-and-alu-registers) and [explanation 2](../alu/#the-h-register).     |
+| ALU-Cout        | ALU-Cout                  | ALU → Flag                 | ALU Carry output to send to the Flag register; [Flag C explanation](../flags/#carry).                          |
+| ALU-Q7          | ALU-Q7                    | ALU → Flag                 | ALU MSB to send to the Flag register; [Flag V explanation](../flags/#overflow).                                |
+| B-Q7            | B-Q7                      | ALU → Flag                 | B MSB to send to the Flag register; [Flag V explanation](../flags/#overflow).                                  |
+| H-Q0\*          | H-Q0                      | ALU → Flag                 | H LSB to send to the Flag register; [Flag C explanation](../flags/#carry).                                     |
+| H-Q7            | H-Q7                      | ALU → Flag                 | H MSB to send to the Flag register; [Flag V explanation](../flags/#overflow) and [Flag C](../flags/#carry).    |
 
-\* Manca nel modulo ALU; dimenticanza nello schema di Tom.
+\* Missing in the ALU module; oversight in Tom's schematic.
 
 ## Microcode
 
-La fase di scrittura del microcode non è stata *troppo* complessa. L'esperienza fatta col SAP, lo studio approfondito dell'NQSAP e molta pazienza mi avevano portato a comprendere piuttosto bene come sviluppare gli step delle istruzioni tenendo in considerazione le diverse modalità di indirizzamento del 6502.
+The microcode writing phase was not *too* complex. The experience gained with the SAP, the in-depth study of the NQSAP and a great deal of patience had led me to understand fairly well how to develop the instruction steps taking into account the different 6502 addressing modes.
 
-Solo poche istruzioni hanno richiesto più tempo per essere assimilate, in particolare quelle di [comparazione](../alu/#istruzioni-di-comparazione), di [salto a subroutine](../stack/#implementazione-del-microcode-dello-stack-pointer) e di salto condizionale. Le istruzioni di comparazione hanno implicato una comprensione approfondita del risultato per impostarne correttamente i flag, mentre per le altre è stato necessario apprendere come utilizzare un registro temporaneo per memorizzare un'informazione da ripristinare in uno step successivo.
+Only a few instructions required more time to be assimilated, in particular those of [comparison](../alu/#comparison-instructions), [jump to subroutine](../stack/#stack-pointer-microcode-implementation) and conditional jump. The comparison instructions required an in-depth understanding of the result in order to correctly set the flags, while for the others it was necessary to learn how to use a temporary register to store information to be restored in a subsequent step.
 
-[![Scrittura del microcode del BEAM con VScode](../../assets/control/40-microcode-vscode.png "Scrittura del microcode del BEAM con VScode"){:width="100%"}](../../assets/control/40-microcode-vscode.png)
+[![Writing the BEAM microcode with VScode](../../../assets/control/40-microcode-vscode.png "Writing the BEAM microcode with VScode"){:width="100%"}](../../../assets/control/40-microcode-vscode.png)
 
-*Scrittura del microcode del BEAM con VScode.*
+*Writing the BEAM microcode with VScode.*
 
-E' risultata invece particolarmente difficile l'*organizzazione* dell'Instruction Set, sulla quale, col senno di poi, avrei dovuto investire più tempo. Purtroppo, ho realizzato di non essere riuscito ad organizzare in maniera stutturata il posizionamento degli opcode solo durante la scrittura del microcode, ma in quel momento avevo già iniziato a lavorare sulla realizzazione hardware - con i forti legami hardwired tra IR, ALU e Flag - e non volevo più tornare indietro.
+Particularly difficult instead was the *organization* of the Instruction Set, on which, in hindsight, I should have invested more time. Unfortunately, I realized that I had not managed to organize the opcode placement in a structured manner only during the microcode writing phase, but at that point I had already started working on the hardware implementation — with the strong hardwired connections between IR, ALU and Flags — and I no longer wanted to go back.
 
-Tom aveva automatizzato parte della generazione del microcodice attraverso un opportuno raggruppamento logico delle istruzioni. Personalmente, non sono riuscito a ottenere risultati comparabili, poiché la mia conoscenza del linguaggio C, sia all'epoca sia al momento della scrittura di questa documentazione, è modesta. Questo mi ha impedito di comprendere chiaramente come strutturare l'Instruction Set per sfruttare appieno tali vantaggi.
+Tom had automated part of the microcode generation through an appropriate logical grouping of instructions. Personally, I was unable to achieve comparable results, since my knowledge of the C language, both at the time and at the time of writing this documentation, is modest. This prevented me from clearly understanding how to structure the Instruction Set to take full advantage of such benefits.
 
-La <a href="../../assets/BEAM computer.xlsx" target="_blank">cartella di lavoro Excel</a> che ho realizzato presenta l'Instruction Set del 6502, l'analisi delle istruzioni per determinare le modalità di indirizzamento e lo sviluppo dell'Instruction Set del BEAM, considerando la necessità di utilizzare il [segnale di controllo LF](../alu/#istruzioni-di-comparazione) per mettere in Subtract Mode l'ALU ed effettuare le operazioni di comparazione.
+The <a href="../../assets/BEAM computer.xlsx" target="_blank">Excel workbook</a> I created presents the 6502 Instruction Set, the analysis of the instructions to determine the addressing modes and the development of the BEAM Instruction Set, taking into account the need to use the [LF control signal](../alu/#comparison-instructions) to put the ALU in Subtract Mode and perform comparison operations.
 
-[![Definizione dell'Instruction Set del BEAM](../../assets/control/40-control-inst-set.png "Definizione dell'Instruction Set del BEAM"){:width="100%"}](../../assets/control/40-control-inst-set.png)
+[![Definition of the BEAM Instruction Set](../../../assets/control/40-control-inst-set.png "Definition of the BEAM Instruction Set"){:width="100%"}](../../../assets/control/40-control-inst-set.png)
 
-*Definizione dell'Instruction Set del BEAM.*
+*Definition of the BEAM Instruction Set.*
 
-Ho speso molto tempo anche nella scrittura dello sketch Arduino utilizzato per programmare le EEPROM. Il programmatore di Ben Eater poteva impiegare *alcuni* interminabili minuti per ogni EEPROM, mentre la programmazione a blocchi implementata per il BEAM - frutto dello studio del codice e del circuito di Tom - ha permesso di ridurre il tempo di scrittura di una AT28C256 a soli 14 secondi. Per ulteriori note, si rimanda alla [pagina dedicata](../eeprom-programmer).
+I also spent a great deal of time writing the Arduino sketch used to program the EEPROMs. Ben Eater's programmer could take *several* interminable minutes for each EEPROM, while the block programming implemented for the BEAM — the result of studying Tom's code and circuit — made it possible to reduce the write time of an AT28C256 to just 14 seconds. For further notes, please refer to the [dedicated page](../eeprom-programmer).
 
-Concludendo, la realizzazione fisica del BEAM e la scrittura del microcode non hanno avuto un percorso molto lungo di *trial and error*, perché le lunghe analisi avevano sortito l'effetto di far funzionare i moduli sin dai primi tentativi, o comunque con poche variazioni finali.
+In conclusion, the physical construction of the BEAM and the microcode writing did not involve a very long *trial and error* process, because the lengthy analyses had the effect of making the modules work from the very first attempts, or in any case with few final adjustments.
 
-Il codice è parzialmente commentato e dovrebbe essere abbastanza esplicativo.
+The code is partially commented and should be fairly self-explanatory.
 
-Alcuni link:
+Some links:
 
-- Un <a href="https://www.atarimania.com/documents/6502%20(65xx)%20Microprocessor%20Instant%20Reference%20Card.pdf" target="_blank">compendio della Micro Logic</a> incredibilmente utile, che in sole due pagine include opcode, modalità di indirizzamento, flag e istruzioni che li modificano, funzionamento delle istruzioni di scorrimento e molto altro. Insostituibile.
-- Un validissimo riferimento per l'analisi della relazione tra Control Logic (CL) ed IR è stata la pagina <a href="https://www.masswerk.at/6502/6502_instruction_set.html" target="_blank">6502 Instruction Set</a> di Norbert Landsteiner. Inquadra l'Instruction Set in una comoda vista tabellare, dalla quale ho ricavato la <a href="../../assets/BEAM computer.xlsx" target="_blank">vista Excel</a> utilizzata per definire gli opcode delle istruzioni del BEAM.
-- Sempre di Norbert, invito a consultare anche il <a href="https://www.masswerk.at/6502/assembler.html" target="_blank">6502 Assembler</a> e il <a href="https://www.masswerk.at/6502/" target="_blank">Virtual 6502</a> che ho utilizzato in fase di debug del microcode: utilissimi per simulare l'esecuzione passo dopo passo delle istruzioni, visualizzando gli aggiornamenti dei flag ed aggiustando di conseguenza il microcode del BEAM.
+- An incredibly useful <a href="https://www.atarimania.com/documents/6502%20(65xx)%20Microprocessor%20Instant%20Reference%20Card.pdf" target="_blank">Micro Logic compendium</a> which in just two pages includes opcodes, addressing modes, flags and the instructions that modify them, the operation of shift instructions and much more. Irreplaceable.
+- A very valuable reference for analyzing the relationship between the Control Logic (CL) and the IR was Norbert Landsteiner's <a href="https://www.masswerk.at/6502/6502_instruction_set.html" target="_blank">6502 Instruction Set</a> page. It presents the Instruction Set in a convenient tabular view, from which I derived the <a href="../../assets/BEAM computer.xlsx" target="_blank">Excel view</a> used to define the BEAM instruction opcodes.
+- Also by Norbert, I recommend consulting the <a href="https://www.masswerk.at/6502/assembler.html" target="_blank">6502 Assembler</a> and the <a href="https://www.masswerk.at/6502/" target="_blank">Virtual 6502</a> that I used during microcode debugging: very useful for simulating the step-by-step execution of instructions, visualizing flag updates and adjusting the BEAM microcode accordingly.
 
-### Differenze rispetto all'Instruction Set del 6502
+### Differences from the 6502 Instruction Set
 
-Il computer BEAM non implementa gli Interrupt e la modalità Decimale del 6502, pertanto le istruzioni SEI, CLI, RTI e SED, CLD non fanno parte dell'Instruction Set.
+The BEAM computer does not implement the Interrupts and the Decimal mode of the 6502, therefore the instructions SEI, CLI, RTI and SED, CLD are not part of the Instruction Set.
 
-Sono state aggiunte le seguenti istruzioni: INA, DEA, OUT.
+The following instructions have been added: INA, DEA, OUT.
 
-Anche l'istruzione BRK non è stata implementata, ma si trova un comportamento simile nella [nuova HLT](../clock/#listruzione-hlt).
+The BRK instruction has also not been implemented, but a similar behavior can be found in the [new HLT](../clock/#the-hlt-instruction).
 
 ## Schematic
 
-[![Schema della Control Logic del computer BEAM](../../assets/control/40-control-logic-schema-beam.png "Schema della Control Logic del computer BEAM"){:width="100%"}](../../assets/control/40-control-logic-schema-beam.png)
+[![Schematic of the BEAM computer Control Logic](../../../assets/control/40-control-logic-schema-beam.png "Schematic of the BEAM computer Control Logic"){:width="100%"}](../../../assets/control/40-control-logic-schema-beam.png)
 
-*Schema della Control Logic del computer BEAM.*
+*Schematic of the BEAM computer Control Logic.*
 
-## Differenze tra Control Logic dell'NQSAP e del BEAM
+## Differences between NQSAP and BEAM Control Logic
 
-La Control Logic del computer BEAM riprende tutto ciò che è stato sviluppato da Tom Nisbet nell'NQSAP.
+The BEAM computer Control Logic incorporates everything that was developed by Tom Nisbet in the NQSAP.
 
-- Una differenza sostanziale sta nell'Instruction Register, sviluppato in modalità bufferizzata come nell'NQSAP-PCB di Tom per rimediare ai problemi di glitching riscontrati nell'NQ-SAP.
-- Il BEAM prevede 16 step per le microistruzioni anziché solo 8. L'emulazione di alcune istruzioni di scorrimento e rotazione richiede più degli 8 step disponibili nell'NQSAP, che pertanto non le include.
+- A substantial difference lies in the Instruction Register, developed in buffered mode as in Tom's NQSAP-PCB to remedy the glitching problems encountered in the NQSAP.
+- The BEAM provides 16 steps for microinstructions instead of just 8. The emulation of some shift and rotate instructions requires more than the 8 steps available in the NQSAP, which therefore does not include them.
 
-## Note
+## Notes
 
-- Per motivi di spazio, nello schema del BEAM non sono presenti la LED bar che mostra l'output del contatore '161 (nella realizzazione, è affiancata alla LED bar connessa all'uscita dell'Instruction Register, etichetta "EEPROM Address" nell'immagine ad inizio pagina) e la LED bar inserita tra i due 74LS377 dell'IR (etichetta "Instruction Register").
+- For space reasons, the BEAM schematic does not include the LED bar showing the output of the '161 counter (in the physical implementation, it is placed alongside the LED bar connected to the Instruction Register output, labeled "EEPROM Address" in the image at the top of the page) and the LED bar inserted between the two 74LS377s of the IR (labeled "Instruction Register").
 
-## Link utili
+## Useful links
 
-- I video di Ben Eater che descrivono la <a href="https://eater.net/8bit/control" target="_blank">Control Logic e il Microcode</a>.
-- La <a href="https://tomnisbet.github.io/nqsap/docs/control/" target="_blank">Control Logic dell'NQSAP</a> di Tom Nisbet
+- Ben Eater's videos describing the <a href="https://eater.net/8bit/control" target="_blank">Control Logic and Microcode</a>.
+- Tom Nisbet's <a href="https://tomnisbet.github.io/nqsap/docs/control/" target="_blank">NQSAP Control Logic</a>.
 
-## Riflessione sul microcode
+## Thoughts on the microcode
 
-Più o meno regolarmente si scoprono vulnerabilità nelle CPU: ad esempio, una macchina virtuale (VM) potrebbe essere in grado di <a href="https://en.wikipedia.org/wiki/Meltdown_(security_vulnerability)" target="_blank">leggere la memoria di un'altra VM</a>; per indirizzare le vulnerabilità, i produttori di sistemi rilasciano aggiornamenti del firmware per indirizzare le falle di sicurezza.
+More or less regularly, vulnerabilities are discovered in modern CPUs: for example, a virtual machine (VM) might be able to <a href="https://en.wikipedia.org/wiki/Meltdown_(security_vulnerability)" target="_blank">read the memory of another VM</a>; to address the vulnerabilities, system manufacturers release firmware updates to address the security flaws.
 
-Prima della realizzazione del progetto SAP, non riuscivo a comprendere il legame tra aggiornamento del firmware e risoluzione del problema di sicurezza identificato in una CPU. Poiché una CPU non è propriamente un componente programmabile, non capivo come un aggiornamento potesse risolvere i problemi di sicurezza nati da una progettazione parzialmente problematica di un componente hardware.
+Before undertaking the SAP project, I could not understand the connection between a firmware update and the resolution of a security problem identified in a CPU. Since a CPU is not strictly a programmable component, I could not understand how an update could resolve security problems arising from a partially flawed design of a hardware component.
 
-Dopo aver costruito il SAP, ho compreso il ruolo del <a href="https://en.wikipedia.org/wiki/Microcode" target="_blank">microcode</a>. Le CPU industriali contengono un proprio microcode, similarmente a quello del SAP, dell'NQSAP, del BEAM. Tale microcode è scritto in una memoria non volatile della CPU e dunque non può essere modificato, ma la CPU comprende anche un'area di memoria volatile nella quale possono essere caricati aggiornamenti del microcode.
+After building the SAP, I understood the role of <a href="https://en.wikipedia.org/wiki/Microcode" target="_blank">microcode</a>. Industrial CPUs contain their own microcode, similarly to that of the SAP, the NQSAP, the BEAM. This microcode is written in a non-volatile memory of the CPU and therefore cannot be modified, but the CPU also includes a volatile memory area into which microcode updates can be loaded.
 
-Quando viene distribuito un aggiornamento del microcode, il sistema operativo carica la  versione aggiornata del microcode nella CPU ad ogni boot; questa modifica è temporanea e risiede nella RAM della CPU, dove rimane caricata fino al prossimo riavvio.
+When a microcode update is distributed, the operating system loads the updated version of the microcode into the CPU at every boot; this modification is temporary and resides in the CPU's RAM, where it remains loaded until the next reboot.

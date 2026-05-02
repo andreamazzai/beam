@@ -238,7 +238,7 @@ that is:
 |  - | -     |  -    |  -    |  -    |  -    |          - |   -       |
 | 1  | **0** | **1** | **0** | **0** | **1** | A Plus B   |  0x09     |
 
-In practice, since the M and S3/S0 inputs of the '181s are directly connected to the [Instruction Register](../control/#instruction-register-and-instructions), the addition instruction will necessarily have to be encoded in the microcode by presenting **01001** on the 5 bits shared between the Instruction Register and the ALU
+In practice, since the M and S3/S0 inputs of the '181s are directly connected to the [Instruction Register](../control/#instruction-register-part-1-and-instructions), the addition instruction will necessarily have to be encoded in the microcode by presenting **01001** on the 5 bits shared between the Instruction Register and the ALU
 
 ![Instruction Register output toward the ALU module with highlight of the 5 selection bits for the '181 function / operation](../../../assets/alu/50-alu-cl-ir-out.png)
 

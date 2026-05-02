@@ -5,7 +5,7 @@ locale: en-US
 permalink: /docs/en/ram/
 excerpt: "Modulo di memoria del computer BEAM"
 ---
-<small>[Primi studi](#primi-studi) - [Memorie con IO separati o IO comuni?](#memorie-con-io-separati-o-io-comuni) - [MUX, Program Mode e Run Mode](#mux-program-mode-e-run-mode) - [Gestione della RAM](#gestione-della-ram) - [Design dei moduli MAR e RAM](#design-dei-moduli-mar-e-ram) - [Schema](#schema) - [Note](#note) - [Link utili](#link-utili)</small>
+<small>[Primi studi](#primi-studi) - [Memorie con IO separati o IO comuni?](#memorie-con-io-separati-o-io-comuni) - [MUX, Program Mode and Run Mode](#mux-program-mode-and-run-mode) - [Gestione della RAM](#gestione-della-ram) - [Design of the MAR and RAM modules](#design-of-the-mar-and-ram-modules) - [Schema](#schema) - [Note](#note) - [Link utili](#link-utili)</small>
 
 [![Modulo di memoria del computer BEAM](../../assets/ram/20-ram-beam.png "Modulo di memoria del computer BEAM"){:width="100%"}](../../assets/ram/20-ram-beam.png)
 
@@ -72,7 +72,7 @@ In <a href="https://www.reddit.com/r/beneater/comments/uot8pk/ram_module_using_6
 
 *Disegno su carta del modulo RAM e MAR per capire la migliore disposizione dei chip in base ai collegamenti necessari.*
 
-## MUX, Program Mode e Run Mode
+## MUX, Program Mode and Run Mode
 
 A cosa servono i MUX nel modulo RAM (e nel MAR)? All'accensione, il contenuto della memoria RAM è vuoto / casuale, dunque dobbiamo prima avere la possibilità di programmare la RAM ("Program Mode") e  poi di renderla visibile al bus del computer durante la normale esecuzione dei programmi ("Run Mode").
 
@@ -213,7 +213,7 @@ Detto diversamente, la RAM riceve il segnale di scrittura nello stesso momento i
 
 Molto, molto clever.
 
-## Design dei moduli MAR e RAM
+## Design of the MAR and RAM modules
 
 Parallelamente agli studi dei lavori di altri utenti, avevo iniziato a lavorare sul disegno dei miei moduli MAR e RAM, non senza continuare ad aprire altri filoni di studio per approfondire temi ancora parzialmente oscuri o affrontare argomenti nuovi. Avevo regolarmente alcune *decine* di pagine web aperte contemporaneamente.
 
@@ -221,7 +221,7 @@ Parallelamente agli studi dei lavori di altri utenti, avevo iniziato a lavorare 
 
 Il MAR era progettato a 8 bit per pilotare 256 indirizzi di memoria. Inizialmente avevo utilizzato due FF '173 a 4 bit, sostituiti in seguito da un unico FF '273 a 8 bit (sprovvisto di controllo dell'attivazione dell'output, che però non è necessario). Infine ho utilizzato un registro a 8 bit '377, altrettanto adatto al nostro scopo.
 
-[![Memory Address Register](../../assets/ram/20-mar-beam.png "Memory Address Register"){:width="100%"}](../../assets/ram/20-mar-beam.png)
+[![Memory Address Register](../../../assets/ram/20-mar-beam.png "Memory Address Register"){:width="100%"}](../../../assets/ram/20-mar-beam.png)
 
 *Memory Address Register (MAR) del BEAM.*
 

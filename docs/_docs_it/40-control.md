@@ -179,7 +179,7 @@ Per finalizzare l'analisi dell'istruzione LDA #$94, riepiloghiamo lo stato del c
 - il Flag Z non sarà attivo (il risultato dell'operazione di caricamento dell'accumulatore non è uguale a zero);
 - il Flag N sarà attivo (secondo il metodo di [rappresentazione dei numeri Signed](../math/#numeri-unsigned-e-numeri-signed) a 8 bit in Complemento a 2, $94 / 1001.0100 è un numero negativo, in quanto il bit più significativo è allo stato logico 1);
 - i Flag V e C non saranno modificati rispetto allo stato precedente;
-- l'accumulatore A e il registro H conterranno il valore $94 esadecimale.
+- L'accumulatore A e il registro H conterranno il valore $94 esadecimale.
 
 ### Fasi
 
@@ -559,7 +559,7 @@ La colonna "Ambito o direzione segnale" indica il contesto di un bus, oppure sor
 | H-Q0\*          | H-Q0                      | ALU → Flag                 | LSB di H da inviare al registro dei Flag; [spiegazione Flag C](../flags/#carry).                                 |
 | H-Q7            | H-Q7                      | ALU → Flag                 | MSB di H da inviare al registro dei Flag; [spiegazione Flag V](../flags/#overflow) e [Flag C](../flags/#carry).  |
 
-\* Manca nel modulo ALU; dimenticanza nello schema di Tom.
+\* Manca nel modulo ALU; piccola dimenticanza nello schema di Tom.
 
 ## Microcode
 

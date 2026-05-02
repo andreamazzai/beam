@@ -158,7 +158,7 @@ In other words, we have 256 instructions that develop over 16 steps, each of whi
 
 A further visual explanation of what has just been described can be obtained starting from minute 17m:52s of Ben Eater's video <a href="https://youtu.be/JUVt_KYAp-I?t=1072" target="_blank">Reprogramming CPU microcode with an Arduino</a>.
 
-Regarding the size count, see also the section [Instruction Register and Instructions](../control/#instruction-register-and-instructions). One aspect to keep in mind is that 4KB and 16KB parallel EEPROMs are not available on the market, so instead 8KB and 32KB EEPROMs are used by setting the last addressing pin to 0, thus using only the first half of the available space.
+Regarding the size count, see also the section [Instruction Register (Part 1) and Instructions](../control/#instruction-register-part-1-and-instructions). One aspect to keep in mind is that 4KB and 16KB parallel EEPROMs are not available on the market, so instead 8KB and 32KB EEPROMs are used by setting the last addressing pin to 0, thus using only the first half of the available space.
 
 With this premise, useful for understanding the distribution of the microcode across the various EEPROMs, we can analyze some important aspects of the Arduino sketch.
 
