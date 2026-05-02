@@ -582,7 +582,12 @@ Particularly difficult instead was the *organization* of the Instruction Set, on
 
 Tom had automated part of the microcode generation through an appropriate logical grouping of instructions. Personally, I was unable to achieve comparable results, since my knowledge of the C language, both at the time and at the time of writing this documentation, is modest. This prevented me from clearly understanding how to structure the Instruction Set to take full advantage of such benefits.
 
-The <a href="../../../assets/BEAM computer.xlsx" target="_blank">Excel workbook</a> I created presents the 6502 Instruction Set, the analysis of the instructions to determine the addressing modes and the development of the BEAM Instruction Set, taking into account the need to use the [LF control signal](../alu/#comparison-instructions) to put the ALU in Subtract Mode and perform comparison operations.
+The <a href="../../../../assets/BEAM computer.xlsx" target="_blank">Excel workbook</a> I created presents the 6502 Instruction Set, the analysis of the instructions to determine the addressing modes and the development of the BEAM Instruction Set, taking into account the need to use the [LF control signal](../alu/#comparison-instructions) to put the ALU in Subtract Mode and perform comparison operations.
+
+The <a href="../../../assets/BEAM computer.xlsx" target="_blank">Excel workbook</a> 
+The <a href="../../assets/BEAM computer.xlsx" target="_blank">Excel workbook</a> 
+The <a href="../assets/BEAM computer.xlsx" target="_blank">Excel workbook</a> 
+The <a href="/assets/BEAM computer.xlsx" target="_blank">Excel workbook</a> 
 
 [![Definition of the BEAM Instruction Set](../../../assets/control/40-control-inst-set.png "Definition of the BEAM Instruction Set"){:width="100%"}](../../../assets/control/40-control-inst-set.png)
 
