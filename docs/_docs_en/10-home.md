@@ -27,7 +27,7 @@ Toward the end of the year, I accidentally came across <a href="https://eater.ne
 
 In the early months of 2022, after completing the basic modules of the 6502 computer, I followed the **SAP-1** (Simple As Possible) 8-bit TTL logic computer <a href="https://www.youtube.com/playlist?list=PLowKtXNTBypGqImE405J2565dvjafglHU" target="_blank">playlist</a> which I became even more passionate about. During the build, I learned a great deal — both thanks to Ben’s excellent presentation style and the significant effort I put into deepening my understanding through other websites and books.
 
-[![My Implementation of the SAP-1 Computer.](assets/home/sap.png "My Implementation of the SAP-1 Computer."){:width="66%"}](assets/home/sap.png)
+[![My Implementation of the SAP-1 Computer.](../../../assets/home/sap.png "My Implementation of the SAP-1 Computer."){:width="66%"}](../../../assets/home/sap.png)
 
 *My Implementation of the SAP-1 Computer.*
 
@@ -68,13 +68,13 @@ Among the aspects to mention, on which I spent a lot, **a **lot**, ***really a l
 - understanding the "glitch" problem;
 - development of the bootloader software.
 
-[![Logical Diagram of the BEAM Computer, July 2023.](../assets/home/hand-drawn-logic.jpg "Logical Diagram of the BEAM Computer, July 2023."){:width="66%"}](../assets/home/hand-drawn-logic.jpg)
+[![Logical Diagram of the BEAM Computer, July 2023.](../../../assets/home/hand-drawn-logic.jpg "Logical Diagram of the BEAM Computer, July 2023."){:width="66%"}](../../../assets/home/hand-drawn-logic.jpg)
 
 *Logical Diagram of the BEAM Computer, July 2023..*
 
 In July 2023, I tried to put together everything I had learned and attempted to transcribe it on paper: I had a good understanding of how some modules worked, while I still had many doubts about others. Additionally, several interactions between modules, especially in the control signals for the flags, were still unclear. By re-reading the material I had studied and the notes I had transcribed on OneNote in the previous months, I connected the dots and created the logical diagram of the computer, beginning to see not just a series of standalone modules, but a coherent logical construct.
 
-[![Paper representation of a possible layout of the BEAM computer modules](../assets/home/beam-paper-breadboards.png "Paper representation of a possible layout of the BEAM computer modules"){:width="66%"}](../assets/home/beam-paper-breadboards.png)
+[![Paper representation of a possible layout of the BEAM computer modules](../../../assets/home/beam-paper-breadboards.png "Paper representation of a possible layout of the BEAM computer modules"){:width="66%"}](../../../assets/home/beam-paper-breadboards.png)
 
 *Paper representation of a possible layout of the BEAM computer modules.*
 
@@ -84,7 +84,7 @@ The construction phase started in October 2023 and was completed in the first da
 
 These pages contain notes, observations, and lessons learned and applied in the creation of BEAM, analysis of the NQSAP and NQSAP-PCB modules, differences between the systems, some comparisons with the SAP-1, and much more.
 
-[![BEAM Breadboard Computer](../assets/home/beam.png "BEAM breadboard computer"){:width="66%"}](../assets/home/beam.png)
+[![BEAM Breadboard Computer](../../../assets/home/beam.png "BEAM breadboard computer"){:width="66%"}](../../../assets/home/beam.png)
 
 Among the things I learned:
 
