@@ -5,7 +5,7 @@ locale: en-US
 permalink: /docs/en/alu/
 excerpt: "BEAM computer Arithmetic and Logic Unit"
 ---
-<small>[The 74LS181](#il-74ls181) - [The A register](#il-registro-a) - [The NQSAP ALU](#the-nqsap-alu) - [The H register](#il-registro-h) - [Logic functions and arithmetic operations](#funzioni-logiche-e-operazioni-aritmetiche) - [Direct (hardwired) relationship between Instruction Register and ALU](#relazione-diretta-hardwired-tra-instruction-register-e-alu) - [Addressing Modes](#addressing-modes) - [Comparison instructions](#istruzioni-di-comparazione) - [Comparison instructions and Flags](#le-istruzioni-di-comparazione-e-i-flag) - [Summary: subtractions, comparisons and addressing modes](#riepilogo-sottrazioni-comparazioni-e-indirizzamenti) - [Carry, additions and subtractions](#carry-addizioni-e-sottrazioni) - [Schematic](#schematic) - [Differences between NQSAP and BEAM ALU modules](#differenze-tra-moduli-alu-dellnqsap-e-del-beam) - [Useful links](#useful-links)</small>
+<small>[The 74LS181](#the-74ls181) - [The A register](#the-a-register) - [The NQSAP ALU](#the-nqsap-alu) - [The H register](#the-h-register) - [Logic functions and arithmetic operations](#logic-functions-and-arithmetic-operations) - [Direct (hardwired) relationship between Instruction Register and ALU](#direct-hardwired-relationship-between-instruction-register-and-alu) - [Addressing Modes](#addressing-modes) - [Comparison instructions](#comparison-instructions) - [Comparison instructions and Flags](#comparison-instructions-and-flags) - [Summary: subtractions, comparisons and addressing modes](#summary-subtractions-comparisons-and-addressing-modes) - [Carry, additions and subtractions](#carry-additions-and-subtractions) - [Schematic](#schematic) - [Differences between NQSAP and BEAM ALU modules](#differences-between-nqsap-and-beam-alu-modules) - [Useful links](#useful-links)</small>
 
 [![BEAM computer Arithmetic and Logic Unit](../../../assets/alu/50-alu-beam.png "BEAM computer Arithmetic and Logic Unit"){:width="100%"}](../../../assets/alu/50-alu-beam.png)
 
@@ -35,12 +35,12 @@ Among the features that stood out in the NQSAP ALU schematic, I noticed above al
 
 [![Schematic of Tom Nisbet's ALU](../../../assets/alu/50-alu-nqsap.png "Schematic of Tom Nisbet's ALU"){:width="100%"}](../../../assets/alu/50-alu-nqsap.png)
 
-*Schematic of Tom Nisbet's ALU, slightly modified for the sole purpose of improving its readability. The H-Q0 signal is missing, likely an oversight by Tom.*
+*Schematic of Tom Nisbet's ALU, slightly modified for the sole purpose of improving its readability. The H-Q0 signal is missing, likely a minor omission by Tom.*
 
 The ALU module is broadly composed of two input registers H and B and a pair of interconnected '181s, which allow an 8-bit word to be handled: H and B are the input registers of the '181s.
 
 - The H register is actually a Shift Register capable of both behaving as a normal 8-bit register and shifting the input value left or right.
-- The B register is an 8-bit Octal D-Type Flip-Flop with 3-State Outputs <a href="https://www.onsemi.com/pdf/datasheet/74vhc574-d.pdf" target="_blank">74LS574</a>. The '574 does not include an Enable input, which Tom therefore implemented artificially by placing a NOR gate on /Clock and /WB ("Write B"); in this way the register activates only in correspondence with /WB (which is active LO) and the Falling Edge of the inverted clock, equivalent to the Rising Edge of the normal clock, which is the moment when registers are loaded (reference: Ben Eater's video <a href="https://www.youtube.com/watch?v=X7rCxs1ppyY" target="_blank">8-bit CPU control logic: Part 2</a>). See also the note on glitching in the section <a href="../control/#il-clock-il-glitching-delle-eeprom-e-linstruction-register-parte-2" target="_blank">The clock and EEPROM "glitching"</a> on the Control Logic page.
+- The B register is an 8-bit Octal D-Type Flip-Flop with 3-State Outputs <a href="https://www.onsemi.com/pdf/datasheet/74vhc574-d.pdf" target="_blank">74LS574</a>. The '574 does not include an Enable input, which Tom therefore implemented artificially by placing a NOR gate on /Clock and /WB ("Write B"); in this way the register activates only in correspondence with /WB (which is active LO) and the Falling Edge of the inverted clock, equivalent to the Rising Edge of the normal clock, which is the moment when registers are loaded (reference: Ben Eater's video <a href="https://www.youtube.com/watch?v=X7rCxs1ppyY" target="_blank">8-bit CPU control logic: Part 2</a>). See also the note on glitching in the section <a href="../control/#clock-eeprom-glitching-and-instruction-register-part-2" target="_blank">The clock and EEPROM "glitching"</a> on the Control Logic page.
 - Three '245 transceivers allow the values contained in H, B and L to be read (L is the A**L**U output).
 
 ## The H register
@@ -116,81 +116,82 @@ The MSB of H / output H-Q7 highlighted in yellow in the schematic is connected t
 
 *Breakdown of the ASL Accumulator instruction into its five elementary microinstructions*.
 
-1. Il primo step carica l'indirizzo del Program Counter nel Memory Address Register
-2. Il secondo step carica l'opcode dell'istruzione nell'IR e incrementa il PC per farlo puntare alla locazione di memoria successiva (che nel caso dell'istruzione ASL Accumulatore contiene l'istruzione successiva)
-3. Il terzo step memorizza il valore di H7 nel Carry:
-    - C1 - seleziona la [provenienza del Carry](../flags/#carry) dall’MSB (H-Q7) del registro H
-    - FS, Flag Select - origine del Flag, in questo caso [da un altro modulo](../flags/#componenti-e-funzionamento)
-    - FC, Flag C - aggiorna il Flag C
-4. Il quarto step trasla il contenuto del registro H verso sinistra e carica uno zero nell'LSB
-    - CC, Carry Clear - presenta un [valore 0](../flags/#il-carry-e-i-registri-h-e-alu) all'input di H
-    - HL, H Left - esegue lo scorrimento
-5. Il quinto ed ultimo step scrive i Flag N e Z ed aggiorna A
-    - RH, Read H - espone il contenuto del Registro H sul bus
-    - FNZ, Flag N & Z - aggiorna i Flag N e Z computati nel modulo Flag
-    - WA, Write A - scrive il contenuto del bus in A
-    - NI, Next Instruction - resetta il Ring Counter
+1. The first step loads the Program Counter address into the Memory Address Register
+2. The second step loads the instruction opcode into the IR and increments the PC to make it point to the next memory location (which in the case of the ASL Accumulator instruction contains the next instruction)
+3. The third step stores the value of H7 in the Carry:
+    - C1 - selects the [Carry source](../flags/#carry) from the MSB (H-Q7) of register H
+    - FS, Flag Select - Flag source, in this case [from another module](../flags/#components-and-operation)
+    - FC, Flag C - updates Flag C
+4. The fourth step shifts the contents of register H to the left and loads a zero into the LSB
+    - CC, Carry Clear - presents a [value of 0](../flags/#the-carry-and-the-h-and-alu-registers) to the H input
+    - HL, H Left - performs the shift
+5. The fifth and final step writes the N and Z Flags and updates A
+    - RH, Read H - exposes the contents of register H on the bus
+    - FNZ, Flag N & Z - updates the N and Z Flags computed in the Flag module
+    - WA, Write A - writes the contents of the bus into A
+    - NI, Next Instruction - resets the Ring Counter
 
-\* I primi due step di tutte le istruzioni sono sempre uguali, come annotato in [Ring Counter e Microistruzioni](../control/#ring-counter-e-microistruzioni).
+\* The first two steps of all instructions are always the same, as noted in [Ring Counter and Microinstructions](../control/#ring-counter-and-microinstructions).
 
- Nello schema il '194 è rappresentato con gli output Q0, Q1, Q2 e Q3, che sono rispettivamente equivalenti agli ouput Q<sub>A</sub>, Q<sub>B</sub>, Q<sub>C</sub> e Q<sub>D</sub> indicati nel <a href="https://www.ti.com/lit/ds/symlink/sn74ls194a.pdf" target="_blank">datasheet</a> del '194.
+In the schematic the '194 is represented with outputs Q0, Q1, Q2 and Q3, which are respectively equivalent to the outputs Q<sub>A</sub>, Q<sub>B</sub>, Q<sub>C</sub> and Q<sub>D</sub> indicated in the <a href="https://www.ti.com/lit/ds/symlink/sn74ls194a.pdf" target="_blank">datasheet</a> of the '194.
 
-Vista la flessibilità e l'utilità del Registro H, questo è stato implementato anche nel BEAM, con una differenza nella scrittura del microcode: l'NQSAP implementa scorrimento e rotazione a sinistra sfruttando l'operazione A Plus A dei '181, mentre il BEAM sfrutta i '194 sia verso sinistra sia verso destra.
+Given the flexibility and usefulness of the H Register, this has also been implemented in the BEAM, with a difference in the microcode writing: the NQSAP implements left shift and rotate by exploiting the A Plus A operation of the '181s, whereas the BEAM exploits the '194s both leftward and rightward.
 
 ## Logic functions and arithmetic operations
 
-Come detto nell'introduzione, il computer BEAM, al pari dell'NQSAP, include il set di istruzioni completo del 6502, comprese quelle logiche e aritmetiche. Ricordavo discretamente le principali operazioni del 6502 e sapevo *abbastanza* bene quale dovesse essere il risultato di quello che stavo facendo, ma in quel momento non avevo ancora idea di come fosse possibile ottenerlo.
+As mentioned in the introduction, the BEAM computer, like the NQSAP, includes the complete 6502 instruction set, including logical and arithmetic instructions. I remembered the main 6502 operations reasonably well and knew well *enough* what the result of what I was doing should be, but at that point I had no idea yet how it would be possible to achieve it.
 
-Avevo intanto deciso di comprendere le operazioni messe a disposizione dal '181 e se vi fosse una logica nella loro disposizione, una sorta di raggruppamento.
+In the meantime I had decided to understand the operations made available by the '181 and whether there was a logic to their arrangement, a sort of grouping.
 
-[![Funzioni logiche e operazioni aritmetiche del 74LS181](../../../assets/alu/50-alu-operations.png "Funzioni logiche e operazioni aritmetiche del 74LS181"){:width="100%"}](../../../assets/alu/50-alu-operations.png)
+[![Logic functions and arithmetic operations of the 74LS181](../../../assets/alu/50-alu-operations.png "Logic functions and arithmetic operations of the 74LS181"){:width="100%"}](../../../assets/alu/50-alu-operations.png)
 
-*Funzioni logiche e operazioni aritmetiche del 74LS181.*
+*Logic functions and arithmetic operations of the 74LS181.*
 
-Il datasheet del '181 era abbastanza criptico e dunque ho avevo fatto ricorso anche alle molte risorse disponibili in rete riportate a fondo pagina. Dal datasheet si comprendeva che vi sono 4 segnali S0, S1, S2 ed S3 ("*Select*") per la selezione della funzione / operazione e un segnale di controllo della modalità M ("*Mode*", M = HI per le funzioni logiche; M = LO per le operazioni aritmetiche); A e B sono gli input dei dati. Nel datasheet venivano menzionati anche il Carry Look-Ahead e il Ripple-Carry, approfonditi in una delle sezioni dedicate all'[Aritmetica Binaria](../math/#multiple-bit-adder).
+The '181 datasheet was fairly cryptic and so I had also made use of the many resources available online listed at the bottom of the page. From the datasheet it was understood that there are 4 signals S0, S1, S2 and S3 ("Select") for function/operation selection and a mode control signal M ("Mode", M = HI for logic functions; M = LO for arithmetic operations); A and B are the data inputs. The datasheet also mentioned Carry Look-Ahead and Ripple-Carry, covered in more depth in one of the sections dedicated to [Binary Arithmetic](../math/#multiple-bit-adder).
 
-Inizialmente avevo trascritto la tabella delle funzioni / operazioni in un foglio Excel per poter lavorare più agevolmente:
+Initially I had transcribed the function/operation table into an Excel spreadsheet to be able to work more easily:
 
-![Funzioni logiche e operazioni aritmetiche del 74LS181](../../../assets/alu/50-alu-operations-xls.png)
+![Logic functions and arithmetic operations of the 74LS181 - in Excel](../../../assets/alu/50-alu-operations-xls.png)
 
-*Funzioni logiche e operazioni aritmetiche del 74LS181 - su Excel.*
+*Logic functions and arithmetic operations of the 74LS181 - in Excel.*
 
-Avevo evidenziato le operazioni ripetute più volte, non trovando però alcun raggruppamento o filo conduttore tra righe e colonne. Cercavo  di capire quale fosse il senso di quella disposizione così apparentemente disordinata, ma non l'avevo trovato. Illuminante fu l'articolo di Ken Shirriff <a href="https://www.righto.com/2017/03/inside-vintage-74181-alu-chip-how-it.html" target="_blank">Inside the vintage 74181 ALU chip: how it works and why it's so strange</a>.
+I had highlighted the operations that appeared multiple times, but without finding any grouping or common thread between rows and columns. I was trying to understand the logic behind that seemingly disordered arrangement, but had not found it. Enlightening was Ken Shirriff's article <a href="https://www.righto.com/2017/03/inside-vintage-74181-alu-chip-how-it.html" target="_blank">Inside the vintage 74181 ALU chip: how it works and why it's so strange</a>.
 
-L'aspetto più importante che avevo capito è cosa accomunava le due colonne delle operazioni aritmetiche (eseguite in corrispondenza della modalità M = LO):
+The most important aspect I had understood is what the two columns of arithmetic operations (performed in correspondence with mode M = LO) had in common:
 
-- senza Carry ("Cn = HI  --> No Carry")
-- con Carry   ("Cn = LO  --> With Carry")
+- without Carry ("Cn = HI –> No Carry")
+- with Carry ("Cn = LO –> With Carry")
 
-Ad un occhio esperto tutto questo sarebbe sembrato ovvio, ma io mi stavo avvicinando per la prima volta al tema dell'ALU e molte cose non mi erano immediatamente chiare.
+To an experienced eye all of this would have seemed obvious, but I was approaching the topic of the ALU for the first time and many things were not immediately clear to me.
 
-Per quanto bizzarre possano apparire alcune delle operazioni disponibili (e Ken spiega anche il perché), il filo conduttore tra le due colonne è che l'output del '181 *è sempre lo stesso*, con l'unica differenza data dalla assenza o presenza del Carry in ingresso. Si noti infatti che, in ogni riga, l'output ha sempre una differenza pari ad 1, che corrisponde al valore del Carry; ad esempio, nella decima riga troviamo la semplice operazione di somma **A Plus B**: la differenza tra quanto computato nelle due colonne è 1 (**A Plus B** in caso di nessun Carry in ingresso e **A Plus B Plus 1** in caso di Carry in ingresso).
+However bizarre some of the available operations may appear (and Ken also explains why), the common thread between the two columns is that the output of the '181 is always the same, with the only difference being the absence or presence of the input Carry. Note in fact that, in every row, the output always has a difference of 1, which corresponds to the value of the Carry; for example, in the tenth row we find the simple addition operation **A Plus B**: the difference between what is computed in the two columns is 1 (A Plus B in case of no input Carry and **A Plus B Plus 1** in case of input Carry).
 
-Lo stesso ragionamento è valido per in tutte le altre operazioni aritmetiche disponibili. Prendiamo come altro esempio la prima riga: in assenza di Carry, l'ALU restituisce quanto presente agli ingressi A, mentre in presenza di Carry aggiunge 1 a quanto presente in A (l'operazione aritmetica **A Plus 1** sarà poi sfruttata per creare l'istruzione INC del computer "iniettando" un Carry artificiale nel '181; similarmente, l'istruzione DEC è stata costruita intorno all'operazione **A Minus 1** della tabella, ma in questo caso senza essere "dopata" da un Carry artificiale).
+The same reasoning applies to all other available arithmetic operations. Taking the first row as another example: in the absence of Carry, the ALU returns whatever is present at inputs A, whereas in the presence of Carry it adds 1 to whatever is present in A (the arithmetic operation **A Plus 1** will later be exploited to create the INC instruction of the computer by "injecting" an artificial Carry into the '181; similarly, the DEC instruction was built around the **A Minus 1** operation in the table, but in this case without being "boosted" by an artificial Carry).
 
-A questo punto è anche opportuno segnalare che il '181 mette a disposizione due modalità di utilizzo: una con la logica attiva bassa ("Active-Low data") e una con la logica attiva alta ("Active-High data") che è quella utilizzata nell'NQSAP; quest'ultima, per complicare un po' le cose, si attende in ingresso un *Carry In negato*, nel senso che un segnale Cn (Carry In) = LO viene interpretato come Carry attivo, mentre un segnale Cn = HI viene interpretato come Carry non presente. Allo stesso modo, anche il *Carry Out* è negato: Cn+4 è infatti HI per indicare che non c'è Carry in uscita, mentre è LO per indicare che è presente un Carry.
+At this point it is also worth noting that the '181 provides two modes of use: one with active-low logic ("Active-Low data") and one with active-high logic ("Active-High data") which is the one used in the NQSAP; the latter, to complicate things slightly, expects a *negated Carry In* input, meaning that a signal Cn (Carry In) = LO is interpreted as an active Carry, while a signal Cn = HI is interpreted as no Carry present. Similarly, the *Carry Out* is also negated: Cn+4 is in fact HI to indicate that there is no output Carry, while it is LO to indicate that a Carry is present.
 
-Ritornando alla tabella delle funzioni / operazioni e cercando di seguire le spiegazioni e logica dell'NQSAP, avevo compreso che il sottoinsieme visibile in questa tabella fosse sufficiente per lo scopo prefissato, che era quello di poter emulare le istruzioni del 6502:
+Returning to the function/operation table and trying to follow the explanations and logic of the NQSAP, I had understood that the subset visible in this table was sufficient for the intended purpose, which was to be able to emulate the 6502 instructions:
 
-![Operazioni logiche e aritmetiche utili del 74LS181](../../../assets/alu/50-alu-operations-xls-subset.png)
 
-*Operazioni logiche e aritmetiche utili del 74LS181.*
+![Useful logic and arithmetic operations of the 74LS181](../../../assets/alu/50-alu-operations-xls-subset.png)
 
-Successivamente capirò che le istruzioni necessarie erano in realtà ancora meno di quelle che ipotizzavo.
+*Useful logic and arithmetic operations of the 74LS181.*
+
+I would later realize that the required instructions were actually even fewer than I had initially assumed.
 
 ## Direct (*hardwired*) relationship between Instruction Register and ALU
 
-Un altro degli aspetti di più difficile comprensione, come anticipato in precedenza, è stata l'associazione diretta tra l'istruzione correntemente contenuta nell'Instruction Register e la funzione logica / operazione aritmetica eseguita dal '181.
+Another of the most difficult aspects to understand, as mentioned earlier, was the direct association between the instruction currently contained in the Instruction Register and the logic function / arithmetic operation performed by the '181.
 
-Provando a sintetizzare quando disegnato nell'NQSAP, avevo costruito questa tabella per avere un riepilogo dei segnali applicati all'ALU, dei loro valori esadecimali corrispondenti e delle operazioni risultanti, estrapolandola dalla tabella completa delle istruzioni visibile in <a href="https://tomnisbet.github.io/nqsap/docs/in-by-mode-group/" target="_blank">NQSAP Instructions by Address Mode Group</a> e nella quale si notano piuttosto chiaramente i raggruppamenti delle istruzioni dell'NQSAP rispetto alle funzioni logiche / operazioni aritmetiche dei '181:
+Trying to summarize what was drawn in the NQSAP, I had built this table to have an overview of the signals applied to the ALU, their corresponding hexadecimal values and the resulting operations, extrapolating it from the complete instruction table visible in <a href="https://tomnisbet.github.io/nqsap/docs/in-by-mode-group/" target="_blank">NQSAP Instructions by Address Mode Group</a>, in which the groupings of the NQSAP instructions with respect to the logic functions / arithmetic operations of the '181s can be seen quite clearly:
 
-| Cn | M  | S3 | S2 | S1 | S0 | Operazione  | M-S3/S0 Hex     |
+| Cn | M  | S3 | S2 | S1 | S0 | Operation   | M-S3/S0 Hex     |
 |  - | -  |  - |  - |  - |  - |          -  |   -             |
 | 0  | 0  | 0  | 0  | 0  | 1  | A Plus 1    |  0x00 + C*      |
-| 0  | 0  | 0  | 0  | 1  | 1  | Tutti 0     |  0x03 + C*      |
+| 0  | 0  | 0  | 0  | 1  | 1  | All 0       |  0x03 + C*      |
 | 0  | 0  | 0  | 1  | 1  | 0  | A Minus B   |  0x06 + C*      |
 | 0  | 0  | 0  | 1  | 1  | 1  | CMP         |  0x07\*\*       |
-| 1  | 0  | 0  | 0  | 1  | 1  | Tutti 1     |  0x03           |
+| 1  | 0  | 0  | 0  | 1  | 1  | All 1       |  0x03           |
 | 1  | 0  | 1  | 0  | 0  | 1  | A Plus B    |  0x09           |
 | 1  | 0  | 1  | 1  | 0  | 0  | A Plus A    |  0x0C\*\*\*     |
 | 1  | 0  | 1  | 1  | 1  | 1  | A Minus 1   |  0x0F           |
@@ -199,143 +200,143 @@ Provando a sintetizzare quando disegnato nell'NQSAP, avevo costruito questa tabe
 | x  | 1  | 1  | 0  | 1  | 1  | A AND B     |  0x1B\*\*\*\*   |
 | x  | 1  | 1  | 1  | 1  | 0  | A OR B      |  0x1E\*\*\*\*   |
 
-*Sintesi operazioni dell'ALU dell'NQSAP.*
+*Summary of NQSAP ALU operations.*
 
-Legenda tabella *Sintesi operazioni dell'ALU dell'NQSAP*:
+Legend for the *Summary of NQSAP ALU operations* table:
 
-- \* Avevo evidenziato queste righe per ricordare che su queste tre operazioni si doveva "iniettare" un Carry artificiale (invertito, dunque il segnale effettivamente applicato sul Carry In del primo '181 doveva essere LO).
+- \* I had highlighted these rows as a reminder that on these three operations an artificial Carry had to be "injected" (inverted, therefore the signal actually applied to the Carry In of the first '181 had to be LO).
 
-- \*\* Le istruzioni che modificano lo stato dei flag del 6502 sono molteplici: aritmetiche, logiche, incremento/decremento, rotazione, stack, flag, caricamento/trasferimento registri e *comparazione*. Queste ultime (CMP, CPX e CPY) hanno effetto solo sui flag N, Z e C, che vengono computati effettuando una sottrazione (SBC nella terminologia del 6502) fittizia tra due valori, scartandone il risultato e tenendo in considerazione solo i flag risultanti dalla sottrazione (non avevo mai realmente approfondito come i flag fossero generati e questo esercizio è stato utilissimo). Funzionamento e differenze tra sottrazioni e comparazioni sono piuttosto semplici da comprendere:
+- \*\* The instructions that modify the state of the 6502 flags are numerous: arithmetic, logical, increment/decrement, rotation, stack, flag, load/transfer register and *comparison*. The latter (CMP, CPX and CPY) affect only the N, Z and C flags, which are computed by performing a fictitious subtraction (SBC in 6502 terminology) between two values, discarding the result and taking into account only the flags resulting from the subtraction (I had never really looked into how the flags were generated and this exercise was very useful). The operation and differences between subtractions and comparisons are fairly simple to understand:
 
-  - nelle sottrazioni il valore risultante dalla sottrazione viene calcolato e *mantenuto*;
-  - nelle comparazioni il valore risultante dalla sottrazione viene calcolato e *scartato*;
-  - per entrambe le istruzioni i flag sono mantenuti.
+  - in subtractions the value resulting from the subtraction is calculated and *retained*;
+  - in comparisons the value resulting from the subtraction is calculated and *discarded*;
+  - for both instructions the flags are retained.
 
-  Per eseguire le comparazioni si eseguono dunque delle sottrazioni scartando il risultato, tuttavia le operazioni di sottrazione del '181 sono già utilizzate per eseguire le sottrazioni vere e proprie (SBC) e sono codificate nella terza riga della tabella con M-S3/S0 = **00110**:
-  
-  | Cn | M     | S3    | S2    | S1    | S0    | Operazione | S3/S0 Hex |
+  To perform comparisons, subtractions are therefore carried out while discarding the result; however, the '181 subtraction operations are already used to perform actual subtractions (SBC) and are encoded in the third row of the table with M-S3/S0 = **00110**:
+
+  | Cn | M     | S3    | S2    | S1    | S0    | Operation  | S3/S0 Hex |
   |  - | -     |  -    |  -    |  -    |  -    |          - |   -       |
   | 1  | **0** | **0** | **1** | **1** | **0** | A Minus B  | 0x06 + C* |
 
-  come è possibile eseguire altre operazioni di sottrazione utilizzando un opcode diverso da **00110** pur sapendo che i '181 eseguono le sottrazioni solo con questa codifica in ingresso? Lo vedremo tra poco nella sezione [Istruzioni di comparazione](#istruzioni-di-comparazione).
+  How is it possible to perform other subtraction operations using an opcode different from **00110** while knowing that the '181s only perform subtractions with this input encoding? We will see this shortly in the section [Comparison instructions](#comparison-instructions).
 
-- \*\*\* L'operazione A + A veniva usata nell'NQSAP per fare lo shift verso sinistra dei bit; vista la presenza dello Shift Register H, ho preferito riversare su di esso tutte le operazioni di rotazione (a destra e a sinistra, sia con Carry sia senza Carry).
+- \*\*\* The A + A operation was used in the NQSAP to shift bits to the left; given the presence of the H Shift Register, I preferred to offload all rotation operations onto it (both right and left, both with and without Carry).
 
-- \*\*\*\* Il Carry è ininfluente in quanto si tratta di funzione logica e non di operazione aritmetica.
+- \*\*\*\* The Carry is irrelevant as this is a logic function and not an arithmetic operation.
 
-### Un esempio pratico
+### A practical example
 
-Si stava sostanzialmente dicendo che per eseguire una somma ("**A Plus B**", vedi sesta riga; "ADC" nella terminologia del 6502) era necessario avere:
+It was essentially being said that to perform an addition ("**A Plus B**", see sixth row; "ADC" in 6502 terminology) it was necessary to have:
 
-- Cn = 1 (che, ricordiamo, è gestito con stato logico invertito, dunque in questo caso l'ALU considera il Carry non presente)
+- Cn = 1 (which, as we recall, is managed with inverted logic, so in this case the ALU considers the Carry as not present)
 - M = **0**
 - S3/S2/S1/S0 = **1001**
 
-cioè:
+that is:
 
-| Cn | M     | S3    | S2    | S1    | S0    | Operazione | S3/S0 Hex |
+| Cn | M     | S3    | S2    | S1    | S0    | Operation  | S3/S0 Hex |
 |  - | -     |  -    |  -    |  -    |  -    |          - |   -       |
 | 1  | **0** | **1** | **0** | **0** | **1** | A Plus B   |  0x09     |
 
-In pratica, poiché gli ingressi M ed S3/S0 dei '181 sono direttamente connessi all'[Instruction Register](../control), l'istruzione di somma dovrà forzatamente essere codificata nel microcode presentando **01001** sui 5 bit comuni tra Instruction Register e ALU.
+In practice, since the M and S3/S0 inputs of the '181s are directly connected to the [Instruction Register](../control/#instruction-register-and-instructions), the addition instruction will necessarily have to be encoded in the microcode by presenting **01001** on the 5 bits shared between the Instruction Register and the ALU
 
-![Output dell'Instruction Register verso il modulo ALU con evidenza dei 5 bit di selezione della funzione / operazione dei '181](../../../assets/alu/50-alu-cl-ir-out.png)
+![Instruction Register output toward the ALU module with highlight of the 5 selection bits for the '181 function / operation](../../../assets/alu/50-alu-cl-ir-out.png)
 
-*Output dell'Instruction Register verso il modulo ALU con evidenza dei 5 bit di selezione della funzione / operazione dei '181.*
+*Instruction Register output toward the ALU module with highlight of the 5 selection bits for the '181 function / operation.*
 
-Attivando questa istruzione, il risultato esposto in output dai '181 sarebbe stato esattamente **A Plus B**, proprio come indicato nella decima riga / colonna Cn = HI della tabella estratta dal datasheet "*Funzioni logiche e operazioni aritmetiche del 74LS181.*"; se avessimo invece avuto un Carry in ingresso, il risultato esposto sarebbe stato A + B + 1, come indicato nella decima riga / colonna Cn = LO. La somma (almeno in teoria) funzionava e iniziavo anche a vedere in pratica il legame tra le due colonne Cn = LO / Cn = HI: il risultato in output era sempre lo stesso e variava solo in conseguenza del fatto che in ingresso ci fosse un Carry o meno.
+By activating this instruction, the result exposed at the '181s output would have been exactly **A Plus B**, just as indicated in the tenth row / Cn = HI column of the table extracted from the datasheet "*Logic functions and arithmetic operations of the 74LS181*"; if we had instead had an input Carry, the exposed result would have been A + B + 1, as indicated in the tenth row / Cn = LO column. The addition (at least in theory) worked and I was also beginning to see in practice the link between the two columns Cn = LO / Cn = HI: the output result was always the same and varied only as a consequence of whether or not there was an input Carry.
 
-Gli altri 3 bit di output dell'IR venivano scelti arbitrariamente, pur se con qualche accorgimento strutturato, per gestire le diverse modalità di indirizzamento disponibili sul 6502 e che dovevano essere emulate dal computer NQSAP.
+The other 3 output bits of the IR were chosen arbitrarily, albeit with some structured considerations, to manage the various addressing modes available on the 6502 that had to be emulated by the NQSAP computer.
 
 ## Addressing Modes
 
-Ogni istruzione del 6502, come ad esempio la succitata ADC, offre infatti un certo numero di indirizzamenti tra le 13 modalità totali disponibili (Accumulatore, Assoluto, Assoluto Indicizzato X o Y, Immediato, Implicito, Indiretto, Indiretto Indicizzato X, Indicizzato Y Indiretto, Relativo, Pagina Zero, Pagina Zero Indicizzato X o Y).
+Each 6502 instruction, such as the aforementioned ADC, offers a certain number of addressing modes among the 13 total available modes (Accumulator, Absolute, Absolute Indexed X or Y, Immediate, Implied, Indirect, Indexed Indirect X, Indirect Indexed Y, Relative, Zero Page, Zero Page Indexed X or Y).
 
-Un valido riferimento per l'analisi della relazione tra IR ed ALU è stata la pagina <a href="https://www.masswerk.at/6502/6502_instruction_set.html" target="_blank">6502 Instruction Set</a> di Norbert Landsteiner, che invito a consultare anche per il <a href="https://www.masswerk.at/6502/assembler.html" target="_blank">6502 Assembler</a> e il <a href="https://www.masswerk.at/6502" target="_blank">Virtual 6502</a> che avrei utilizzato in seguito in fase di debug del microcode.
+A useful reference for analyzing the relationship between the IR and the ALU was the <a href="https://www.masswerk.at/6502/6502_instruction_set.html" target="_blank">6502 Instruction Set</a> page by Norbert Landsteiner, which I also recommend consulting for the <a href="https://www.masswerk.at/6502/assembler.html" target="_blank">6502 Assembler</a> and the <a href="https://www.masswerk.at/6502" target="_blank">Virtual 6502</a> that I would later use during microcode debugging.
 
-Dalla tabella HTML delle istruzioni avevo ricavato una tabella Excel a partire dalla quale ho ragionato sugli indirizzamenti, notando che ogni istruzione del 6502 non presentava mai più di 8 diverse modalità di indirizzamento: ecco che gli altri 3 bit di output dell'IR permettevano dunque di costruire un set di istruzioni basato sulle funzioni logiche / operazioni aritmetiche del '181 incrociandole con le (non più di) 8 modalità di indirizzamento usate da ogni istruzione (2^3 = 8 modalità di indirizzamento sfruttabili da ogni istruzione).
+From the HTML instruction table I had derived an Excel spreadsheet from which I reasoned about the addressing modes, noting that each 6502 instruction never presented more than 8 different addressing modes: hence the other 3 IR output bits allowed a instruction set to be built based on the '181 logic functions / arithmetic operations crossed with the (no more than) 8 addressing modes used by each instruction (2^3 = 8 addressable modes usable by each instruction).
 
-Lo spreadsheet Excel citato nel paragrafo precedente è [scaricabile qui](../../../assets/BEAM computer.xlsx); le tabelle appena menzionate sono presenti nel foglio "6502 Inst. Set".
+The Excel spreadsheet mentioned in the previous paragraph can be [downloaded here](../../../assets/BEAM computer.xlsx); the tables just mentioned are present in the "6502 Inst. Set" sheet.
 
-Vale anche la pena notare che, in un computer con soli 256 byte di RAM, gli indirizzamenti Zero Page e Assoluti risultano ridondanti, poiché entrambi possono accedere agli stessi 256 byte di memoria. Di conseguenza, le modalità di indirizzamento Zero Page (ZP, "Zero Page" in inglese) non verranno implementate, essendo equivalenti a quelle Assolute.
+It is also worth noting that, in a computer with only 256 bytes of RAM, Zero Page and Absolute addressing modes are redundant, since both can access the same 256 bytes of memory. Consequently, Zero Page addressing modes (ZP) will not be implemented, as they are equivalent to the Absolute ones.
 
-Riprendendo le operazioni ADC / A Plus B e SBC / A Minus B ed integrandole con i 3 bit utilizzati per gestire le modalità di indirizzamento si costruisce - ad esempio - questa tabella degli opcode:
+Returning to the ADC / A Plus B and SBC / A Minus B operations and integrating them with the 3 bits used to manage the addressing modes, one can build — for example — this opcode table:
 
-| Cn | I3    | I2    | I1    | M     | S3    | S2    | S1    | S0    | Operazione | Indirizzamento          | Hex   |
+| Cn | I3    | I2    | I1    | M     | S3    | S2    | S1    | S0    | Operaion   | Addressing Mode         | Hex   |
 |  - | -     | -     | -     | -     | -     | -     | -     | -     | -          | -                       | -     |
-| 1  | **0** | **0** | **1** | **0** | **1** | **0** | **0** | **1** | A Plus B   | Immediato               | 0x29  |
-| 1  | **0** | **1** | **0** | **0** | **1** | **0** | **0** | **1** | A Plus B   | Assoluto                | 0x49  |
-| 1  | **0** | **1** | **1** | **0** | **1** | **0** | **0** | **1** | A Plus B   | Assoluto, X             | 0x69  |
-| 1  | **1** | **0** | **0** | **0** | **1** | **0** | **0** | **1** | A Plus B   | Assoluto, Y             | 0x89  |
-| 1  | **1** | **0** | **1** | **0** | **1** | **0** | **0** | **1** | A Plus B   | Indiretto Indicizzato X | 0xA9  |
-| 1  | **1** | **1** | **0** | **0** | **1** | **0** | **0** | **1** | A Plus B   | Indicizzato Y Indiretto | 0xC9  |
+| 1  | **0** | **0** | **1** | **0** | **1** | **0** | **0** | **1** | A Plus B   | Immediate               | 0x29  |
+| 1  | **0** | **1** | **0** | **0** | **1** | **0** | **0** | **1** | A Plus B   | Absolute                | 0x49  |
+| 1  | **0** | **1** | **1** | **0** | **1** | **0** | **0** | **1** | A Plus B   | Absolute, X             | 0x69  |
+| 1  | **1** | **0** | **0** | **0** | **1** | **0** | **0** | **1** | A Plus B   | Absolute, Y             | 0x89  |
+| 1  | **1** | **0** | **1** | **0** | **1** | **0** | **0** | **1** | A Plus B   | Indexed Indirect X      | 0xA9  |
+| 1  | **1** | **1** | **0** | **0** | **1** | **0** | **0** | **1** | A Plus B   | Indirect Indexed Y      | 0xC9  |
 |  - | -     |-      | -     | -     | -     | -     | -     | -     | -          | -                       | -     |
-| 0  | **0** | **0** | **1** | **0** | **0** | **1** | **1** | **0** | A Minus B  | Immediato               | 0x26  |
-| 0  | **0** | **1** | **0** | **0** | **0** | **1** | **1** | **0** | A Minus B  | Assoluto                | 0x46  |
-| 0  | **0** | **1** | **1** | **0** | **0** | **1** | **1** | **0** | A Minus B  | Assoluto, X             | 0x66  |
-| 0  | **1** | **0** | **0** | **0** | **0** | **1** | **1** | **0** | A Minus B  | Assoluto, Y             | 0x86  |
-| 0  | **1** | **0** | **1** | **0** | **0** | **1** | **1** | **0** | A Minus B  | Indiretto Indicizzato X | 0xA6  |
-| 0  | **1** | **1** | **0** | **0** | **0** | **1** | **1** | **0** | A Minus B  | Indicizzato Y Indiretto | 0xC6  |
+| 0  | **0** | **0** | **1** | **0** | **0** | **1** | **1** | **0** | A Minus B  | Immediate               | 0x26  |
+| 0  | **0** | **1** | **0** | **0** | **0** | **1** | **1** | **0** | A Minus B  | Absolute                | 0x46  |
+| 0  | **0** | **1** | **1** | **0** | **0** | **1** | **1** | **0** | A Minus B  | Absolute, X             | 0x66  |
+| 0  | **1** | **0** | **0** | **0** | **0** | **1** | **1** | **0** | A Minus B  | Absolute, Y             | 0x86  |
+| 0  | **1** | **0** | **1** | **0** | **0** | **1** | **1** | **0** | A Minus B  | Indexed Indirect X      | 0xA6  |
+| 0  | **1** | **1** | **0** | **0** | **0** | **1** | **1** | **0** | A Minus B  | Indirect Indexed Y      | 0xC6  |
 
-*Esempio della relazione tra IR ed ALU per tutte le modalità di indirizzamento delle istruzioni ADC e SBC del 6502.*
+*Example of the relationship between IR and ALU for all addressing modes of the 6502 ADC and SBC instructions.*
 
-Si nota che i 5 bit dell'operazione sono sempre gli stessi per ogni modalità di indirizzamento e che solamente i 3 bit di indirizzamento variano a seconda della modalità prescelta.
+It can be noted that the 5 operation bits are always the same for each addressing mode and that only the 3 addressing bits vary depending on the chosen mode.
 
-Partendo da questo ragionamento diventava possibile definire gli opcode di ogni istruzione da codificare poi nel microcode.
+Starting from this reasoning it became possible to define the opcodes of each instruction to then be encoded in the microcode.
 
 ## Comparison instructions
 
-Abbiamo evidenziato in precedenza che le istruzioni di modificano lo stato dei flag sono molte e che tra queste ci sono anche quelle di comparazione.
+We have previously highlighted that the instructions that modify the state of the flags are numerous and that among these are also the comparison instructions.
 
-Per approfondirle, partiamo ad esempio da una istruzione che fa uso dei flag risultanti da una comparazione: l'istruzione di salto condizionale BMI (**B**ranch on **MI**nus). Questa istruzione viene eseguita solo in presenza del flag N, che indica che il numero risultante dalla comparazione *con segno*\* è **N**egativo, cioè compreso tra -128 e -1 (0x80 e 0xFF in esadecimale).
+To explore them further, let us start for example with an instruction that makes use of the flags resulting from a comparison: the conditional jump instruction BMI (**B**ranch on **MI**nus). This instruction is executed only in the presence of the N flag, which indicates that the number resulting from the *signed comparison*\* is **N**egative, i.e. between -128 and -1 (0x80 and 0xFF in hexadecimal).
 
-\* = si veda la sezione riservata all'[Aritmetica Binaria](../math/#numeri-unsigned-e-numeri-signed).
+\* = see the section dedicated to [Binary Arithmetic](../math/#unsigned-and-signed-numbers).
 
-Come anticipato, i flag delle istruzioni di comparazione sono calcolati eseguendo una sottrazione fittizia tra il valore contenuto nel registro A, X o Y e il valore indicato dall'operando dell'istruzione di comparazione; si prendono in considerazione solo i flag risultanti dall'operazione e il risultato della sottrazione viene scartato. I flag sono dunque generati sfruttando l'operazione di sottrazione del '181, che è però già utilizzata per eseguire l'operazione standard di sottrazione **A Minus B** (terza riga della tabella *Sintesi operazioni dell'ALU dell'NQSAP* dove M-S3/S2/S1/S0 = 00110 e il microcodice dovrà perciò presentare **00110** sui 5 bit comuni tra Instruction Register e ALU).
+As mentioned, the flags of the comparison instructions are calculated by performing a fictitious subtraction between the value contained in register A, X or Y and the value indicated by the operand of the comparison instruction; only the flags resulting from the operation are taken into account and the result of the subtraction is discarded. The flags are therefore generated by exploiting the '181 subtraction operation, which is however already used to perform the standard subtraction operation **A Minus B** (third row of the *Summary of NQSAP ALU operations* table where M-S3/S2/S1/S0 = 00110 and the microcode will therefore need to present **00110** on the 5 bits shared between the Instruction Register and the ALU).
 
-Tutti i segnali che pilotano i '181 derivano direttamente dall'Instruction Register (IR), eccetto per il Carry In. Si può dire che l'ALU è *hardwired* all'IR e che pertanto il microcode del computer deve essere scritto in modo tale che le istruzioni che utilizzano l'ALU rispecchino i segnali in ingresso del '181: ad esempio, osservando la tabella precedente *Esempio della relazione tra IR ed ALU per tutte le modalità di indirizzamento delle istruzioni ADC e SBC del 6502*, l'istruzione di somma **A Plus B** dovrà avere i bit comuni tra IR ed ALU codificati come **01001**, mentre l'istruzione di sottrazione **A Minus B** dovrà averli codificati come **00110**.
+All the signals that drive the '181s derive directly from the Instruction Register (IR), except for the Carry In. It can be said that the ALU is *hardwired* to the IR and that therefore the computer's microcode must be written in such a way that the instructions that use the ALU reflect the input signals of the '181: for example, observing the previous table *Example of the relationship between IR and ALU for all addressing modes of the 6502 ADC and SBC instructions*, the **A Plus B** addition instruction will need to have the bits shared between IR and ALU encoded as **01001**, while the **A Minus B** subtraction instruction will need them encoded as **00110**.
 
-| Cn | M  | S3 | S2 | S1 | S0 | Operazione  | M-S3/S0 Hex     |
+| Cn | M  | S3 | S2 | S1 | S0 | Operation   | M-S3/S0 Hex     |
 |  - | -  |  - |  - |  - |  - |          -  |   -             |
 | 0  | 0  | 0  | 1  | 1  | 0  | A Minus B   |  0x06 + C*      |
 | 1  | 0  | 1  | 0  | 0  | 1  | A Plus B    |  0x09           |
 
-Effetto benefico collaterale molto importante del collegamento hardwired tra IR e ALU è che non è necessario dedicare preziose uscite delle ROM per le linee di controllo delle funzioni / operazioni dei '181.
+A very important beneficial side effect of the hardwired connection between IR and ALU is that it is not necessary to dedicate precious ROM outputs for the '181 function / operation control lines.
 
-![Ingressi di selezione della funzione logica / operazione aritmetica dell'ALU e connessione "hardwired" con l'IR](../../../assets/alu/50-alu-select-in.png)
+![ALU logic function / arithmetic operation selection inputs and "hardwired" connection with the IR](../../../assets/alu/50-alu-select-in.png)
 
-*Ingressi di selezione della funzione logica / operazione aritmetica dell'ALU e connessione "hardwired" con l'IR.*
+*ALU logic function / arithmetic operation selection inputs and "hardwired" connection with the IR.*
 
-Come si nota nell'estratto dello schema *Output dell’Instruction Register verso il modulo ALU con evidenza dei 5 bit di selezione della funzione / operazione dei ‘181*, il segnale S0 è in realtà solo "parzialmente diretto" verso i '181, perché transita prima attraverso una NOR: questa viene pilotata da una ROM (pin 8) ed attivata solo in corrispondenza delle istruzioni di comparazione, cosicché la codifica 0011**1**, da noi arbitrariamente designata per indicare le istruzioni di comparazione, venga presentata ai '181 come 0011**0**, che è il codice per l'istruzione di sottrazione (Subtract Mode) e del quale abbiamo bisogno per eseguire la comparazione!
+As can be seen in the excerpt from the schematic *Instruction Register output toward the ALU module with highlight of the 5 selection bits for the '181 function / operation*, the S0 signal is actually only "partially direct" toward the '181s, because it first passes through a NOR gate: this is driven by a ROM (pin 8) and activated only in correspondence with comparison instructions, so that the encoding 0011**1**, arbitrarily designated by us to indicate comparison instructions, is presented to the '181s as 0011**0**, which is the code for the subtraction instruction (Subtract Mode) and which we need to perform the comparison!
 
-In altre parole, il microcode delle istruzioni di comparazione (che nella mnemonica del 6502 sono CMP, CPX o CPY) dovrà attivare un segnale ("*LF*") in una delle EEPROM: questo segnale attiverà la porta NOR per trasmettere ai '181 il codice 0011**0** della sottrazione anziché 0011**1**, che corrisponde originariamente al codice dell'operazione **A And Not B**, non necessario per simulare le istruzioni del 6502 e dunque inutilizzato. LF è l'abbreviazione di A**L**U **F**orce.
+In other words, the microcode of the comparison instructions (which in 6502 mnemonics are CMP, CPX or CPY) will need to activate a signal ("*LF*") in one of the EEPROMs: this signal will activate the NOR gate to transmit to the '181s the subtraction code 0011**0** instead of 0011**1**, which originally corresponds to the code for the *A And Not B* operation, not needed to emulate the 6502 instructions and therefore unused. LF is an abbreviation for A**L**U **F**orce.
 
-Detto in altre parole ancora:
+In other words yet:
 
-- Le istruzioni di comparazione del 6502 sono eseguite simulando una sottrazione.
-- L'operazione di sottrazione è codificata nel '181 come M-S3/S0 = **00110** (e non è modificabile).
-- Come è possibile gestire sia le sottrazioni reali sia le comparazioni, considerando che entrambe necessitano di mettere in input sui '181 la stessa codifica **01110**, la quale deve però essere assegnata sia alle istruzioni di sottrazione sia a quelle di comparazione, che devono in realtà avere opcode diversi - e dunque anche codifiche diverse?
-- Si identifica un opcode arbitrario per le operazioni di comparazione utilizzandone uno che è assegnato a un'operazione non necessaria, ad esempio **A And Not B**, che ha come codice M/S3-S0 = **00111**.
-- La differenza tra l'operazione A Minus B e l'operazione A And Not B sta nell'ultimo bit: la prima si attiva con M-S3/S0 = 0011**0**, la seconda con M-S3/S0 = 0011**1**.
-- Quando l'IR carica una istruzione 00111 di comparazione, metterà tale codifica in output verso le EEPROM e verso l'ALU, ma l'ultimo bit di tale codifica raggiungerà l'ALU solo dopo aver attraversato la NOR.
-- Una delle EEPROM ospitanti il microcode, quando troverà in ingresso xxx00111, attiverà il segnale LF sul pin 8 della NOR: la NOR invertirà l'ultimo bit 0011**1** e i '181 troveranno in realtà in ingresso 0011**0**, configurandosi dunque in Subtract Mode ed effettuando la sottrazione, della quale scarteremo il risultato per mantenere solo i flag.
+- The 6502 comparison instructions are executed by simulating a subtraction.
+- The subtraction operation is encoded in the '181 as M-S3/S0 = **00110** (and cannot be modified).
+- How is it possible to handle both actual subtractions and comparisons, considering that both need to present the same encoding **00110** to the '181 inputs, which however must be assigned to both subtraction instructions and comparison instructions, which must actually have different opcodes — and therefore different encodings as well?
+- An arbitrary opcode is identified for comparison operations by using one that is assigned to an unnecessary operation, for example **A And Not B**, which has the code M/S3-S0 = **00111**.
+- The difference between the A Minus B operation and the A And Not B operation lies in the last bit: the former is activated with M-S3/S0 = 0011**0**, the latter with M-S3/S0 = 0011**1**.
+- When the IR loads a comparison instruction 00111, it will output that encoding toward the EEPROMs and toward the ALU, but the last bit of that encoding will reach the ALU only after passing through the NOR gate.
+- One of the EEPROMs hosting the microcode, when it finds xxx00111 at its input, will activate the LF signal on pin 8 of the NOR gate: the NOR gate will invert the last bit of 0011**1** and the '181s will actually find 0011**0** at their input, thus configuring themselves in Subtract Mode and performing the subtraction, whose result we will discard in order to retain only the flags.
 
 ## Comparison instructions and Flags
 
-Inizialmente avevo incontrato qualche difficoltà nel comprendere la logica della variazione dei Flag nelle istruzioni di comparazione. Un supporto eccellente si trova in un <a href="http://www.6502.org/tutorials/compare_beyond.html" target="_blank">tutorial</a> su 6502.org, che descrive come un'operazione di confronto equivalga ad impostare il Carry e ad [eseguire la differenza](../alu/#relazione-diretta-hardwired-tra-instruction-register-e-alu), mantenendo solamente i Flag modificati e scartando il valore della sottrazione.
+Initially I had encountered some difficulty in understanding the logic of Flag changes in comparison instructions. Excellent support can be found in a <a href="http://www.6502.org/tutorials/compare_beyond.html" target="_blank">tutorial</a> on 6502.org, which describes how a comparison operation is equivalent to setting the Carry and [performing the difference](#direct-hardwired-relationship-between-instruction-register-and-alu), retaining only the modified Flags and discarding the subtraction result.
 
-Se dopo l'operazione di comparazione CMP NUM, che equivale a SEC seguito da SBC NUM:
+If after the comparison operation CMP NUM, which is equivalent to SEC followed by SBC NUM:
 
-- il Flag Z è 0, allora A <> NUM e il salto condizionale BNE viene eseguito
-- il Flag Z è 1, allora A = NUM e il salto condizionale BEQ viene eseguito
-- il Flag C è 0, allora A (senza segno) <  NUM (senza segno) e il salto condizionale BCC viene eseguito
-- il Flag C è 1, allora A (senza segno) >= NUM (senza segno) e il salto condizionale BCS viene eseguito
-- il Flag N è 0, allora A (senza segno) >= NUM (senza segno) e il salto condizionale BPL viene eseguito
-- il Flag N è 1, allora A (senza segno) <  NUM (senza segno) e il salto condizionale BMI viene eseguito
+- Flag Z is 0, then A <> NUM and the conditional jump BNE is executed
+- Flag Z is 1, then A = NUM and the conditional jump BEQ is executed
+- Flag C is 0, then A (unsigned) <  NUM (unsigned) and the conditional jump BCC is executed
+- Flag C is 1, then A (unsigned) >= NUM (unsigned) and the conditional jump BCS is executed
+- Flag N is 0, then A (unsigned) >= NUM (unsigned) and the conditional jump BPL is executed
+- Flag N is 1, then A (unsigned) <  NUM (unsigned) and the conditional jump BMI is executed
 
-Dopo aver metabolizzato l'argomento, mi sono dilettato in alcune prove.
+After having absorbed the topic, I had some fun with a few tests.
 
-Il codice seguente compara l'operando di CPY con Y e, se Y >= operando, il salto condizionale viene eseguito:
+The following code compares the CPY operand with Y and, if Y >= operand, the conditional jump is executed:
 
 ~~~text
 LDY #$40
@@ -343,9 +344,9 @@ CPY #$30
 BCS $60
 ~~~
 
-Prima di eseguire la sottrazione simulata, il microcode dell'istruzione CPY imposta il Carry; poiché il valore dell'operando è inferiore al valore contenuto in Y, la sottrazione non ricorre al "prestito" (borrow) del Carry, che alla fine dell'operazione risulta ancora impostato, così come lo era all'inizio dell'istruzione. Trovando il Carry attivo, la successiva istruzione BCS (Branch on Carry Set) viene eseguita.
+Before performing the simulated subtraction, the microcode of the CPY instruction sets the Carry; since the value of the operand is less than the value contained in Y, the subtraction does not resort to borrowing the Carry, which at the end of the operation is still set, just as it was at the beginning of the instruction. Finding the Carry active, the subsequent BCS instruction (Branch on Carry Set) is executed.
 
-Come sopra, il codice seguente compara l'operando di CPY con Y:
+As above, the following code compares the CPY operand with Y:
 
 ~~~text
 LDY #$40
@@ -353,9 +354,9 @@ CPY #$40
 BNE $60
 ~~~
 
-La comparazione attiva i Flag Z e C: #$40 - #$40 = 0, dunque il risultato della sottrazione simulata è pari a zero e Z viene settato; inoltre, poiché il numero da comparare è uguale, non si ricorre al prestito e C rimane attivo. Trovando Z attivo, la successiva istruzione BNE (Branch on Not Equal) non viene eseguita.
+The comparison activates the Z and C Flags: #$40 - #$40 = 0, therefore the result of the simulated subtraction is equal to zero and Z is set; furthermore, since the number to compare is equal, no borrowing is needed and C remains active. Finding Z active, the subsequent BNE instruction (Branch on Not Equal) is not executed.
 
-Il codice:
+The code:
 
 ~~~text
 LDY #$40
@@ -363,15 +364,15 @@ CPY #$50
 BMI $60
 ~~~
 
-non attiva né Z, né C, coerentemente con quanto esposto in precedenza; attiva invece N, perché la sottrazione simulata genera un risultato negativo: l'MSB assume valore 1, attivando così il Flag N. Il Flag C, settato all'inizio della comparazione, assume il valore 0 perché viene "preso in prestito". Trovando N attivo, la successiva istruzione BMI (Branch on MInus) viene eseguita.
+activates neither Z nor C, consistently with what was described earlier; it activates N instead, because the simulated subtraction generates a negative result: the MSB takes the value 1, thus activating Flag N. Flag C, set at the beginning of the comparison, takes the value 0 because it is "borrowed". Finding N active, the subsequent BMI instruction (Branch on MInus) is executed.
 
 ## Summary: subtractions, comparisons and addressing modes
 
-La documentazione dell'NQSAP segnalava che "poiché la ALU è legata all'IR, ci sono solo 8 Opcode disponibili per metterla in Subtract Mode", ma non capivo cosa volesse dire. "Per creare i 16 Opcode necessari per tutte le combinazioni di Subtract e Compare, si mette una NOR su ALU-S0 (IR 0) e su LF, così da  riutilizzare la Selection 0111 come se fosse 0110, che è la modalità Subtract".
+The NQSAP documentation noted that "since the ALU is tied to the IR, there are only 8 Opcodes available to put it in Subtract Mode", but I did not understand what this meant. "To create the 16 Opcodes needed for all combinations of Subtract and Compare, a NOR gate is placed on ALU-S0 (IR 0) and on LF, so as to reuse Selection 0111 as if it were 0110, which is Subtract Mode".
 
-Importante evidenziare che la modalità **Subtract Mode** del '181 altro non è che la configurazione di Input M-S3/S0 = 00110 che equivale alla operazione aritmetica di sottrazione, come chiarito da David Courtney nel video <a href="https://www.youtube.com/watch?v=jmROTNtoUGI" target="_blank">Comparator Functions of 74LS181 (74HCT181) ALU</a>. Il datasheet non era così chiaro relativamente alla definizione di questa modalità.
+It is important to highlight that the '181 **Subtract Mode** is nothing other than the Input configuration M-S3/S0 = 00110 which corresponds to the arithmetic subtraction operation, as clarified by David Courtney in the video <a href="https://www.youtube.com/watch?v=jmROTNtoUGI" target="_blank">Comparator Functions of 74LS181 (74HCT181) ALU</a>. The datasheet was not so clear regarding the definition of this mode.
 
-La tabella successiva evidenzia come con la disponibilità di 8 bit per la codifica delle istruzioni (256 combinazioni possibili), solo 8 combinazioni (2^3, descritte dai bit I2-I1-I0) siano quelle degli opcode che permettono di avere M e S3/S0 in Subtract Mode, cioè **00110**: tuttavia, la gestione di tutte le operazioni di sottrazione SBC e di comparazione CMP, CPX e CPY richiede ben più di 8 combinazioni, poiché si devono poter gestire anche tutte le combinazioni degli indirizzamenti del 6502. Ecco che il segnale LF (ALU Force) trasforma la codifica 00111 (corrispondente all'operazione inutilizzata A AND NOT B) in 00110, che attiva nuovamente l'operazione aritmetica di sottrazione del '181 e che ci permette di ottenere 8 + 8 = 16 opcode totali da inserire nel microcode per la gestione di sottrazioni e comparazioni in tutte le <a href="https://www.masswerk.at/6502/6502_instruction_set.html#modes" target="_blank">modalità di indirizzamento</a> previste nel 6502.
+The following table highlights how, with 8 bits available for instruction encoding (256 possible combinations), only 8 combinations (2^3, described by bits I2-I1-I0) are the opcodes that allow M and S3/S0 to be in Subtract Mode, i.e. **00110**: however, handling all SBC subtraction and CMP, CPX and CPY comparison operations requires far more than 8 combinations, since all combinations of 6502 addressing modes must also be manageable. This is where the LF (ALU Force) signal transforms the encoding 00111 (corresponding to the unused operation A AND NOT B) into 00110, which again activates the '181 arithmetic subtraction operation and allows us to obtain 8 + 8 = 16 total opcodes to insert in the microcode for handling subtractions and comparisons in all <a href="https://www.masswerk.at/6502/6502_instruction_set.html#modes" target="_blank">addressing modes</a> provided in the 6502.
 
 | Bit IR  | 7      | 6      | 5      | 4  | 3   | 2   | 1   | 0   |
 |  -      | -      | -      | -      | -  | -   | -   | -   | -   |
@@ -385,81 +386,81 @@ La tabella successiva evidenzia come con la disponibilità di 8 bit per la codif
 | Opcode  | **1**  | **1**  | **0**  | 0  | 0   | 1   | 1   | 0   |
 | Opcode  | **1**  | **1**  | **1**  | 0  | 0   | 1   | 1   | 0   |
 
-*Codifica dell'istruzione di sottrazione SBC con le 8 combinazioni possibili di indirizzamento determinate dai 3 bit I0, I1, I2.*
+*Encoding of the SBC subtraction instruction with the 8 possible addressing combinations determined by the 3 bits I0, I1, I2.*
 
-Letto dopo averlo capito mi sembra ora molto semplice; inizialmente non lo era proprio.
+Reading it after having understood it now seems very simple; initially it was anything but.
 
 ## Carry, additions and subtractions
 
-Alcuni esempi chiariranno il funzionamento del Carry utilizzando due '181 messi in cascata tra di loro per comporre una word di 8 bit.
+Some examples will clarify the operation of the Carry using two '181s cascaded together to compose an 8-bit word.
 
-![Interconnessione di due ALU '181 in cascata](../../../assets/alu/50-alu-nqsap-cascade.png)
+![Cascade interconnection of two '181 ALUs](../../../assets/alu/50-alu-nqsap-cascade.png)
 
-*Interconnessione di due ALU '181 in cascata.*
+*Cascade interconnection of two '181 ALUs.*
 
-Supponiamo di fare un'operazione **A Plus B** con due ALU. Si deve inviare in ingresso sul /Cn del primo '181 un segnale allo stato logico HI, che corrisponde a non avere un Carry (ricordiamo che nella logica "Active-High Data" il Carry è negato). Il **/Cn+4** (Carry Out) del primo '181 entra nel **/Cn** (Carry In) del secondo:
+Suppose we perform an **A Plus B** operation with two ALUs. A signal at logic state HI must be sent to the /Cn input of the first '181, which corresponds to having no Carry (recall that in "Active-High Data" logic the Carry is negated). The **/Cn+4** (Carry Out) of the first '181 enters the **/Cn** (Carry In) of the second:
 
-- Se l'operazione eseguita sui primi 4 bit non genera un riporto, il /Cn+4 del primo '181 è HI ad indicare assenza di Carry; questo segnale viene propagato al secondo '181, che trova dunque l'ingresso /Cn allo stato HI: entrambi i '181 eseguono **A Plus B**, dunque una normale operazione senza riporto.
+- If the operation performed on the first 4 bits does not generate a carry, the /Cn+4 of the first '181 is HI to indicate the absence of Carry; this signal is propagated to the second '181, which therefore finds the /Cn input at HI state: both '181s perform **A Plus B**, i.e. a normal operation without carry.
 
-- Viceversa, se l'operazione eseguita sui primi 4 bit genera un riporto, il /Cn+4 del primo '181 è LO ad indicare presenza di Carry; questo segnale viene propagato al secondo '181, che trova dunque l'ingresso /Cn allo stato LO: il primo '181 esegue dunque l'operazione **A Plus B**, mentre il secondo esegue l'operazione **A Plus B plus 1**: il '181 inferiore va sostanzialmente a generare un riporto che viene propagato al '181 superiore.
+- Conversely, if the operation performed on the first 4 bits generates a carry, the /Cn+4 of the first '181 is LO to indicate the presence of Carry; this signal is propagated to the second '181, which therefore finds the /Cn input at LO state: the first '181 thus performs the **A Plus B** operation, while the second performs the **A Plus B plus 1** operation: the lower '181 essentially generates a carry that is propagated to the upper '181.
 
-Per eseguire invece una sottrazione **A minus B** dobbiamo attivare preventivamente il Carry, cioè settare /Cn = LO.
+To perform a subtraction **A minus B** instead, we must activate the Carry beforehand, i.e. set /Cn = LO.
 
-- Se il primo '181 non genera un prestito ("borrow"), il /Cn+4 è allo stato logico LO, che viene propagato al /Cn del secondo '181 che esegue dunque l'operazione **A Minus B**.
-- Se invece il primo '181 genera un borrow, il /Cn+4 è allo stato logico HI, che viene propagato al /Cn del secondo '181 che esegue l'operazione **A Minus B - 1**: il '181 inferiore va sostanzialmente a prendere un prestito dal '181 superiore.
+- If the first '181 does not generate a borrow, the /Cn+4 is at logic state LO, which is propagated to the /Cn of the second '181 which therefore performs the **A Minus B** operation.
+- If instead the first '181 generates a borrow, the /Cn+4 is at logic state HI, which is propagated to the /Cn of the second '181 which performs the **A Minus B - 1** operation: the lower '181 essentially borrows from the upper '181.
 
-Possiamo dire che il Carry In del '181 inferiore è utilizzato, insieme ai bit M-S3/S0, per selezionare l'operazione che il modulo ALU dovrà eseguire.
+We can say that the Carry In of the lower '181 is used, together with the M-S3/S0 bits, to select the operation that the ALU module will have to perform.
 
-Questi ed altri punti sono spiegati molto bene da Tom nella sezione <a href="https://tomnisbet.github.io/nqsap/docs/74181-alu-notes/#carry-flag" target="_blank">Carry Flag</a> della sua pagina *74181 ALU Notes* dedicata all'ALU.
+These and other points are explained very well by Tom in the <a href="https://tomnisbet.github.io/nqsap/docs/74181-alu-notes/#carry-flag" target="_blank">Carry Flag</a> section of his *74181 ALU Notes* page dedicated to the ALU.
 
-L'uso del Carry nel '181 (e di conseguenza nell'NQSAP) è simile a quanto avviene nel 6502, con il Carry che viene normalmente azzerato (CLC) prima di fare una addizione e settato (SEC) prima di fare una sottrazione:
+The use of the Carry in the '181 (and consequently in the NQSAP) is similar to what happens in the 6502, with the Carry normally being cleared (CLC) before performing an addition and set (SEC) before performing a subtraction:
 
-- se al completamento della addizione il Carry risultante in uscita dal '181 superiore è settato, significa che vi è un riporto che si propaga oltre gli 8 bit degli operandi;
-- viceversa, se al completamento della sottrazione il Carry risultante in uscita dal '181 superiore è azzerato, significa che è stato chiesto un prestito che si propaga oltre gli 8 bit degli operandi.
+- if upon completion of the addition the Carry resulting from the output of the upper '181 is set, it means that there is a carry that propagates beyond the 8 bits of the operands;
+- conversely, if upon completion of the subtraction the Carry resulting from the output of the upper '181 is cleared, it means that a borrow has been requested that propagates beyond the 8 bits of the operands.
 
-### L'Overflow
+### The Overflow
 
-Dalle interessantissime note di Tom trascrivevo anche che, per le caratteristiche di funzionamento del '181 e provando a fare delle addizioni o sottrazioni con e senza Carry, si potesse pensare di eseguire un semplice OR esclusivo (XOR) tra i Carry Out (/Cn+4) dei due chip per individuare se il risultato dell'operazione genera un Overflow. Tuttavia il meccanismo non funziona in caso di istruzioni **A + 1** e **A - 1** (e dunque per la verifica dell'esistenza dell'Overflow si ricorrerà ad un altro metodo, come discusso nella pagina dedicata all'[Aritmetica Binaria](../math/#approfondimento-overflow)).
+From Tom's very interesting notes I also transcribed that, due to the operating characteristics of the '181 and by trying to perform additions or subtractions with and without Carry, one might think of performing a simple exclusive OR (XOR) between the Carry Out (/Cn+4) of the two chips to determine whether the result of the operation generates an Overflow. However the mechanism does not work in the case of **A + 1** and **A - 1** instructions (and therefore for verifying the existence of Overflow another method will be used, as discussed in the page dedicated to [Binary Arithmetic](../math/#overflow-in-depth)).
 
-Per quale motivo la verifica suddetta non è valida in caso di istruzioni di incremento e decremento?
+Why is the aforementioned check not valid in the case of increment and decrement instructions?
 
-- Eseguendo un'operazione **A + 1** (si vedano i segnali da applicare al '181 *Sintesi operazioni dell'ALU dell'NQSAP*) si possono verificare due casi - facciamo due esempi:
+When performing an **A + 1** operation (see the signals to be applied to the '181 in *Summary of NQSAP ALU operations*) two cases can occur — let us look at two examples:
 
-  - A = 0000.0101 che, incrementato di un valore 1, diventa 0000.0110; l'incremento avviene iniettando un segnale LO sul Carry In (/Cn) del primo '181; il suo Carry Out (/Cn+4) è HI, cioè non attivo; il risultato dell'operazione svolta dal secondo '181 non comporta un Carry, pertanto il suo Carry Out (/Cn+4) è ancora HI.
-  - A = 0000.1111 che, incrementato di un valore 1, diventa 0001.0000; l'incremento avviene iniettando un segnale LO sul Carry In (/Cn) del primo '181; il suo Carry in uscita (/Cn+4) è LO, cioè attivo; il risultato dell'operazione svolta dal secondo '181 non comporta un Carry, pertanto il suo Carry Out (/Cn+4) è HI.
+  - A = 0000.0101 which, incremented by a value of 1, becomes 0000.0110; the increment occurs by injecting a LO signal on the Carry In (/Cn) of the first '181; its Carry Out (/Cn+4) is HI, i.e. not active; the result of the operation performed by the second '181 does not involve a Carry, therefore its Carry Out (/Cn+4) is still HI.
+  - A = 0000.1111 which, incremented by a value of 1, becomes 0001.0000; the increment occurs by injecting a LO signal on the Carry In (/Cn) of the first '181; its output Carry (/Cn+4) is LO, i.e. active; the result of the operation performed by the second '181 does not involve a Carry, therefore its Carry Out (/Cn+4) is HI.
 
-- Nel primo caso entrambi i /Cn+4 sono LO e dunque una XOR con gli ingressi connessi a tali uscite non segnalerebbe uno stato di Overflow, correttamente.
+- In the first case both /Cn+4 are LO and therefore an XOR with inputs connected to those outputs would not signal an Overflow condition, correctly.
+- In the second case there is no real Overflow when incrementing the initial word from 0000.1111 to 0001.0000, but if one were to interpret the Carry Outs of the two '181s with an XOR function, an error would be made, as the two signals are inverted and the XOR would incorrectly signal Overflow.
 
-- Nel secondo caso non si ha un reale Overflow incrementando la word iniziale da 0000.1111 a 0001.0000, ma se si andassero ad interpretare i Carry Out dei due '181 con una funzione XOR, si incorrerebbe in un errore, in quanto i due segnali sono invertiti e la XOR segnalerebbe Overflow, sbagliando.
+All of this is explained very well by Tom on the same page cited a few lines above; as just mentioned, the topic of Overflow is also extensively covered in a [dedicated section](../math/#overflow-in-depth).
 
-Tutto questo è spiegato molto bene da Tom nella stessa pagina citata poche righe più sopra; come detto poc'anzi, l'argomento dell'Overflow è anche diffusamente ripreso [in una sezione dedicata](../math/#approfondimento-overflow).
+## Schematic
 
-## Schema
+[![Schematic of the BEAM computer ALU](../../../assets/alu/50-alu-beam-schematics.png "Schematic of the BEAM computer ALU"){:width="100%"}](../../../assets/alu/50-alu-beam-schematics.png)
 
-[![Schema dell'ALU del computer BEAM](../../../assets/alu/50-alu-beam-schematics.png "Schema dell'ALU del computer BEAM"){:width="100%"}](../../../assets/alu/50-alu-beam-schematics.png)
-
-*Schema dell'ALU del computer BEAM.*
+*Schematic of the BEAM computer ALU.*
 
 ## Differences between NQSAP and BEAM ALU modules
 
-Come si può vedere dallo schema del modulo ALU del computer BEAM, questo è quasi una copia 1:1 del modulo ALU del computer NQSAP: non avevo certamente la capacità di sviluppare autonomamente un modulo ALU così complesso e legato a doppio filo con altri moduli del computer, ma la comprensione completa del funzionamento dell'ALU sviluppata da Tom ha rappresentato comunque un traguardo molto importante.
+As can be seen from the schematic of the BEAM computer ALU module, this is almost a 1:1 copy of the NQSAP computer ALU module: I certainly did not have the ability to independently develop such a complex ALU module so tightly coupled with other modules of the computer, but the complete understanding of the operation of the ALU developed by Tom nonetheless represented a very important milestone.
 
-Ecco una lista delle differenze:
+Here is a list of the differences:
 
-- Per il registro B è stato utilizzato un registro tipo D <a href="https://www.ti.com/lit/ds/symlink/sn54ls377.pdf" target="_blank">74LS377</a> al posto del <a href="https://www.onsemi.com/pdf/datasheet/74vhc574-d.pdf" target="_blank">74LS574</a> utilizzato da Tom. A differenza del '574, il '377 è dotato di ingresso Enable, che solo quando attivo permette il caricamento del registro in corrispondenza del Rising Edge del clock: così facendo si elimina la necessità di un gate in ingresso sul clock per realizzare un Enable artificiale, come descritto nella sezione [L'ALU dell'NQSAP](#lalu-dellnqsap).
+- For the B register a <a href="https://www.ti.com/lit/ds/symlink/sn54ls377.pdf" target="_blank">74LS377</a> D-type register was used instead of the <a href="https://www.onsemi.com/pdf/datasheet/74vhc574-d.pdf" target="_blank">74LS574</a> used by Tom. Unlike the '574, the '377 features an Enable input, which only when active allows the register to be loaded on the Rising Edge of the clock: by doing so the need for a gate on the clock input to create an artificial Enable is eliminated, as described in the section [The NQSAP ALU](#the-nqsap-alu).
 
-![Schema di uno degli 8 Flip-Flop del 74LS377](../../../assets/alu/50-alu-377.png){:width="66%"}
 
-*Schema di uno degli 8 Flip-Flop del 74LS377.*
+![Schematic of one of the 8 Flip-Flops of the 74LS377](../../../assets/alu/50-alu-377.png){:width="66%"}
 
-- Il computer NQSAP prevedeva 8 step per le microistruzioni, mentre il BEAM ne prevede 16. Con soli 8 step non sarebbe stato possibile emulare alcune istruzioni di scorrimento e rotazione del 6502. Questa è in realtà una differenza architetturale più legata alla Control Logic, però il maggior numero di step disponibili ha un importante impatto su questo modulo e ha dunque sicuramente senso citarla anche in questa sezione.
+*Schematic of one of the 8 Flip-Flops of the 74LS377.*
 
-- Tom ha utilizzato l'operazione A Plus A dei '181 per implementare lo scorrimento a sinistra delle istruzioni ASL e ROL del 6502 e il registro H per lo scorrimento a destra delle istruzioni LSR e ROR, mentre il BEAM utilizza H in [entrambe le situazioni](#il-registro-h).
+- The NQSAP computer provided 8 steps for microinstructions, while the BEAM provides 16. With only 8 steps it would not have been possible to emulate some of the 6502 shift and rotate instructions. This is actually an architectural difference more related to the Control Logic, however the greater number of available steps has an important impact on this module and it therefore certainly makes sense to mention it in this section as well.
+
+- Tom used the A Plus A operation of the '181s to implement the left shift of the 6502 ASL and ROL instructions and the H register for the right shift of the LSR and ROR instructions, while the BEAM uses H in [both situations](#the-h-register).
 
 ## Useful links
 
-- <a href="https://www.righto.com/2017/03/inside-vintage-74181-alu-chip-how-it.html" target="_blank">Inside the vintage 74181 ALU chip: how it works and why it's so strange</a> di Ken Shirriff. Fondamentale per capire il perché dell'implementazione apparentemente così strana del chip; eccellente anche lo **schema interattivo**, che permette di visualizzare l'attivazione dei segnali interni e degli output come conseguenza degli input applicati.
-- La pagina delle <a href="https://tomnisbet.github.io/nqsap/docs/74181-alu-notes" target="_blank">note sul 74181</a> di Tom Nisbet.
-- <a href="https://web.archive.org/web/20160326004629/http://www.ti.com/product/sn74ls181" target="_blank">Home page</a> del 74181 su ti.com preservata da Internet Archive.
-- <a href="https://www.youtube.com/watch?v=Fq0MIJjlGsw" target="_blank">Demo of 74LS181 (74HCT181) ALU</a> e <a href="https://www.youtube.com/watch?v=jmROTNtoUGI" target="_blank">Comparator Functions of 74LS181 (74HCT181) ALU</a>: due ottimi video di David Courtney.
-- Il <a href="https://www.atarimania.com/documents/6502%20(65xx)%20Microprocessor%20Instant%20Reference%20Card.pdf" target="_blank">compendio della Micro Logic</a>, dal quale è tratta l'immagine sulle modalità di [scorrimento e rotazione](#il-registro-h) del 6502.
+- <a href="https://www.righto.com/2017/03/inside-vintage-74181-alu-chip-how-it.html" target="_blank">Inside the vintage 74181 ALU chip: how it works and why it's so strange</a> by Ken Shirriff. Essential for understanding the reason behind the apparently so strange implementation of the chip; also excellent is the **interactive schematic**, which allows the activation of internal signals and outputs to be visualized as a consequence of the applied inputs.
+- Tom Nisbet's notes page on the <a href="https://tomnisbet.github.io/nqsap/docs/74181-alu-notes" target="_blank">note sul 74181</a>.
+- <a href="https://web.archive.org/web/20160326004629/http://www.ti.com/product/sn74ls181" target="_blank">Home page</a> of the 74181 on ti.com preserved by Internet Archive.
+- <a href="https://www.youtube.com/watch?v=Fq0MIJjlGsw" target="_blank">Demo of 74LS181 (74HCT181) ALU</a> and <a href="https://www.youtube.com/watch?v=jmROTNtoUGI" target="_blank">Comparator Functions of 74LS181 (74HCT181) ALU</a>: two excellent videos by David Courtney.
+- The <a href="https://www.atarimania.com/documents/6502%20(65xx)%20Microprocessor%20Instant%20Reference%20Card.pdf" target="_blank">Micro Logic compendium</a>, from which the image on the 6502 [shift and rotate](#the-h-register) modes is taken.

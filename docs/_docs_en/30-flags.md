@@ -5,7 +5,7 @@ locale: en-US
 permalink: /docs/en/flags/
 excerpt: "Modulo dei Flag del computer BEAM"
 ---
-<small>[Componenti e funzionamento](#componenti-e-funzionamento) - [I salti condizionali e incondizionati](#i-salti-condizionali-e-incondizionati) - [Calcolo dei Flag N, V, Z e C](#calcolo-dei-flag-n-v-z-e-c) - [Il Carry e i registri H e ALU](#il-carry-e-i-registri-h-e-alu) - [Schema](#schema) - [Differenze tra Moduli Flag dell’NQSAP e del BEAM](#differenze-tra-moduli-flag-dellnqsap-e-del-beam) - [Link utili](#link-utili)</small>
+<small>[Components and operation](#components-and-operation) - [Conditional and unconditional jumps](#conditional-and-unconditional-jumps) - [Calculation of Flags N, V, Z and C](#calculation-of-flags-n-v-z-and-c) - [The Carry and the H and ALU registers](#the-carry-and-the-h-and-alu-registers) - [Schematic](#schematic) - [Differences between NQSAP and BEAM Flag modules](#differences-between-nqsap-and-beam-flag-modules) - [Useful links](#useful-links)</small>
 
 [![Modulo dei Flag del computer BEAM](../../assets/flags/30-flag-beam.png "Modulo dei Flag del computer BEAM"){:width="100%"}](../../assets/flags/30-flag-beam.png)
 
@@ -58,7 +58,7 @@ I miglioramenti derivanti da questa architettura sono:
 - risparmio di linee di indirizzamento delle EEPROM;
 - l'aggiornamento dei flag non modifica gli indirizzi delle EEPROM nel bel mezzo dell'esecuzione di un'istruzione ed elimina questa possibile causa di [glitching](../control/#il-clock-il-glitching-delle-eeprom-e-linstruction-register-parte-2).
 
-## Componenti e funzionamento
+## Components and operation
 
 Un multiplexer (MUX) <a href="https://www.ti.com/lit/ds/symlink/sn74ls157.pdf" target="_blank">74LS157</a> prende in input i valori dei flag V, Z e C selezionandone la provenienza:
 
@@ -93,7 +93,7 @@ Un bus transceiver <a href="https://www.mouser.com/datasheet/2/308/74LS245-11904
 
 Interessante notare che le istruzioni CLC, CLV e SEC non hanno bisogno di segnali dedicati della CL per azzerare o settare i flag C e V: si utilizza la ALU per mettere 0x00 o 0xFF sul bus e si modifica il solo flag di interesse attivando opportunamente il segnale di controllo FC o FV.
 
-## I salti condizionali e incondizionati
+## Conditional and unconditional jumps
 
 Ogni variazione di un flag nel computer SAP-1 di Ben Eater generava una variazione degli indirizzi delle EEPROM, così da poter attivare segnali in uscita opportunamente diversi in conseguenza delle diverse combinazioni degli stati dei flag.
 
@@ -163,7 +163,7 @@ In definitiva, il microcode delle istruzioni di salto prevede:
 - l'attivazione di JE per eseguire i salti condizionali;
 - l'attivazione di WP per eseguire i salti incondizionati.
 
-## Calcolo dei Flag N, V, Z e C
+## Calculation of Flags N, V, Z and C
 
 ### Negative
 
@@ -228,7 +228,7 @@ L'utilizzo di un altro '151 rappresenta il sistema più efficiente per seleziona
 
 - \*\* Come già discusso nella pagina dell'ALU, il Carry del '181 lavora in logica negativa, pertanto un segnale C = LO indica che il Carry è presente; va da sé che per registrare lo stato del Carry in logica positiva sul registro del flag C è necessario invertire il segnale in ingresso.
 
-## Il Carry e i registri H e ALU
+## The Carry and the H and ALU registers
 
 Oltre ad essere utilizzato per eseguire salti condizionali, il Carry trova chiaramente uso nel [modulo ALU](../alu/#lalu-dellnqsap) per eseguire operazioni aritmetiche ('181) e di scorrimento e rotazione ('194).
 
@@ -266,17 +266,17 @@ Si noti che la Truth Table della tabella richiederebbe i componenti evidenziati 
 
 *Schema rivisto con l'applicazione del teorema di De Morgan.*
 
-## Schema
+## Schematic
 
 [![Schema del modulo dei Flag del computer BEAM](../../assets/flags/30-flag-beam-schematics.png "Schema del modulo dei Flag del computer BEAM"){:width="100%"}](../../assets/flags/30-flag-beam-schematics.png)
 
 *Schema del modulo dei Flag del computer BEAM.*
 
-## Differenze tra Moduli Flag dell'NQSAP e del BEAM
+## Differences between NQSAP and BEAM Flag modules
 
 Il modulo Flag del computer BEAM è sostanzialmente una copia del modulo Flag del computer NQSAP; con le mie conoscenze non avrei saputo svilupparne una versione migliore, ma il fatto di averne compreso perfettamente tanto il funzionamento quanto l'integrazione con gli altri moduli del computer è stata una ottima lezione.
 
-## Link utili
+## Useful links
 
 - I video di Ben Eater <a href="https://www.youtube.com/watch?v=ObnosznZvHY" target="_blank">CPU flags register</a> e <a href="https://www.youtube.com/watch?v=Zg1NdPKoosU" target="_blank">Conditional jump instructions</a>, che spiegano la costruzione del modulo dei Flag e le modifiche necessarie al microcode per la gestione delle istruzioni di salto condizionale. Si noterà la differenza con l'approccio dell'NQSAP, che non richiede microcode ad-hoc per ogni flag e non abbisogna di linee di indirizzamento EEPROM dedicate.
 

@@ -33,7 +33,7 @@ Tra le caratteristiche che spiccavano nello schema dell'ALU dell'NQSAP, notavo s
 
 [![Schema dell'ALU di Tom Nisbet](../../../assets/alu/50-alu-nqsap.png "Schema dell'ALU di Tom Nisbet"){:width="100%"}](../../../assets/alu/50-alu-nqsap.png)
 
-*Schema dell'ALU di Tom Nisbet, leggermente modificato al solo scopo di migliorarne la leggibilità. Manca il segnale H-Q0, probabile dimenticanza di Tom.*
+*Schema dell'ALU di Tom Nisbet, leggermente modificato al solo scopo di migliorarne la leggibilità. Manca il segnale H-Q0, probabile piccola dimenticanza di Tom.*
 
 Il modulo ALU è sommariamente composto da due registri di input H e B e da una coppia di '181 interconnessi, che permettono di gestire una word di 8 bit: H e B sono i registri di input dei '181.
 
@@ -215,7 +215,7 @@ Legenda tabella *Sintesi operazioni dell'ALU dell'NQSAP*:
   |  - | -     |  -    |  -    |  -    |  -    |          - |   -       |
   | 1  | **0** | **0** | **1** | **1** | **0** | A Minus B  | 0x06 + C* |
 
-  come è possibile eseguire altre operazioni di sottrazione utilizzando un opcode diverso da **00110** pur sapendo che i '181 eseguono le sottrazioni solo con questa codifica in ingresso? Lo vedremo tra poco nella sezione [Istruzioni di comparazione](#istruzioni-di-comparazione).
+  Come è possibile eseguire altre operazioni di sottrazione utilizzando un opcode diverso da **00110** pur sapendo che i '181 eseguono le sottrazioni solo con questa codifica in ingresso? Lo vedremo tra poco nella sezione [Istruzioni di comparazione](#istruzioni-di-comparazione).
 
 - \*\*\* L'operazione A + A veniva usata nell'NQSAP per fare lo shift verso sinistra dei bit; vista la presenza dello Shift Register H, ho preferito riversare su di esso tutte le operazioni di rotazione (a destra e a sinistra, sia con Carry sia senza Carry).
 

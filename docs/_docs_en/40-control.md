@@ -5,7 +5,7 @@ locale: en-US
 permalink: /docs/en/control/
 excerpt: "Control Logic del computer BEAM"
 ---
-<small>[Instruction Register and Instructions](#instruction-register-and-instructions) - [Ring Counter e Microistruzioni](#ring-counter-e-microistruzioni) - [Fasi](#fasi) - [Clock, "glitching" delle EEPROM e Instruction Register (parte 2)](#clock-eeprom-glitching-and-instruction-register-part-2) - [Lunghezza delle istruzioni](#lunghezza-delle-istruzioni) - [I 74LS138 per la gestione dei segnali](#i-74ls138-per-la-gestione-dei-segnali) - [Caricamento di un programma dal Loader](#caricamento-di-un-programma-dal-loader) - [Riepilogo segnali dell’NQSAP e del BEAM](#riepilogo-segnali-dellnqsap-e-del-beam) - [Control signals](#control-signals) - [Bus e altri segnali](#bus-e-altri-segnali) - [Microcode](#microcode) - [Differenze rispetto all’Instruction Set del 6502](#differenze-rispetto-allinstruction-set-del-6502) - [Schematic](#schematic) - [Differenze tra Control Logic dell’NQSAP e del BEAM](#differenze-tra-control-logic-dellnqsap-e-del-beam) - [Note](#note) - [Link Utili](#link-utili) - [Riflessione sul microcode](#riflessione-sul-microcode)</small>
+<small>[Instruction Register and Instructions](#instruction-register-and-instructions) - [Ring Counter and Microinstructions](#ring-counter-and-microinstructions) - [Fasi](#fasi) - [Clock, "glitching" delle EEPROM e Instruction Register (parte 2)](#clock-eeprom-glitching-and-instruction-register-part-2) - [Lunghezza delle istruzioni](#lunghezza-delle-istruzioni) - [I 74LS138 per la gestione dei segnali](#i-74ls138-per-la-gestione-dei-segnali) - [Caricamento di un programma dal Loader](#caricamento-di-un-programma-dal-loader) - [Riepilogo segnali dell’NQSAP e del BEAM](#riepilogo-segnali-dellnqsap-e-del-beam) - [Control signals](#control-signals) - [Bus e altri segnali](#bus-e-altri-segnali) - [Microcode](#microcode) - [Differenze rispetto all’Instruction Set del 6502](#differenze-rispetto-allinstruction-set-del-6502) - [Schematic](#schematic) - [Differenze tra Control Logic dell’NQSAP e del BEAM](#differenze-tra-control-logic-dellnqsap-e-del-beam) - [Note](#note) - [Link Utili](#link-utili) - [Riflessione sul microcode](#riflessione-sul-microcode)</small>
 
 [![Control Logic del computer BEAM](../../assets/control/40-beam-control.png "Control Logic del computer BEAM"){:width="100%"}](../../assets/control/40-beam-control.png)
 
@@ -124,7 +124,7 @@ Come si vedrà in seguito parlando del Ring Counter, un aspetto importante del c
 
 Prima di approfondire l'argomento, è opportuno iniziare a parlare anche del Ring Counter, che ha un ruolo primario nel caricamento di tutti i registri, IR compreso.
 
-## Ring Counter e Microistruzioni
+## Ring Counter and Microinstructions
 
 Per capire il funzionamento del Ring Counter, è necessario fare proprio il concetto di microistruzione: le *istruzioni* di un microprocessore sono composte da un certo numero di step, più precisamente chiamati *microistruzioni*.
 
