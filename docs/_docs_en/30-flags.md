@@ -86,7 +86,7 @@ Each computer instruction, thanks to microcode customization, can set more than 
 
 - The FF outputs are connected to a '151 to manage conditional jumps.
 
-- Flag C is also exported toward the '181s and the H register of the ALU module; see the section [The Carry and the H and ALU registers](the-carry-and-the-h-and-alu-registers) on this same page.
+- Flag C is also exported toward the '181s and the H register of the ALU module; see the section [The Carry and the H and ALU registers](#the-carry-and-the-h-and-alu-registers) on this same page.
 
 A <a href="https://www.mouser.com/datasheet/2/308/74LS245-1190460.pdf" target="_blank">74LS245</a> bus transceiver finally allows exporting the 4 NVZC flags onto the bus to save them in memory, or more precisely in the Stack, similarly to what happens in the 6502 with the Push Processor Status (PHP) instruction.
 
@@ -229,9 +229,7 @@ The use of another '151 represents the most efficient system for selecting the C
 
 ## The Carry and the H and ALU registers
 
-In addition to being used for conditional jumps, the Carry is clearly used in the [ALU module]() to perform arithmetic operations ('181) and shift and rotate operations ('194).
-
-Oltre ad essere utilizzato per eseguire salti condizionali, il Carry trova chiaramente uso nel [modulo ALU](../alu/#the-nqsap-alu) per eseguire operazioni aritmetiche ('181) e di scorrimento e rotazione ('194).
+In addition to being used for conditional jumps, the Carry is clearly used in the [ALU module](../alu/#the-nqsap-alu) to perform arithmetic operations ('181) and shift and rotate operations ('194).
 
 ![Selection of the Carry to pass to the Carry Input of H and the '181s of the ALU module](../../../assets/flags/30-flag-c-h-alu.png){:width="50%"}
 
