@@ -1,13 +1,13 @@
 ---
-title: "Flag"
+title: "Flags"
 lang: en
 locale: en-US
 permalink: /docs/en/flags/
-excerpt: "Modulo dei Flag del computer BEAM"
+excerpt: "BEAM computer Flags module"
 ---
 <small>[Components and operation](#components-and-operation) - [Conditional and unconditional jumps](#conditional-and-unconditional-jumps) - [Calculation of Flags N, V, Z and C](#calculation-of-flags-n-v-z-and-c) - [The Carry and the H and ALU registers](#the-carry-and-the-h-and-alu-registers) - [Schematic](#schematic) - [Differences between NQSAP and BEAM Flag modules](#differences-between-nqsap-and-beam-flag-modules) - [Useful links](#useful-links)</small>
 
-[![Modulo dei Flag del computer BEAM](../../../assets/flags/30-flag-beam.png "Modulo dei Flag del computer BEAM"){:width="100%"}](../../../assets/flags/30-flag-beam.png)
+[![BEAM computer Flags module](../../../assets/flags/30-flag-beam.png "BEAM computer Flags module"){:width="100%"}](../../../assets/flags/30-flag-beam.png)
 
 Many times, while analyzing the NQSAP and reading Tom Nisbet's documentation, I had found very ingenious ideas; some of these are found in the Flag module.
 
@@ -35,9 +35,9 @@ Analyzing for example a conditional jump instruction linked to flag Z, I found t
 
 *Instruction Register output toward the Flag module with highlight of the 3 selection bits of the conditional jump instruction.*
 
-[![Ingressi di selezione dell'istruzione di salto condizionale del registro dei Flag e connessione "hardwired" con l'IR](../../../assets/flags/30-flag-select-in.png "Ingressi di selezione dell'istruzione di salto condizionale del registro dei Flag e connessione "hardwired" con l'IR"){:width="80%"}](../../../assets/flags/30-flag-select-in.png)
+[![Selection inputs of the conditional jump instruction of the Flag register and hardwired connection with the IR](../../../assets/flags/30-flag-select-in.png "Ingressi di selezione dell'istruzione di salto condizionale del registro dei Flag e connessione "hardwired" con l'IR"){:width="80%"}](../../../assets/flags/30-flag-select-in.png)
 
-*Ingressi di selezione dell'istruzione di salto condizionale del registro dei Flag e connessione "hardwired" con l'IR.*
+*Selection inputs of the conditional jump instruction of the Flag register and hardwired connection with the IR.*
 
 If for example a generic *Jump on Zero* instruction were encoded as 010 on the 3 signals S2, S1 and S0 shared between the Instruction Register (IR) and the Flag register, the following sequence would occur:
 
