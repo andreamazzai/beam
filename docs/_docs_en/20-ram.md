@@ -149,7 +149,7 @@ On the one hand, the schematic appeared simplified compared to those I had seen 
 
 [![Writing to the RAM while in Run Mode](../../../assets/ram/20-ram-run-mode-write-t8be.png "Writing to the RAM while in Run Mode"){:width="40%"}](../../../assets/ram/20-ram-run-mode-write-t8be.png)
 
-- Lettura dalla RAM in Run Mode
+- Reading from the RAM while in Run Mode
 
 [![Reading from the RAM while in Run Mode](../../../assets/ram/20-ram-run-mode-read-t8be.png "Reading from the RAM while in Run Mode"){:width="40%"}](../../../assets/ram/20-ram-run-mode-read-t8be.png)
 
@@ -219,7 +219,7 @@ Very, very clever.
 
 In parallel with the study of other users' work, I had started working on the design of my own MAR and RAM modules, while continuing to open other lines of study to deepen partially obscure topics or tackle new subjects. I regularly had *dozens* of web pages open simultaneously.
 
-### Il MAR
+### The MAR
 
 The MAR was designed at 8 bits to drive 256 memory addresses. Initially I had used two 4-bit '173 FFs, later replaced by a single 8-bit '273 FF (lacking output activation control, which however is not necessary). Finally I used an 8-bit '377 register, equally suited to our purpose.
 
