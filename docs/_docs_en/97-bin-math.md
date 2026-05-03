@@ -37,14 +37,14 @@ Here is a series of YouTube videos:
 
 2. **Sums of Unsigned numbers, the concept of Carry and possible Overflow** - Mr Dimmick's Computing Channel - <a href="https://www.youtube.com/watch?v=nKxjLM6ePcI" target="_blank">link</a>: very well done; also explains the basic rules applicable to all binary number additions.
 
-3. **Numeri negativi in binario** by the same author as video #1 - <a href="https://www.youtube.com/watch?v=dHB7jFjESLY" target="_blank">link</a>: an excellent video that explains how to represent negative numbers in two's complement and how to convert a positive number to negative and vice versa.
+3. **Negative Numbers in Binary** by the same author as video #1 - <a href="https://www.youtube.com/watch?v=dHB7jFjESLY" target="_blank">link</a>: an excellent video that explains how to represent negative numbers in two's complement and how to convert a positive number to negative and vice versa.
 
     - With two's complement, there is only one 0, unlike what happens with Sign and Magnitude (see further on in this page).
     - To convert a positive number to negative it is sufficient to invert all the bits and add 1.
     - The same procedure is perfectly valid in reverse as well (from negative to positive).
-    - Pay attention to an error also acknowledged by the author in the comments: in the discussion of Sign and Magnitude the range does not go from -64 to +64, but from -128 to +128.
+    - Pay attention to an error also acknowledged by the author in the comments: in the discussion of Sign and Magnitude the range does not go from -64 to +64, but from -128 to +127.
 
-4. **Twos complement: Negative numbers in binary** by  Ben Eater - <a href="https://www.youtube.com/watch?v=dHB7jFjESLY" target="_blank">link</a>: more on negative numbers, complements and subtractions. Excellent for understanding how two's complement addresses the shortcomings of one's complement.
+4. **Twos complement: Negative numbers in binary** by  Ben Eater - <a href="https://www.youtube.com/watch?v=4qH4unVtJkE" target="_blank">link</a>: more on negative numbers, complements and subtractions. Excellent for understanding how two's complement addresses the shortcomings of one's complement.
 
 5. **Binary Addition and Subtraction With Negative Numbers, 2's Complements & Signed Magnitude** - The Organic Chemistry Tutor - <a href="https://www.youtube.com/watch?v=sJXTo3EZoxM" target="_blank">link</a>: excellent video with very effective graphical visualization.
 
@@ -629,7 +629,7 @@ Writing the truth table to add the three bits of each column, we will assign the
 | 1              | 1 | 0 | 0 | 1               |
 | 1              | 1 | 1 | 1 | 1               |
 
-Rather than resorting to the combination of AND and OR (Sum of Products, presented in Brock LaMeres' video <a href="https://www.youtube.com/watch?v=04qG6HhC0wM" target="_blank">Combinational Logic Synthesis: SOP Forms & Minterms</a>), let us try to simplify using Karnaugh maps (explained in the video a href="https://www.youtube.com/watch?v=Y18RPvtS9AU" target="_blank">Combinational Logic Minimization: K-map Formation</a>, also by LaMeres).
+Rather than resorting to the combination of AND and OR (Sum of Products, presented in Brock LaMeres' video <a href="https://www.youtube.com/watch?v=04qG6HhC0wM" target="_blank">Combinational Logic Synthesis: SOP Forms & Minterms</a>), let us try to simplify using Karnaugh maps (explained in the video <a href="https://www.youtube.com/watch?v=Y18RPvtS9AU" target="_blank">Combinational Logic Minimization: K-map Formation</a>, also by LaMeres).
 
 The analysis of **Q** produces the following map (in which C corresponds to the C<sub>IN</sub> seen in the truth table):
 
@@ -771,14 +771,10 @@ C<sub>OUT</sub> = g + p\*C<sub>IN</sub>, that is, by substituting **g** and **p*
 
 C<sub>OUT</sub> = A\*B + (A+B)\*C<sub>IN</sub>, which we are already familiar with, as it is nothing other than C<sub>OUT</sub> of any Full Adder.
 
-Utilizziamo ora **i** per identificare la posizione di ogni bit all'interno del Multiple Bit Adder, ad esempio 0-3 per un Adder a 4 bit, e scrivere le espressioni generali per **p** e **g**:
-
 We now use **i** to identify the position of each bit within the Multiple Bit Adder — for example, 0–3 for a 4‑bit adder—and write the general expressions for **p** and **g**:
 
 g<sub>i</sub> = A<sub>i</sub>\*B<sub>i</sub> (e.g., g<sub>2</sub> = A<sub>2</sub>\*B<sub>2</sub>)\
 p<sub>i</sub> = A<sub>i</sub>+B<sub>i</sub> (e.g., p<sub>3</sub> = A<sub>3</sub>+B<sub>3</sub>)
-
-Andiamo a computare il Carry In "C" di un generico Adder **i+1**, che equivale al Carry Out dell'Adder **i** che lo precede, analizzando gli input di quest'ultimo:
 
 Let us now compute the Carry‑In "C" of a generic adder **i+1**, which corresponds to the Carry Out of the preceding Adder **i**, by analyzing the inputs of the latter:
 
@@ -817,7 +813,7 @@ Let us finally write the expression for C<sub>4</sub>, which is the Carry Out of
 C<sub>4</sub> = g<sub>3</sub> + p<sub>3</sub>\*C<sub>3</sub>, cioè, sostituendo C<sub>3</sub>:\
 C<sub>4</sub> = g<sub>3</sub> + p<sub>3</sub>\*(g<sub>2</sub> + p<sub>2</sub>\*g<sub>1</sub> + p<sub>2</sub>\*p<sub>1</sub>\*g<sub>0</sub> + p<sub>2</sub>\*p<sub>1</sub>\*p<sub>0</sub>\*C<sub>0</sub>), which means that C<sub>4</sub> does not depend on the result of the previous Adder, but only on the A and B inputs of the previous Adders and on C<sub>0</sub>. Applying the distributive property, we obtain:
 
-C<sub>4</sub> = g<sub>3</sub> + p<sub>3</sub>\*g<sub>2</sub> + p<sub>3</sub>\*p<sub>2</sub>\*g<sub>1</sub> + p<sub>3</sub>\*p<sub>2</sub>\*p<sub>1</sub>\*g<sub>0</sub> + p<sub>3</sub>\*p<sub>2</sub>\*p<sub>1</sub>\*p<sub>0</sub>\*C<sub>0</sub>, cioé:\
+C<sub>4</sub> = g<sub>3</sub> + p<sub>3</sub>\*g<sub>2</sub> + p<sub>3</sub>\*p<sub>2</sub>\*g<sub>1</sub> + p<sub>3</sub>\*p<sub>2</sub>\*p<sub>1</sub>\*g<sub>0</sub> + p<sub>3</sub>\*p<sub>2</sub>\*p<sub>1</sub>\*p<sub>0</sub>\*C<sub>0</sub>, that is:\
 C<sub>4</sub> = A<sub>3</sub>\*B<sub>3</sub> + (A<sub>3</sub>+B<sub>3</sub>)\*A<sub>2</sub>\*B<sub>2</sub> + (A<sub>3</sub>+B<sub>3</sub>)\*(A<sub>2</sub>+B<sub>2</sub>)\*A<sub>1</sub>\*B<sub>1</sub> + (A<sub>3</sub>+B<sub>3</sub>)\*(A<sub>2</sub>+B<sub>2</sub>)\*(A<sub>1</sub>+B<sub>1</sub>)\*A<sub>0</sub>\*B<sub>0</sub> + (A<sub>3</sub>+B<sub>3</sub>)\*(A<sub>2</sub>+B<sub>2</sub>)\*(A<sub>1</sub>+B<sub>1</sub>)\*(A<sub>0</sub>+B<sub>0</sub>)*C<sub>0</sub>
 
 Observing the expressions of each Adder, it can be deduced that all depend only on inputs A, B and C<sub>0</sub>, which is exactly the goal to be pursued: each stage calculates its own Carry without having to wait for the Carry calculation performed by the previous stage.
@@ -825,8 +821,6 @@ Observing the expressions of each Adder, it can be deduced that all depend only 
 Let us now implement a Carry Look Ahead Adder, but first, considering what we have seen above, let us modify the Full Adders by creating *Modified* Full Adders.
 
 The sum **Q**, as always, corresponds to A<sub>0</sub>⊕B<sub>0</sub>⊕C<sub>0</sub>. We add to the Full Adder an OR gate and an AND gate with the sole purpose of obtaining the terms **p** (i.e. A<sub>0</sub>+B<sub>0</sub> for the first Adder) and **g** (i.e. A<sub>0</sub>\*B<sub>0</sub> for the first Adder)
-
-La somma **Q**, come sempre, corrisponde ad A<sub>0</sub>⊕B<sub>0</sub>⊕C<sub>0</sub>. Aggiungiamo al Full Adder una porta OR e una porta AND con il solo scopo di ottenere i termini **p** (cioè A<sub>0</sub>+B<sub>0</sub> per il primo Adder) e **g** (cioé A<sub>0</sub>*B<sub>0</sub> per il primo Adder).
 
 ![Logic of the sum of the Modified Full Adder](../../../assets/math/modified-full-adder-1.png){:width="20%"}
 

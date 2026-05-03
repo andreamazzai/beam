@@ -40,9 +40,9 @@ Ecco una serie di video su YouTube:
     - Con il complemento a 2, vi è un solo 0, a differenza di quanto accade con Modulo e Segno (si veda più avanti in questa pagina).
     - Per convertire un numero positivo in negativo è sufficiente invertire tutti i bit ed aggiungere 1.
     - Lo stesso procedimento è perfettamente valido anche al contrario (da negativo a positivo).
-    - Prestare attenzione a un errore riconosciuto anche dall'autore nei commenti: nella discussione di Segno e Modulo il range non va da -64 a +64, ma da -128 a +128.
+    - Prestare attenzione a un errore riconosciuto anche dall'autore nei commenti: nella discussione di Segno e Modulo il range non va da -64 a +64, ma da -128 a +127.
 
-4. **Twos complement: Negative numbers in binary** di Ben Eater - <a href="https://www.youtube.com/watch?v=dHB7jFjESLY" target="_blank">link</a>: ancora su numeri negativi, complementi e sottrazioni. Ottimo per capire come il complemento a 2 indirizzi le lacune del complemento a 1.
+4. **Twos complement: Negative numbers in binary** di Ben Eater - <a href="https://www.youtube.com/watch?v=4qH4unVtJkE" target="_blank">link</a>: ancora su numeri negativi, complementi e sottrazioni. Ottimo per capire come il complemento a 2 indirizzi le lacune del complemento a 1.
 
 5. **Binary Addition and Subtraction With Negative Numbers, 2's Complements & Signed Magnitude** - The Organic Chemistry Tutor - <a href="https://www.youtube.com/watch?v=sJXTo3EZoxM" target="_blank">link</a>: ottimo video con visualizzazione grafica molto efficace.
 
