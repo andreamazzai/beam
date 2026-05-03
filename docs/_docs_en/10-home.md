@@ -107,7 +107,7 @@ Among the things I learned:
 
 - Ben Eater for his incredible ability to create <a href="https://www.youtube.com/@BenEater/playlists/" target="_blank">such interesting content</a>, especially for the <a href="https://www.youtube.com/playlist?list=PLowKtXNTBypGqImE405J2565dvjafglHU" target="_blank">Building an 8-bit breadboard computer</a> playlist;
 - Tom Nisbet for the <a href="https://tomnisbet.github.io/nqsap/" target="_blank">NQSAP</a> and <a href="https://tomnisbet.github.io/nqsap-pcb/" target="_blank">NQSAP-PCB</a>, significantly expanding and improving Ben Eater's project;
-- the <a href="https://www.reddit.com/r/beneater/" target="_blank">r/beneater</a> subreddit - especially The8BitEnthusiast — thank you!
+- the <a href="https://www.reddit.com/r/beneater/" target="_blank">r/beneater</a> subreddit - especially The8BitEnthusiast for answering some tricky questions — thank you!
 - Ken Shirrif for some <a href="https://www.righto.com/" target="_blank">very interesting articles</a>  on Overflow, the 6502, 74181, and much more!
 - The enthusiastic and inspiring Dr. Brock LaMeres from the University of Montana for the excellent <a href="https://www.youtube.com/playlist?list=PL643xA3Ie_Et2uM4xu1yFk-A5ZQQ8gQ5e" target="_blank">Intro to Logic Circuits</a> playlist on YouTube; a <a href="https://www.montana.edu/blameres/book_content_vhdl.html" target="_blank">more readable index</a> of the same material is available on the official University of Montana website;
 - The <a href="http://6502.org" target="_blank">6502.org</a> website and its forum: detailed, no-frills documentation and truly experienced members;

@@ -1,51 +1,52 @@
 ---
-title: "RAM e MAR"
+title: "RAM and MAR"
 lang: en
 locale: en-US
 permalink: /docs/en/ram/
-excerpt: "Modulo di memoria del computer BEAM"
+excerpt: "BEAM computer memory module"
 ---
-<small>[Primi studi](#primi-studi) - [Memorie con IO separati o IO comuni?](#memorie-con-io-separati-o-io-comuni) - [MUX, Program Mode and Run Mode](#mux-program-mode-and-run-mode) - [Gestione della RAM](#gestione-della-ram) - [Design of the MAR and RAM modules](#design-of-the-mar-and-ram-modules) - [Schema](#schema) - [Note](#note) - [Link utili](#link-utili)</small>
+<small>[Early research](#early-research) - [Memories with separate IO or common IO?](#memories-with-separate-io-or-common-io) - [MUX, Program Mode and Run Mode](#mux-program-mode-and-run-mode) - [RAM management](#ram-management) - [Design of the MAR and RAM modules](#design-of-the-mar-and-ram-modules) - [Schematic ](#schematic) - [Notes](#notes) - [Useful links](#useful-links)</small>
 
-[![Modulo di memoria del computer BEAM](../../assets/ram/20-ram-beam.png "Modulo di memoria del computer BEAM"){:width="100%"}](../../assets/ram/20-ram-beam.png)
+[![BEAM computer memory module](../../../assets/ram/20-ram-beam.png "BEAM computer memory module"){:width="100%"}](../../../assets/ram/20-ram-beam.png)
 
-Il limite principale del computer SAP-1 di Ben Eater era sicuramente la modesta quantità di RAM indirizzabile, pari a 16 byte; era possibile caricare un semplice contatore da 0 a 255 e viceversa, oppure un piccolo algoritmo di Fibonacci, ma nulla di più. Questo è stato lo stimolo primario per la realizzazione di un computer più potente.
+The main limitation of Ben Eater's SAP-1 computer was certainly the modest amount of addressable RAM, equal to 16 bytes; it was possible to load a simple counter from 0 to 255 and back, or a small Fibonacci algorithm, but nothing more. This was the primary stimulus for the creation of a more powerful computer.
 
-All'approssimarsi del completamento della costruzione del SAP-1, avevo iniziato a documentarmi su vari blog e forum per raccogliere idee su possibili miglioramenti ed espansioni.
+As the completion of the SAP-1 construction was approaching, I had started researching various blogs and forums to gather ideas on possible improvements and expansions.
 
-### Primi studi
+### Early research
 
-Il <a href="https://www.reddit.com/r/beneater/" target="_blank">canale Reddit</a> dedicato ai progetti di Ben Eater è stato fondamentale in questo mio percorso.
+The <a href="https://www.reddit.com/r/beneater/" target="_blank">Reddit channel</a> dedicated to Ben Eater's projects was fundamental in this journey of mine.
 
-Dal <a href="https://www.reddit.com/r/beneater/comments/crl270/,8_bit_computer_memory_bootloader_and_display/" target="_blank">primo articolo letto</a> avevo tratto queste note:
+From the <a href="https://www.reddit.com/r/beneater/comments/crl270/,8_bit_computer_memory_bootloader_and_display/" target="_blank">first article I had read</a> I had taken these notes:
 
 > Addressable memory - so the idea here is to have 16bit's of addressable memory (about 65KB). This would greatly expand the capabilities compared to the 16 bytes of Ben's PC. This would affect the following things
 >> Memory Address register - after the expansion of course the MAR would have to be 16 bits wide. Here i was considering using 2 x LS273 8 bit flip-flop along with an AND gate to allow the chip to have Input Enable signal (that would be implemented by AND-ing the CLK with an Input signal, since the chip has no InputEnable and i was unable to find one that is 8 bit wide, has CLR and inputenable and did not want to use LS173 but might reconsider)
 
-Questo utente desiderava fare una espansione radicale del computer, passando da 16 byte a 64K; il mio desiderio era quello di crescere fino a 256 byte (e non complicarmi troppo la vita con un bus a 16 bit), ma alcune informazioni erano state comunque molto utili per una comprensione generale della questione.
+This user wanted to make a radical expansion of the computer, going from 16 bytes to 64K; my desire was to grow to 256 bytes (and not complicate my life too much with a 16-bit bus), but some information had nonetheless been very useful for a general understanding of the matter.
 
-Per indirizzare 64K di memoria era necessario un registro MAR (Memory Address Register) a 16 bit (2^16 = 64K). Invece di utilizzare quattro registri tipo D <a href="https://www.ti.com/lit/ds/sdls067a/sdls067a.pdf" target="_blank">74LS173</a> da 4 bit, come nel SAP-1 originale, sembrava più pratico adottare due registri tipo D <a href="https://www.ti.com/lit/ds/symlink/sn74ls273.pdf" target="_blank">74LS273</a> a 8 bit. Tuttavia, questi ultimi presentavano uno svantaggio rispetto alla versione a 4 bit: mancavano di un ingresso di Enable. Il computer, invece, richiedeva questo segnale, poiché il MAR doveva caricare un indirizzo di memoria solo quando specificamente richiesto, e non ad ogni ciclo di clock. Il segnale MI (Memory Address Register In) del SAP-1 serviva proprio a questo: permetteva al MAR di memorizzare l'indirizzo presente sul bus solo quando necessario, in corrispondenza del fronte di salita del clock. Viceversa, in assenza di un ingresso di Enable, il flip-flop ‘273 avrebbe registrato il dato ad ogni ciclo di clock.
+To address 64K of memory a 16-bit MAR (Memory Address Register) was needed (2^16 = 64K). Instead of using four 4-bit <a href="https://www.ti.com/lit/ds/sdls067a/sdls067a.pdf" target="_blank">74LS173</a> D-type registers, as in the original SAP-1, it seemed more practical to adopt two 8-bit <a href="https://www.ti.com/lit/ds/symlink/sn74ls273.pdf" target="_blank">74LS273</a> D-type registers. However, the latter had a disadvantage compared to the 4-bit version: they lacked an Enable input. The computer, instead, required this signal, since the MAR had to load a memory address only when specifically requested, and not at every clock cycle. The SAP-1's MI (Memory Address Register In) signal served precisely this purpose: it allowed the MAR to store the address present on the bus only when necessary, at the Rising Edge of the clock. Conversely, in the absence of an Enable input, the '273 flip-flop would have registered the data at every clock cycle.
 
-Nel mio progetto a 256 byte bastava un MAR a 8 bit (2^8 = 256), dunque si potevano semplicemente utilizzare due '173 a 4 bit continuando a sfruttare i segnali di Enable nativi. Per completezza, va detto che sarebbe stato possibile utilizzare anche il '273 e una porta AND per *costruire* un segnale di Enable artificiale: collegando i segnali CLK e MI agli ingressi della AND, l'output avrebbe pilotato l'ingresso CLK del FF, che così si sarebbe attivato solo quando entrambi i segnali, CLK e MI, fossero contemporaneamente presenti.
+In my 256-byte project a 8-bit MAR was sufficient (2^8 = 256), so it was possible to simply use two 4-bit '173s continuing to exploit the native Enable signals. For completeness, it should be noted that it would also have been possible to use the '273 and an AND gate to *build* an artificial Enable signal: by connecting the CLK and MI signals to the AND inputs, the output would have driven the CLK input of the FF, which would thus have activated only when both signals, CLK and MI, were simultaneously present.
 
-Il '273, al pari del '173, presenta un ingresso Clear / Reset (CLR), che nel MAR è necessario per resettare il registro - o almeno *credevo* fosse necessario. Sembrava anche interessante l'ipotesi alternativa di usare un registro a 8 bit <a href="https://www.ti.com/lit/ds/symlink/sn74ls377.pdf" target="_blank">74LS377</a>, che include 8 FF con Enable; inizialmente credevo che **non** fosse possibile procedere in tal senso, perché nel MAR serviva anche il CLR, non presente in questo chip. In seguito avevo realizzato che il MAR poteva funzionare perfettamente anche senza un segnale di Clear / Reset; il '377 sarebbe diventato uno dei chip più utilizzati nel BEAM.
+The '273, like the '173, has a Clear / Reset input (CLR), which in the MAR is needed to reset the register — or at least I believed it was necessary. The alternative hypothesis of using a <a href="https://www.ti.com/lit/ds/symlink/sn74ls377.pdf" target="_blank">74LS377</a> 8-bit register, which includes 8 FFs with Enable, also seemed interesting; initially I believed it was **not** possible to proceed in this way, because the MAR also needed the CLR, not present in this chip. Later I had realized that the MAR could work perfectly well without a Clear / Reset signal; the '377 would become one of the most widely used chips in the BEAM.
 >> Program counter - would have to be expanded to a 16 bit counter (should be trivial to do that) I currently have tons of 8 bit counters combined with a register (and the 4 bit 161 counters that Ben used)
 
-Come nel caso del MAR, per indirizzare 256 byte di RAM era necessario un registro [Program Counter](../programcounter) (PC) a 8 bit. Nel computer SAP-1 era invece presente un contatore a 4 bit <a href="https://www.ti.com/lit/ds/symlink/sn54ls161a-sp.pdf" target="_blank">74LS161</a> e dovevo pertanto cercare di combinarne due in cascata.
+As in the case of the MAR, to address 256 bytes of RAM an 8-bit [Program Counter](../programcounter) (PC) register was needed. In the SAP-1 computer a 4-bit counter <a href="https://www.ti.com/lit/ds/symlink/sn54ls161a-sp.pdf" target="_blank">74LS161</a> was present instead and I therefore had to try to combine two of them in cascade.
 
-Sarebbe stato comodo utilizzare un singolo contatore a 8 bit, ma tra i chip disponibili sul mercato non ne ho trovato uno che includesse anche l'ingresso LOAD. Il LOAD permette il caricamento parallelo sul PC di uno specifico indirizzo al quale il computer deve saltare (ad esempio, per eseguire un'istruzione di salto assoluto o branch relativo).
+It would have been convenient to use a single 8-bit counter, but among the chips available on the market I could not find one that also included the LOAD input. The LOAD allows the parallel loading onto the PC of a specific address to which the computer must jump (for example, to execute an absolute jump or relative branch instruction).
 
-Per combinare due chip a 4 bit è stato necessario, nonché molto utile, comprendere la differenza fra "Ripple Mode Carry" e "Carry Look Ahead": il datasheet del contatore 74LS161 riportava infatti questi due diversi esempi di collegamento di chip in cascata tra di loro. Un approfondimento sul tema si trova in una apposita sezione della pagina dedicata all'[Aritmetica Binaria](../math/#gli-adder).
+To combine two 4-bit chips it was necessary, and also very useful, to understand the difference between "Ripple Mode Carry" and "Carry Look Ahead": the 74LS161 counter datasheet in fact reported these two different examples of connecting chips in cascade with each other. A deeper discussion on the topic can be found in a dedicated section of the page devoted to [Binary Arithmetic](../math/#adders).
+
 
 >> Instruction register - now sh!t gets fun. Since i want to bomb completely, I am considering having a 3 byte Instruction register in a way mimicking the BIU block & instruction queue in a 8086. The idea here is to split the instruction register in 3 bytes. 1 byte would be for the instruction/opcode alone, the second and third are going to hold the data of the instruction (either address or an immediate value). This would allow you to address the entire memory space. Also instructions can be of different size. For example. OUT (move to out register) would be just 1 byte wide, LDI (load immediate) would be 2 bytes and LDA (load address/absolute) would be 3 bytes wide. The control logic would take care of the fetch cycle. Or in other words since you know the instruction you are execution you would know how much bytes the instruction is and thus fetch either 1, 2 or 3 bytes from the RAM.
 
-Dopo aver letto questo punto avevo iniziato a raccogliere i miei pensieri per l'espansione di memoria a 256 byte, idea che riprendo in seguito in questa pagina. Di certo, non avevo intenzione di costruire un IR a più byte, o comunque un IR in grado di ospitare sia l'opcode, sia l'operando. Immaginavo di leggere dapprima l'opcode e di caricarlo nell'Instruction Register e, successivamente, di leggere l'operando e di trattarlo adeguatamente.
+After reading this point I had started gathering my thoughts for the 256-byte memory expansion, an idea I return to later in this page. Certainly, I had no intention of building a multi-byte IR, or in any case an IR capable of holding both the opcode and the operand. I imagined first reading the opcode and loading it into the Instruction Register and, subsequently, reading the operand and handling it appropriately.
 
-### Memorie con IO separati o IO comuni?
+### Memories with separate IO or common IO?
 
-Fino ad ora, avevo quasi sostanzialmente dato per scontato di continuare ad usare chip di memoria con porte di Input e Output separati ("dual-port"), esattamente come accade nel <a href="https://eater.net/datasheets/74189.pdf" target="_blank">74189</a> utilizzato nel SAP. Tuttavia, in questo <a href="https://www.reddit.com/r/beneater/comments/hon6ar/74189_alternative/" target="_blank">post su Reddit</a>, un utente evidenziava difficoltà nell'approvvigionamento dei 74189 e chiedeva lumi sull'uso del <a href="https://www.alliancememory.com/wp-content/uploads/pdf/AS6C62256.pdf" target="_blank">62256</a>; ho così iniziato ad approfondire le caratteristiche di questo chip "single-port", aumentando la mia comprensione di queste due diverse architetture.
+Until now, I had almost substantially taken for granted that I would continue using memory chips with separate Input and Output ports ("dual-port"), exactly as happens in the <a href="https://eater.net/datasheets/74189.pdf" target="_blank">74189</a> used in the SAP. However, in this <a href="https://www.reddit.com/r/beneater/comments/hon6ar/74189_alternative/" target="_blank">Reddit post</a>, a user highlighted difficulties in sourcing the 74189 and asked for clarification on the use of the <a href="https://www.alliancememory.com/wp-content/uploads/pdf/AS6C62256.pdf" target="_blank">62256</a>; I thus began to delve deeper into the characteristics of this "single-port" chip, increasing my understanding of these two different architectures.
 
-In origine avevo evidenziato questi pochi appunti presenti nel post, riflettendo sul fatto che l'approccio di questo utente alla gestione dei segnali di controllo mi sembrava un po' troppo semplificato, ma più in là nel tempo avevo realizzato che, tutto sommato, la scrittura sulla RAM non è *eccessivamente* complessa:
+Originally I had highlighted these few notes present in the post, reflecting on the fact that this user's approach to managing control signals seemed to me a bit too simplified, but further along in time I had realized that, all things considered, writing to the RAM is not *excessively* complex:
 
 > 62256 - The I/O lines are controlled by OE and CE.
 When either are high puts the I/O lines at high impedance.
@@ -56,315 +57,316 @@ Writing takes place (two ways, but this is one way) CE low and OE high. A low pu
 - **OE** = Output Enable
 - **WE** = Write Enable
 
-L'utente segnala che ci sono due modalità di scrittura; quella evidenziata da lui prevede OE HI, CE LO e l'impulso WE LO; l'altra modalità riportata nel datasheet ("WE Controlled") prevede sia OE sia CE allo stato LO e l'impulso WE LO. In questa seconda modalità l'unico segnale da gestire è WE, che dovrà essere HI nelle fasi di lettura e *pulsato* LO nelle fasi di scrittura. Nel primo e nel secondo schema del modulo RAM di mia ideazione avevo adottato la prima delle due modalità, mentre nel modulo definitivo - e dopo aver compreso meglio i risvolti dell'una e dell'altra - ho utilizzato la seconda modalità. Altre note relative all'argomento si trovano in seguito in questa stessa pagina.
+The user notes that there are two write modes; the one he highlights requires OE HI, CE LO and the WE LO pulse; the other mode reported in the datasheet ("WE Controlled") requires both OE and CE at LO state and the WE LO pulse. In this second mode the only signal to manage is WE, which will need to be HI during read phases and *pulsed* LO during write phases. In the first and second schematic of the RAM module of my own design I had adopted the first of the two modes, while in the final module — and after having better understood the implications of each — I used the second mode. Other notes relating to the topic can be found later on this same page.
 
-Un altro aspetto che avevo notato immediatamente, ipotizzando l'uso del 62256, era l'impossibilità di mantenere la visibilità del contenuto della cella di RAM indirizzata dal MAR utilizzando i LED (o almeno così credevo): se con i '189 le porte di output erano sempre attive e potevo vedere in ogni momento il valore contenuto della cella di memoria correntemente indirizzata dal MAR, con il 62256 avrei avuto visibilità del contenuto della cella solo nel momento in cui la RAM veniva letta - e dunque non costantemente.
+Another aspect that I had immediately noticed, hypothesizing the use of the 62256, was the impossibility of maintaining visibility of the content of the RAM cell addressed by the MAR using LEDs (or at least so I believed): if with the '189s the output ports were always active and I could see at any moment the value contained in the memory cell currently addressed by the MAR, with the 62256 I would have had visibility of the cell content only at the moment when the RAM was being read — and therefore not continuously.
 
-[![Schema del modulo RAM di Ben Eater basato su 74189: le porte nativamente designate per l'Output consentono la visualizzazione ininterrotta del contenuto della locazione RAM indirizzata dal MAR](../../assets/ram/20-be-ram-detail.png "Schema del modulo RAM basato su 74189: le porte nativamente designate per l'Output consentono la visualizzazione continua del contenuto della locazione RAM indirizzata dal MAR"){:width="66%"}](../../assets/ram/20-be-ram-full.png)
+[![Schematic of Ben Eater's RAM module based on the 74189: the natively designated Output ports allow uninterrupted display of the contents of the RAM location addressed by the MAR](../../../assets/ram/20-be-ram-detail.png "Schematic of Ben Eater's RAM module based on the 74189: the natively designated Output ports allow uninterrupted display of the contents of the RAM location addressed by the MAR"){:width="66%"}](../../../assets/ram/20-be-ram-full.png)
 
-*Schema del modulo RAM di Ben Eater: si notano i 74189 con le porte di Input dedicate D1-D4 e le porte di Output dedicate O1-O4.*
+*Schematic of Ben Eater's RAM module: note the 74189s with dedicated Input ports D1-D4 and dedicated Output ports O1-O4.*
 
-Quello che iniziavo a capire era che per utilizzare una RAM con Common IO dovevo fare un "doppio passaggio" o qualcosa di simile. Come faccio ad avere sempre visibile il contenuto della locazione di memoria anche nel momento in cui setto le porte di IO del chip in modalità input? Come faccio a mantenere la visibilità del contenuto della RAM quando questa non è attiva in output? Devo forse memorizzare il contenuto delle uscite della RAM in qualche latch e solo a quel punto disabilitare il chip prima di andarvi a scrivere? In seguito avrei capito che non era necessario un latch, ma che c'era un'altra strada.
+What I was beginning to understand was that to use a RAM with Common IO I had to do a "double pass" or something similar. How do I always keep the content of the memory location visible even at the moment when I set the IO ports of the chip to input mode? How do I maintain visibility of the RAM content when it is not active in output? Do I perhaps need to store the content of the RAM outputs in some latch and only at that point disable the chip before writing to it? Later I would understand that a latch was not necessary, but that there was another way.
 
-In <a href="https://www.reddit.com/r/beneater/comments/uot8pk/ram_module_using_65256/" target="_blank">questo post</a> un utente esponeva un disegno che credevo potesse andare bene, ma <a href="https://imgur.com/upvYjUX" target="_blank">nel suo schema</a> le uscite dei multiplexer (MUX) sono sempre attive (i <a href="https://www.ti.com/lit/ds/symlink/sn74ls157.pdf" target="_blank">multiplexer 74LS157</a> non sono tri-state) e potrebbero creare contenzioso con le uscite della RAM quando questa è attiva in output; la soluzione poteva essere quella di aggiungere un altro <a href="https://www.mouser.com/datasheet/2/308/74LS245-1190460.pdf" target="_blank">bus transceiver 74LS245</a>, oppure di utilizzare dei <a href="https://www.ti.com/lit/ds/symlink/sn54ls257b.pdf" target="_blank">MUX tri-state 74LS257</a>; intuivo qualcosa relativamente alla necessità di gestire i segnali di controllo della RAM in maniera più ampia e controllare le interazioni con i MUX e con il/i transceiver di interfacciamento verso il bus del computer.
+In <a href="https://www.reddit.com/r/beneater/comments/uot8pk/ram_module_using_65256/" target="_blank">this post</a> a user presented a drawing that I believed could work, but in <a href="https://imgur.com/upvYjUX" target="_blank">his schematic</a> the multiplexer (MUX) outputs are always active (the <a href="https://www.ti.com/lit/ds/symlink/sn74ls157.pdf" target="_blank">multiplexer 74LS157</a> multiplexers are not tri-state) and could create contention with the RAM outputs when the latter is active in output; the solution could be to add another <a href="https://www.mouser.com/datasheet/2/308/74LS245-1190460.pdf" target="_blank">bus transceiver 74LS245</a>, or to use <a href="https://www.ti.com/lit/ds/symlink/sn54ls257b.pdf" target="_blank">MUX tri-state 74LS257</a>; I had some intuition regarding the need to manage the RAM control signals in a more comprehensive way and to control the interactions with the MUXes and with the transceiver(s) interfacing with the computer bus.
 
-[![Disegno su carta del modulo RAM e MAR per capire la migliore disposizione dei chip in base ai collegamenti necessari](../../assets/ram/20-ram-mar-drawing.png "Disegno su carta del modulo RAM e MAR per capire la migliore disposizione dei chip in base ai collegamenti necessari"){:width="66%"}](../../assets/ram/20-ram-mar-drawing.png)
+[![Paper drawing of the RAM and MAR module to understand the best chip arrangement based on the required connections](../../../assets/ram/20-ram-mar-drawing.png "Paper drawing of the RAM and MAR module to understand the best chip arrangement based on the required connections"){:width="66%"}](../../../assets/ram/20-ram-mar-drawing.png)
 
-*Disegno su carta del modulo RAM e MAR per capire la migliore disposizione dei chip in base ai collegamenti necessari.*
+*Paper drawing of the RAM and MAR module to understand the best chip arrangement based on the required connections.*
 
 ## MUX, Program Mode and Run Mode
 
-A cosa servono i MUX nel modulo RAM (e nel MAR)? All'accensione, il contenuto della memoria RAM è vuoto / casuale, dunque dobbiamo prima avere la possibilità di programmare la RAM ("Program Mode") e  poi di renderla visibile al bus del computer durante la normale esecuzione dei programmi ("Run Mode").
+What are the MUXes for in the RAM module (and in the MAR)? At power-on, the content of the RAM memory is empty / random, so we must first have the possibility to program the RAM ("Program Mode") and then to make it visible to the computer bus during normal program execution ("Run Mode").
 
-- La modalità **Program Mode** è manuale e sfrutta dei dip-switch per indirizzare e programmare manualmente la RAM.
+- **Program Mode** is manual and uses dip-switches to manually address and program the RAM.
 
-- La modalità **Run Mode** è la modalità di esecuzione, nella quale la RAM viene indirizzata esclusivamente dal MAR e altrettanto esclusivamente viene acceduta in lettura / scrittura solo dal bus del computer; da notare che è possibile passare manualmente al Program Mode per leggere o scrivere il contenuto della RAM in stile "debug mode" e riprendere poi la normale esecuzione del programma.
+- **Run Mode** is the execution mode, in which the RAM is addressed exclusively by the MAR and is equally accessed for reading / writing only by the computer bus; note that it is possible to manually switch to Program Mode to read or write the RAM content in a "debug mode" style and then resume normal program execution.
 
-La selezione di cosa passare a RAM e MAR avviene mediante un MUX (nel nostro caso 2:1, cioè ad ogni uscita corrispondono due ingressi selezionabili): gli ingressi del MUX sono connessi sia ai dip-switch che utilizzeremo per la programmazione manuale del computer, sia al bus dati del computer; le uscite sono connesse agli ingressi della RAM e del MAR. Un semplice interruttore connesso all'ingresso di selezione del MUX consente di scegliere quali ingressi attivare.
+The selection of what to pass to RAM and MAR is done through a MUX (in our case 2:1, i.e. each output corresponds to two selectable inputs): the MUX inputs are connected both to the dip-switches we will use for manual programming of the computer and to the computer data bus; the outputs are connected to the RAM and MAR inputs. A simple switch connected to the MUX selection input allows choosing which inputs to activate.
 
-Ad esempio, nello schema del SAP-1 visibile più in alto in questa pagina, i multiplexer '157 gestiscono gli ingressi della RAM: gli ingressi dei MUX sono connessi sia al dip-switch sia al bus del computer, mentre le uscite sono connesse alle porte di ingresso D1-D4 dei chip di RAM '189.
+For example, in the SAP-1 schematic visible higher up on this page, the '157 multiplexers manage the RAM inputs: the MUX inputs are connected both to the dip-switch and to the computer bus, while the outputs are connected to the D1-D4 input ports of the '189 RAM chips.
 
-Riprendevo il tema del "doppio passaggio" (o meglio "doppio bus", come capirò in seguito), che da quanto iniziavo a comprendere poteva rendere possibile la visualizzazione persistente del contenuto della RAM. A pagina 17 e 18 del "Building the SAP-3 rev 3.3.pdf" presente nel repository GitHub di <a href="https://github.com/rolf-electronics/The-8-bit-SAP-3" target="_blank">rolf-electronics</a>, altro utente del canale Reddit, avevo notato che era stato inserito un secondo transceiver '245.
+I returned to the theme of the "double pass" (or better "double bus", as I would understand later), which from what I was beginning to understand could make possible the persistent display of the RAM content. On pages 17 and 18 of "Building the SAP-3 rev 3.3.pdf" present in the GitHub repository of <a href="https://github.com/rolf-electronics/The-8-bit-SAP-3" target="_blank">rolf-electronics</a>, another user of the Reddit channel, I had noticed that a second '245 transceiver had been inserted.
 
-[![Modulo RAM di rolf electronics](../../assets/ram/20-rolf-ram.png "Modulo RAM di rolf electronics"){:width="50%"}](../../assets/ram/20-rolf-ram.png)
+[![Rolf electronics RAM module](../../../assets/ram/20-rolf-ram.png "Rolf electronics RAM module"){:width="50%"}](../../../assets/ram/20-rolf-ram.png)
 
-Il funzionamento e la necessità dei transceiver mi erano chiarissimi, in quanto ampiamente utilizzati nel SAP-1 computer per poter attivare i vari moduli del computer solo nel momento in cui fosse necessario farlo: tipicamente ogni modulo ha bisogno di un unico transceiver di interconnessione verso il bus.
+The operation and necessity of the transceivers were very clear to me, as they were widely used in the SAP-1 computer to be able to activate the various computer modules only when it was necessary to do so: typically each module needs a single interconnection transceiver toward the bus.
 
-Lo schema del modulo RAM di Rolf ne prevede invece due, uno "interno" e uno "esterno", per separare il percorso dei dati *verso* la RAM da quello dei dati *dalla* RAM:
+Rolf's RAM module schematic instead provides two, one "internal" and one "external", to separate the data path *toward* the RAM from that of the data *from* the RAM:
 
-- Il transceiver di sinistra è attivo quando si scrive *sulla* RAM, selezionando quale sia la sorgente mediante il MUX '157 (che in "Program Mode" attiva gli ingressi connessi al dip-switch, mentre in "Run Mode" attiva gli ingressi connessi al bus); i LED mostrano il valore che viene scritto sulla RAM.
-- Il transceiver di destra è attivo quando si legge *dalla* RAM; i LED mostrano il valore che viene letto dalla RAM e trasferito sul bus del computer.
 
-Un latch per memorizzare lo stato dei LED, come erroneamente ipotizzavo inizialmente, non era necessario.
+- The left transceiver is active when writing *to* the RAM, selecting the source via the '157 MUX (which in "Program Mode" activates the inputs connected to the dip-switch, while in "Run Mode" activates the inputs connected to the bus); the LEDs show the value being written to the RAM
+- The right transceiver is active when reading *from* the RAM; the LEDs show the value being read from the RAM and transferred to the computer bus.
 
-Proseguendo nello studio, avevo trovato <a href="https://imgur.com/a/ruclh" target="_blank">questo schema</a> dell'utente jaxey1631, che aveva lasciato un commento nel video di Ben Eater <a href="https://www.youtube.com/watch?v=JUVt_KYAp-I&lc=UgjusLoROw6az3gCoAEC" target="_blank">Reprogramming CPU microcode with an Arduino</a>:
+A latch to store the LED state, as I had initially and incorrectly assumed, was not necessary.
 
-[![RAM e MAR con doppio bus](../../assets/ram/20-ram-ruclh.png "RAM e MAR con doppio bus"){:width="100%"}](../../assets/ram/20-ram-ruclh.png)
+Continuing my research, I had found <a href="https://imgur.com/a/ruclh" target="_blank">this schematic</a> by user jaxey1631, who had left a comment in Ben Eater's video <a href="https://www.youtube.com/watch?v=JUVt_KYAp-I&lc=UgjusLoROw6az3gCoAEC" target="_blank">Reprogramming CPU microcode with an Arduino</a>:
 
-*Schema di RAM e MAR con bus interno.*
+[![RAM and MAR with dual bus](../../../assets/ram/20-ram-ruclh.png "RAM and MAR with dual bus"){:width="100%"}](../../../assets/ram/20-ram-ruclh.png)
 
-In questo schema troviamo:
+*RAM and MAR with dual bus.*
 
-- Il chip di RAM 62256.
+In this schematic we find:
 
-- Un FF '273 in alto a destra che, sprovvisto di Enable come discusso in precedenza, si attiva in corrispondenza di un Enable fittizio costruito con l'operazione logica "Clock *AND* Memory Address Register In" (ingressi 1A e 1B del NAND a sinistra nello schema); il segnale MI indica che il computer si prepara a settare l'indirizzo di RAM sul quale eseguirà la prossima operazione.
+- The 62256 RAM chip.
 
-- I due MUX '157 in alto che consentono la selezione degli indirizzi (tra quelli settati sui dip-switch o quelli presenti sulle uscite del FF '273) da esportare verso i pin A0-A7 del chip di RAM. La selezione degli ingressi attivati dal MUX avviene grazie all'interruttore (in alto a sinistra) di selezione della modalità connesso agli ingressi SEL: in Program Mode è acceso il LED rosso e gli ingressi SEL sono allo stato LO, attivando gli ingressi A1-A4 dei MUX; in Run Mode è acceso il LED verde e gli ingressi SEL sono allo stato HI, attivando gli ingressi B1-B4.
+- A '273 FF in the upper right which, lacking an Enable as discussed earlier, activates in correspondence with a fictitious Enable built with the logical operation "Clock *AND* Memory Address Register In" (inputs 1A and 1B of the NAND on the left in the schematic); the MI signal indicates that the computer is preparing to set the RAM address on which it will perform the next operation.
 
-- Altri due MUX '157 in basso che consentono la selezione di cosa esportare verso i pin dati D0-D7 del chip di RAM; anche questi MUX sono connessi all'interruttore di selezione della modalità e attivano gli ingressi connessi al dip-switch di selezione degli indirizzi o quelli connessi al bus del computer, a seconda dello stato dell'interruttore (Program Mode o Run Mode).
+- The two '157 MUXes at the top that allow the selection of addresses (between those set on the dip-switches or those present on the outputs of the '273 FF) to be exported toward the A0-A7 pins of the RAM chip. The selection of the inputs activated by the MUX occurs thanks to the mode selection switch (upper left) connected to the SEL inputs: in Program Mode the red LED is on and the SEL inputs are at LO state, activating the A1-A4 inputs of the MUXes; in Run Mode the green LED is on and the SEL inputs are at HI state, activating the B1-B4 inputs.
 
-- Un primo transceiver '245 (in basso) i cui ingressi sono connessi alle uscite dei due MUX citati nel punto precedente. Questo transceiver funge da interfaccia *verso* la RAM (il pin DIR settato a LO configura i pin A1-A8 come ingressi e i pin B1-B8 come uscite) e si attiva nel momento in cui si deve scrivere in memoria; il segnale OE di questo primo transceiver è infatti attivo quando quando si preme il pulsante Write Button (in basso a sinistra) se in Program Mode, o in corrispondenza di Clock + RI (RAM In) (vedi ingressi 4A e 4B del NAND centrale a sinistra nello schema) quando in Run Mode;
+- Another two '157 MUXes at the bottom that allow the selection of what to export toward the D0-D7 data pins of the RAM chip; these MUXes are also connected to the mode selection switch and activate the inputs connected to the address selection dip-switch or those connected to the computer bus, depending on the state of the switch (Program Mode or Run Mode).
 
-- Un secondo transceiver '245 che si attiva nel momento in cui si deve leggere *dalla* RAM e trasferirne l'output verso il bus dati (anche in questo caso il pin DIR del '245 settato a LO configura i pin A1-A8 come ingressi e i pin B1-B8 come uscite); notare il suo ingresso OE connesso al segnale RO (RAM Output) del computer.
+- A first '245 transceiver (at the bottom) whose inputs are connected to the outputs of the two MUXes mentioned in the previous point. This transceiver acts as an interface *toward* the RAM (the DIR pin set to LO configures pins A1-A8 as inputs and pins B1-B8 as outputs) and activates at the moment when data must be written to memory; the OE signal of this first transceiver is in fact active when the Write Button is pressed (lower left) in Program Mode, or in correspondence with Clock + RI (RAM In) (see inputs 4A and 4B of the central NAND on the left in the schematic) when in Run Mode;
 
-[![Write cicle del 62256](../../assets/ram/20-ram-write-cycle.png "Write cicle del 62256"){:width="50%"}](../../assets/ram/20-ram-write-cycle.png)
+- A second '245 transceiver that activates at the moment when data must be read *from* the RAM and its output transferred toward the data bus (in this case too the DIR pin of the '245 set to LO configures pins A1-A8 as inputs and pins B1-B8 as outputs); note its OE input connected to the RO (RAM Output) signal of the computer.
 
-*Write Cycle "WE Controlled" del 62256.*
+[![62256 "WE Controlled" Write Cycle](../../../assets/ram/20-ram-write-cycle.png "62256 "WE Controlled" Write Cycle"){:width="50%"}](../../../assets/ram/20-ram-write-cycle.png)
 
-Notare la configurazione del chip di RAM: i segnali CE ed OE sono sempre attivi, che significa che l'utente ha deciso di utilizzare la modalità di scrittura definita come "WE# Controlled" definita a pagina 6 del <a href="https://www.alliancememory.com/wp-content/uploads/pdf/AS6C62256.pdf" target="_blank">datasheet</a> del 62256. Rileggendo questi appunti diverso tempo dopo aver completato il mio progetto, mi sembra tutto facile, ma la comprensione delle modalità di scrittura della RAM è stata in realtà abbastanza lunga.
+*62256 "WE Controlled" Write Cycle.*
 
-Da notare inoltre che anche questo utente non usa il CLR sui FF '273 di input del MAR - a pensarci, potrebbe realmente non servire, perché ogni volta che ho bisogno di accedere alla RAM, vado preventivamente a settare sul MAR l'indirizzo desiderato. Probabilmente il reset all'accensione era dunque più estetico che altro.
+Note the configuration of the RAM chip: the CE and OE signals are always active, which means that the user has decided to use the write mode defined as "WE# Controlled" defined on page 6 of the <a href="https://www.alliancememory.com/wp-content/uploads/pdf/AS6C62256.pdf" target="_blank">62256 datasheet</a>. Re-reading these notes a good while after completing my project, everything seems easy, but understanding the RAM write modes was actually quite a lengthy process.
 
-E' stato in questo momento (agosto 2022) che ho scoperto l'**NQSAP**, inserendolo tra i miei appunti come "c'è questo <a href="https://tomnisbet.github.io/nqsap/docs/ram/" target="_blank">https://tomnisbet.github.io/nqsap/docs/ram/</a> che sembra aver fatto delle belle modifiche al suo computer" 😁; ho deciso di seguire questo progetto perché permetteva di costruire un Instruction Set come quello del 6502 che, come scoprirò in seguito, richiederà un numero elevato di indirizzi per il microcode delle EEPROM.
+It is also worth noting that this user too does not use the CLR on the '273 FFs of the MAR input — thinking about it, it might really not be needed, because every time I need to access the RAM, I preventively set the desired address on the MAR. The reset at power-on was probably more aesthetic than anything else.
 
-Tra i vari link sondati per l'upgrade della RAM, c'era anche <a href="https://www.reddit.com/r/beneater/comments/h8y28k/stepbystep_guide_to_upgrading_the_ram_with/" target="_blank">Step-by-Step Guide to Upgrading the RAM with Pictures</a>, che molti utenti hanno trovato ben fatto, ma che io ho trovato particolarmente difficile da digerire in quanto mancante di uno schema.
+It was at this moment (August 2022) that I discovered the NQSAP, adding it to my notes as "there's this guy<a href="https://tomnisbet.github.io/nqsap/docs/ram/" target="_blank">https://tomnisbet.github.io/nqsap/docs/ram/</a> that seems to have made some nice modifications to his computer" 😁; I decided to follow this project because it allowed building an Instruction Set like that of the 6502 which, as I would later discover, would require a large number of addresses for the EEPROM microcode
 
-Per aggiungere un ulteriore link utile per la comprensione delle architetture del modulo di RAM, evidenzio questo <a href="https://www.reddit.com/r/beneater/comments/ad2uko/upgrading_the_ram_module_to_256_bytes/" target="_blank">post su Reddit</a>. Le spiegazioni sono molto ben fatte e utili. Il chip di RAM utilizzato è interessante perché si presenta come due RAM distinte, ognuna con accessi dedicati e un segnale di Busy per gestire le richieste parallele sulla stessa locazione. Altro aspetto degno di nota nell'implementazione di questo utente è la possibilità di aumentare fino a 256 il numero di istruzioni del computer, grazie alla scelta di utilizzare un byte intero per l'istruzione ed un eventuale byte successivo per l'operando, anziché avere un unico byte di cui i 4 Most Significant Bit (MSB) rappresentano l'opcode e di cui i 4 Least Significant Bit (LSB) sono l'operando, come nel SAP-1 di Ben Eater.
+Among the various links explored for the RAM upgrade, there was also <a href="https://www.reddit.com/r/beneater/comments/h8y28k/stepbystep_guide_to_upgrading_the_ram_with/" target="_blank">Step-by-Step Guide to Upgrading the RAM with Pictures</a>, which many users found well done, but which I found particularly difficult to digest as it lacked a schematic.
 
-Un aspetto collaterale (ma importantissimo) dell'aumento del numero di istruzioni era la necessità di aumentare la [dimensione](../control/#instruction-register-e-istruzioni) delle EEPROM ospitanti il microcode: volendo gestire (fino a) 256 istruzioni, erano necessari 8 bit di istruzioni, 3 di step e 2 di flag = 13 pin totali, portanto si rendevano necessarie delle 28C64... e avevo dimenticato che mi sarebbe servito un bit aggiuntivo per la selezione delle due EEPROM! In quel momento, non sapevo ancora che avrei speso *intere settimane* a comprendere il fantastico modulo dei [Flag](../flags) dell'NQSAP di Tom Nisbet, che ha un approccio completamente diverso e che non necessita di segnali in uscita dalle EEPROM.
+To add a further useful link for understanding RAM module architectures, I highlight this <a href="https://www.reddit.com/r/beneater/comments/ad2uko/upgrading_the_ram_module_to_256_bytes/" target="_blank">Reddit post</a>. The explanations are very well done and useful. The RAM chip used is interesting because it presents itself as two distinct RAMs, each with dedicated access and a Busy signal to manage parallel requests on the same location. Another noteworthy aspect of this user's implementation is the possibility of increasing the number of computer instructions up to 256, thanks to the choice of using a full byte for the instruction and an optional subsequent byte for the operand, rather than having a single byte of which the 4 Most Significant Bits (MSB) represent the opcode and the 4 Least Significant Bits (LSB) are the operand, as in Ben Eater's SAP-1.
 
-## Gestione della RAM
+A collateral (but very important) aspect of increasing the number of instructions was the need to increase the [size](../control/#instruction-register-part-1-and-instructions) of the EEPROMs hosting the microcode: wanting to manage (up to) 256 instructions, 8 instruction bits, 3 step bits and 2 flag bits = 13 total pins were needed, making 28C64s necessary... and I had forgotten that I would need an additional bit for the selection of the two EEPROMs! At that moment, I did not yet know that I would spend entire weeks understanding the fantastic Flag module of Tom Nisbet's NQSAP, which has a completely different approach and does not require output signals from the EEPROMs.
 
-Tra i post più utili relativi alla comprensione dei segnali di gestione di RAM e MAR per il modulo di memoria con IO comuni, c'è certamente il <a href="https://www.reddit.com/r/beneater/comments/ut1oud/8bit_question_about_ram_replacement/" target="_blank">Question about RAM replacement</a>, nel quale il moderatore The8BitEnthusiast invita a consultare la sua (*eccellente*, aggiungo io) realizzazione, che ho preso ad esempio e ispirazione.
+## RAM management
 
-[![Modulo RAM dell'utente Reddit The8BitEnthusiast](../../assets/ram/20-ram-the8bit_enthusiast.png "Modulo RAM dell'utente Reddit The8BitEnthusiast"){:width="100%"}](../../assets/ram/20-ram-the8bit_enthusiast.png)
+Among the most useful posts relating to the understanding of RAM and MAR management signals for the memory module with common IO, there is certainly the <a href="https://www.reddit.com/r/beneater/comments/ut1oud/8bit_question_about_ram_replacement/" target="_blank">Question about RAM replacement</a>, in which the moderator The8BitEnthusiast invites consulting his (*excellent*, I would add) implementation, which I took as an example and inspiration.
 
-*Modulo RAM dell'utente e moderatore Reddit The8BitEnthusiast.*
+[![RAM module by Reddit user and moderator The8BitEnthusiast](../../../assets/ram/20-ram-the8bit_enthusiast.png "RAM module by Reddit user and moderator The8BitEnthusiast"){:width="100%"}](../../../assets/ram/20-ram-the8bit_enthusiast.png)
 
-Da un lato, lo schema appariva semplificato rispetto a quelli che avevo visto in precedenza; dall'altro, l'uso di un solo MUX '157, con segnali che uscivano per rientrare in altre porte, lo rendeva difficile da comprendere analizzare. Avevo pertanto provato a costruirmi i grafici temporali degli schemi dei segnali per questi tre possibili casi:
+*RAM module by Reddit user and moderator The8BitEnthusiast.*
 
-- Scrittura sulla RAM in Run Mode
+On the one hand, the schematic appeared simplified compared to those I had seen previously; on the other hand, the use of only one '157 MUX, with signals going out to re-enter other gates, made it difficult to understand and analyze. I had therefore tried to build myself the timing diagrams of the signal schematics for these three possible cases:
 
-[![Scrittura sulla RAM in Run Mode](../../assets/ram/20-ram-run-mode-write-t8be.png "Scrittura sulla RAM in Run Mode"){:width="40%"}](../../assets/ram/20-ram-run-mode-write-t8be.png)
+- Writing to the RAM in Run Mode
+
+[![Writing to the RAM while in Run Mode](../../../assets/ram/20-ram-run-mode-write-t8be.png "Writing to the RAM while in Run Mode"){:width="40%"}](../../../assets/ram/20-ram-run-mode-write-t8be.png)
 
 - Lettura dalla RAM in Run Mode
 
-[![Lettura dalla RAM in Run Mode](../../assets/ram/20-ram-run-mode-read-t8be.png "Lettura dalla RAM in Run Mode"){:width="40%"}](../../assets/ram/20-ram-run-mode-read-t8be.png)
+[![Reading from the RAM while in Run Mode](../../../assets/ram/20-ram-run-mode-read-t8be.png "Reading from the RAM while in Run Mode"){:width="40%"}](../../../assets/ram/20-ram-run-mode-read-t8be.png)
 
-- Scrittura sulla RAM in Program Mode
+- Writing to the RAM while in Program Mode
 
-[![Scrittura sulla RAM in Program Mode](../../assets/ram/20-ram-program-mode-write-t8be.png "Scrittura sulla RAM in Program Mode"){:width="40%"}](../../assets/ram/20-ram-program-mode-write-t8be.png)
+[![Writing to the RAM while in Program Mode](../../../assets/ram/20-ram-program-mode-write-t8be.png "Writing to the RAM while in Program Mode"){:width="40%"}](../../../assets/ram/20-ram-program-mode-write-t8be.png)
 
-The8BitEnthusiast segnalava di *aver sfruttato il ritardo di propagazione dei '245 per gestire i requisiti di temporizzazione*, al che avevo provato a chiedergli se fosse necessario gestire le temporizzazioni in maniera così precisa perché il suo progetto lavorava in modalità "just in time" ogni volta che sopraggiungeva un impulso di clock.
+The8BitEnthusiast noted that he had *exploited the propagation delay of the '245s to manage the timing requirements*, at which point I had tried to ask him whether it was necessary to manage timings in such a precise way because his project was working in "just in time" mode every time a clock pulse arrived.
 
-Per esempio, ipotizzavo che nel primo caso "Scrittura sulla RAM in Run Mode" accadesse quanto segue.
+For example, I assumed that in the first case "Writing to the RAM while in Run Mode" the following occurred.
 
-- **Prima del Rising Edge del CLK**:
+- **Before the Rising Edge of CLK**:
 
-  - siamo in Run Mode, dunque PROG è HI
-  - il MUX abilita gli ingressi I1a, I1b, I1c
-  - Zb è HI (in quanto l'input I1b è connesso a Vcc) e dunque il '245 di destra, che connette il dip-switch di programmazione, è disabilitato
-  - il segnale RI è HI (RI = RAM In, cioè scrittura sulla RAM), dunque stiamo preparando una scrittura
-  - il segnale /RO è HI (RO = RAM Out, cioè lettura dalla RAM), dunque la lettura dalla RAM è disabilitata
-  - Zc = /(CLK LO * RI HI) = HI, dunque la direzione del '245 di sinistra, che connette il data bus, è A-->B (Output)
-  - Za = //(/RO HI * Zc HI) = HI, dunque il '245 dal/al data bus è disabilitato
+  - we are in Run Mode, therefore PROG is HI
+  - the MUX enables inputs I1a, I1b, I1c
+  - Zb is HI (since input I1b is connected to Vcc) and therefore the right '245, which connects the programming   - dip-switch, is disabled
+  - the RI signal is HI (RI = RAM In, i.e. writing to the RAM), therefore we are preparing a write
+  - the /RO signal is HI (RO = RAM Out, i.e. reading from the RAM), therefore reading from the RAM is disabled
+  - Zc = /(CLK LO * RI HI) = HI, therefore the direction of the left '245, which connects the data bus, is A-->B   - (Output)
+  - Za = //(/RO HI * Zc HI) = HI, therefore the '245 from/to the data bus is disabled
 
-- **CLK attivo**:
+- **CLK active**:
 
-  - Zc = /(CLK HI * RI HI) = LO, dunque la direzione del '245 dal/al data bus è B-->A (Input)
-  - Za = //(/RO HI * Zc LO) = LO, dunque il '245 dal/al data bus è attivo
-  - /WE = Zc = LO, dunque la RAM riceve il Falling Edge del segnale di Write e trova sui suoi ingressi quanto le viene proiettato dal '245 dal/al data bus
+  - Zc = /(CLK HI * RI HI) = LO, therefore the direction of the '245 from/to the data bus is B-->A (Input)
+  - Za = //(/RO HI * Zc LO) = LO, therefore the '245 from/to the data bus is active
+  - /WE = Zc = LO, therefore the RAM receives the Falling Edge of the Write signal and finds at its inputs what is projected onto it by the '245 from/to the data bus
 
-- **Quando l'impulso di Clock termina**:
+- **When the clock pulse ends**:
 
-  - Zc = /(CLK LO * RI HI) = HI, dunque la direzione del '245 dal/al data bus è A-->B (Output)
-  - /WE = Zc = HI, dunque l'impulso di Write sulla RAM termina con il Rising Edge
-  - Za = //(/RO HI * Zc HI) = HI, dunque il '245 dal/al data bus viene disabilitato
+  - Zc = /(CLK LO * RI HI) = HI, therefore the direction of the '245 from/to the data bus is A-->B (Output)
+  - /WE = Zc = HI, therefore the Write pulse on the RAM ends with the Rising Edge
+  - Za = //(/RO HI * Zc HI) = HI, therefore the '245 from/to the data bus is disabled
 
-Legenda:
+Legend:
 
-- **PROG** è il segnale dell'interruttore di selezione della modalità Program Mode (LO) / Run Mode (HI); negli schemi originali del SAP-1 computer si trova nel MAR
-- **/** significa NOT
-- **\*** significa AND
+- **PROG** is the signal of the Program Mode (LO) / Run Mode (HI) mode selection switch; in the original SAP-1 computer schematics it is found in the MAR
+- **/** means NOT
+- **\*** means AND
 
-[![Scrittura sulla RAM in Run Mode](../../assets/ram/20-ram-run-mode-write-large-t8be.png "Scrittura sulla RAM in Run Mode"){:width="100%"}](../../assets/ram/20-ram-run-mode-write-large-t8be.png)
+[![Writing to the RAM while in Run Mode](../../../assets/ram/20-ram-run-mode-write-large-t8be.png "Writing to the RAM while in Run Mode"){:width="100%"}](../../../assets/ram/20-ram-run-mode-write-large-t8be.png)
 
-*Scrittura sulla RAM in Run Mode.*
+*Writing to the RAM while in Run Mode.*
 
-Da quanto leggevo, immaginavo che il momento critico fosse il Rising Edge del Clock, perché in quel mentre è necessario attendere che la RAM sia pronta per la scrittura e proprio qui è necessario sfruttare il ritardo introdotto dal '245 per mostrare i dati alla RAM "un po' più tardi", ma non capivo esattamente il motivo.
+From what I was reading, I imagined that the critical moment was the Rising Edge of the Clock, because at that point it is necessary to wait for the RAM to be ready for writing and it is precisely here that it is necessary to exploit the delay introduced by the '245 to show the data to the RAM "a little later", but I did not understand exactly why.
 
-The8BitEnthusiast aveva gentilmente risposto al mio quesito:
+The8BitEnthusiast had kindly replied to my question:
 
-> Dovevo assicurarmi che i ‘245 non consegnassero dati alla RAM quando questa non era ancora pronta per accettare dati in Input perché le sue uscite erano ancora attive in output\*\*. Il datasheet segnala che la RAM disabilita l’output ed è pronta per l’input 20 nanosecondi dopo che WE viene portato allo stato LO.
+> I had to make sure that the '245s did not deliver data to the RAM when it was not yet ready to accept data as Input because its outputs were still active in output\*\*. The datasheet states that the RAM disables the output and is ready for input 20 nanoseconds after WE is brought to LO state.
 
-[![Timing RAM 62256](../../assets/ram/20-ram-62256-timing.png "Timing RAM 62256"){:width="66%"}](../../assets/ram/20-ram-62256-timing.png)
+[![62256 RAM Timing](../../../assets/ram/20-ram-62256-timing.png "62256 RAM Timing"){:width="66%"}](../../../assets/ram/20-ram-62256-timing.png)
 
-\*\* Nello schema del modulo RAM di The8BitEnthusiast si nota che il segnale OE della RAM è connesso a ground, che significa che i pin dati sono sempre attivi in output, *tranne* quando si deve effettuare una scrittura. Quando si attiva il segnale di write WE, vi è un tempo tWHZ durante il quale la RAM è ancora attiva in output; trascorso questo tempo, è possibile mettere dei dati in input sulla RAM.
+\*\* In the schematic of The8BitEnthusiast's RAM module it can be noted that the OE signal of the RAM is connected to ground, which means that the data pins are always active in output, *except* when a write must be performed. When the write signal WE is activated, there is a time tWHZ during which the RAM is still active in output; once this time has elapsed, it is possible to put data in input on the RAM.
 
-In altre parole, la RAM è normalmente attiva in output; per scrivere su di essa, la si deve attivare in input col segnale WE. Poiché la RAM impiega 20 nanosecondi per commutare i pin dati da output a input, prima di applicarle dei segnali in input è necessario attendere almeno 20 nanosecondi dal momento in cui si attiva WE (altrimenti si potrebbero provocare dei cortocircuiti: ad esempio avere un pin di output sulla RAM HI e il corrispondente pin di input sul transceiver LO significherebbe portare l'output della RAM direttamente a ground, cortocircuitandola).
+In other words, the RAM is normally active in output; to write to it, it must be activated in input with the WE signal. Since the RAM takes 20 nanoseconds to switch the data pins from output to input, before applying input signals to it it is necessary to wait at least 20 nanoseconds from the moment WE is activated (otherwise short circuits could be caused: for example having an output pin on the RAM at HI and the corresponding input pin on the transceiver at LO would mean bringing the RAM output directly to ground, short-circuiting it).
 
-[![Write Cycle](../../assets/ram/20-ram-write-cycle-twhz.png "Write Cycle"){:width="50%"}](../../assets/ram/20-ram-write-cycle-twhz.png)
+[![Write Cycle](../../../assets/ram/20-ram-write-cycle-twhz.png "Write Cycle"){:width="50%"}](../../../assets/ram/20-ram-write-cycle-twhz.png)
 
-The8BitEnthusiast continuava:
+The8BitEnthusiast continued:
 
-> Lo stesso segnale Zc che attiva la scrittura su RAM (WE) abilita anche i due '245; il datasheet del '245 specifica che la sua attivazione richiede 25 nanosecondi, che è un valore superiore a quello necessario alla RAM per attivarsi in input, dunque il requisito è rispettato.
+> The same Zc signal that activates writing to the RAM (WE) also enables the two '245s; the '245 datasheet specifies that its activation requires 25 nanoseconds, which is a value greater than that required by the RAM to activate in input, so the requirement is met
 
-Detto diversamente, la RAM riceve il segnale di scrittura nello stesso momento in cui il transceiver riceve il segnale di attivazione, ma il transceiver è più lento della RAM e dunque i pin della RAM saranno già nella corretta modalità di input *prima* che il transceiver metta in output quanto presente nei suoi ingressi.
+In other words, the RAM receives the write signal at the same moment the transceiver receives the enable signal, but the transceiver is slower than the RAM and therefore the RAM pins will already be in the correct input mode *before* the transceiver outputs what is present at its inputs.
 
-Molto, molto clever.
+Very, very clever.
 
 ## Design of the MAR and RAM modules
 
-Parallelamente agli studi dei lavori di altri utenti, avevo iniziato a lavorare sul disegno dei miei moduli MAR e RAM, non senza continuare ad aprire altri filoni di studio per approfondire temi ancora parzialmente oscuri o affrontare argomenti nuovi. Avevo regolarmente alcune *decine* di pagine web aperte contemporaneamente.
+In parallel with the study of other users' work, I had started working on the design of my own MAR and RAM modules, while continuing to open other lines of study to deepen partially obscure topics or tackle new subjects. I regularly had *dozens* of web pages open simultaneously.
 
 ### Il MAR
 
-Il MAR era progettato a 8 bit per pilotare 256 indirizzi di memoria. Inizialmente avevo utilizzato due FF '173 a 4 bit, sostituiti in seguito da un unico FF '273 a 8 bit (sprovvisto di controllo dell'attivazione dell'output, che però non è necessario). Infine ho utilizzato un registro a 8 bit '377, altrettanto adatto al nostro scopo.
+The MAR was designed at 8 bits to drive 256 memory addresses. Initially I had used two 4-bit '173 FFs, later replaced by a single 8-bit '273 FF (lacking output activation control, which however is not necessary). Finally I used an 8-bit '377 register, equally suited to our purpose.
 
-[![Memory Address Register](../../../assets/ram/20-mar-beam.png "Memory Address Register"){:width="100%"}](../../../assets/ram/20-mar-beam.png)
+[![BEAM Memory Address Register (MAR)](../../../assets/ram/20-mar-beam.png "BEAM Memory Address Register (MAR)"){:width="100%"}](../../../assets/ram/20-mar-beam.png)
 
-*Memory Address Register (MAR) del BEAM.*
+*BEAM Memory Address Register (MAR).*
 
-Notare l'interruttore di selezione Program Mode / Run Mode (segnale /PROG, che è connesso anche al modulo RAM):
+Note the Program Mode / Run Mode selection switch (signal /PROG, which is also connected to the RAM module):
 
-- alla chiusura dei contatti 1-2 i pin di selezione dei MUX '157 si trovano allo stato logico LO, attivando gli ingressi I0a, I0b, I0c ed I0d, che trasmettono così al bus indirizzi della RAM i valori settati sul dip-switch;
-- alla chiusura dei contatti 2-3 i pin di selezione dei MUX '157 si trovano allo stato logico HI, attivando gli ingressi I1a, I1b, I1c ed I1d, che trasmettono così al bus indirizzi della RAM i valori presenti in output sul '377.
+- when contacts 1-2 are closed the '157 MUX selection pins are at logic state LO, activating inputs I0a, I0b, I0c and I0d, which thus transmit to the RAM address bus the values set on the dip-switch;
+- when contacts 2-3 are closed the '157 MUX selection pins are at logic state HI, activating inputs I1a, I1b, I1c and I1d, which thus transmit to the RAM address bus the values present at the '377 output.
 
-### Prima versione del modulo RAM
+### First version of the RAM module
 
-Come già detto, per quanto riguarda la realizzazione del modulo RAM avevo deciso di procedere con il chip 62256 con IO comuni. Per cercare di fissare i concetti, avevo trascritto nuovamente le differenze tra le architetture con chip con IO separati ed IO comuni:
+As already mentioned, regarding the construction of the RAM module I had decided to proceed with the 62256 chip with common IO. To try to fix the concepts, I had transcribed again the differences between the architectures with chips with separate IO and common IO:
 
-- Con le RAM dual-port, avevo i segnali di RAM IN e RAM OUT su bus "separati":
-  - il bus "IN" collegava le uscite dei MUX 74LS157 ai pin Data In delle RAM: i MUX erano sempre attivi sulle porte "Write" delle RAM e mostravano ad esse tutto quello che accadeva sul bus principale del computer in Run Mode o sul DIP-Switch in Program Mode, ma non era un problema, in quanto le RAM scrivevano solo in corrispondenza del segnale RI (RAM In);
-  - il bus "OUT" collegava il transceiver '245 e le uscite Data Out delle RAM; l'uscita del transceiver veniva abilitata solo in corrispondenza del segnale /RO (RAM Out).
+- With dual-port RAMs, I had the RAM IN and RAM OUT signals on "separate" buses:
+  - the "IN" bus connected the outputs of the 74LS157 MUXes to the Data In pins of the RAMs: the MUXes were always active on the "Write" ports of the RAMs and showed them everything that was happening on the main computer bus in Run Mode or on the DIP-Switch in Program Mode, but it was not a problem, since the RAMs only wrote in correspondence with the RI (RAM In) signal;
+  - the "OUT" bus connected the '245 transceiver and the Data Out outputs of the RAMs; the transceiver output was enabled only in correspondence with the /RO (RAM Out) signal.
 
-- Con la RAM single-port le linee Data sono invece le stesse per Write e Read. A seconda dell'operazione da eseguire, si attivano due percorsi diversi, come già discusso parlando del doppio bus. Per scrivere sulla RAM la sequenza era questa:
+- With the single-port RAM the Data lines are instead the same for Write and Read. Depending on the operation to be performed, two different paths are activated, as already discussed when talking about the dual bus. To write to the RAM the sequence was as follows:
 
-  - Output Enable /OE LO fisso;
-  - Chip Enable /CE *pulsato* LO ("↘↗");
-  - /WE ↘↗ (che deve essere "contenuto" all'interno del ciclo ↘↗ di /CE).
+  - Output Enable /OE fixed LO;
+  - Chip Enable /CE pulsed LO ("↘↗");
+  - /WE ↘↗ (which must be "contained" within the ↘↗ cycle of /CE).
 
-[![Prima versione del modulo RAM](../../assets/ram/20-ram-1st.png "Prima versione del modulo RAM"){:width="100%"}](../../assets/ram/20-ram-1st.png)
+[![First version of the BEAM memory (RAM) module](../../../assets/ram/20-ram-1st.png "First version of the BEAM memory (RAM) module"){:width="100%"}](../../../assets/ram/20-ram-1st.png)
 
-*Prima versione del Modulo di memoria (RAM) del BEAM.*
+*First version of the BEAM memory (RAM) module.*
 
-Riponevo grandi speranze su questo primo design.
+I had high hopes for this first design.
 
-Per scrivere in RAM in Run Mode:
+To write to RAM in Run Mode:
 
-- RI (che nel ciclo di Write è HI) abilita il '245 superiore mediante una NOT;
-- /RO (che nel ciclo di Write è HI) porta /OE a HI, disabilitando l'output del 62256;
-- /CE (aka /CS, Chip Select) è fisso LO in quanto connesso a ground;
-- i valori presenti nel bus o nel dip-switch vengono presentati via MUX al transceiver che, a sua volta, presenta tali valori alle porte della RAM;
-- Zd, e dunque /WE,  è HI, in quanto il pin 1 della NAND è LO
-- al Rising Edge del Clock l'uscita della NAND passa da HI a LO per il tempo RC e l'impulso /WE ↘↗ viene trasmesso alla RAM attraverso il MUX '157: la RAM memorizza quanto trova nelle sue porte di ingresso D0-D7.
+  - RI (which in the Write cycle is HI) enables the upper '245 via a NOT gate;
+  - /RO (which in the Write cycle is HI) brings /OE to HI, disabling the 62256 output;
+  - /CE (aka /CS, Chip Select) is fixed LO as it is connected to ground;
+  - the values present on the bus or on the dip-switch are presented via MUX to the transceiver which, in turn, presents these values to the RAM ports;
+  - Zd, and therefore /WE, is HI, since pin 1 of the NAND is LO;
+  - at the Rising Edge of the Clock the NAND output goes from HI to LO for the RC time and the /WE ↘↗ pulse is transmitted to the RAM through the '157 MUX: the RAM stores whatever it finds at its D0-D7 input ports.
 
-In Program Mode l'ingresso I0d del MUX è HI grazie alla resistenza di pull-up da 1K, ma premendo il bottone si crea un impulso negativo che attiva un ciclo /WE ↘↗: anche in questo caso la RAM memorizza quanto trova nelle sue porte di ingresso D0-D7.
+In Program Mode the I0d input of the MUX is HI thanks to the 1K pull-up resistor, but by pressing the button a negative pulse is created that activates a /WE ↘↗ cycle: in this case too the RAM stores whatever it finds at its D0-D7 input ports.
 
-Per leggere dalla RAM si devono soddisfare le seguenti condizioni:
+To read from the RAM the following conditions must be met:
 
-- /CE LO, cioè il chip deve essere abilitato
-- /OE LO, cioè le uscite devono essere attivate
-- /WE HI, dunque non devo attivare il segnale di scrittura
+  - /CE LO, i.e. the chip must be enabled
+  - /OE LO, i.e. the outputs must be activated
+  - /WE HI, therefore I must not activate the write signal
 
-La sequenza degli eventi è dunque la seguente:
+The sequence of events is therefore as follows:
 
-- RI è LO, dunque la NOT disabiliterà il transceiver superiore, che non metterà dunque alcunché in output verso la RAM;
-- RO LO abilita il XCVR inferiore e /OE della RAM, che viene attivata in output;
-- /CE (aka /CS, Chip Select) è fisso LO in quanto connesso a ground;
-- nel frattempo WE è HI (e dunque la scrittura è inibita) perché:
-  - in Run Mode RI LO mantiene HI all'uscita della NAND connessa a I1d del MUX (se uno dei due input della RAM è LO, l'uscita è HI) e dunque anche /WE è fisso HI, inibendo la scrittura;
-  - in Program Mode l'ingresso I0d del MUX è fisso HI grazie alla resistenza da 1K, perciò anche in questo caso non vi è scrittura.
+- RI is LO, therefore the NOT gate will disable the upper transceiver, which will therefore not output anything toward the RAM;
+- RO LO enables the lower XCVR and /OE of the RAM, which is activated in output;
+- /CE (aka /CS, Chip Select) is fixed LO as it is connected to ground;
+- meanwhile WE is HI (and therefore writing is inhibited) because:
+  - in Run Mode RI LO keeps HI at the output of the NAND connected to I1d of the MUX (if one of the two RAM inputs is LO, the output is HI) and therefore /WE is also fixed HI, inhibiting writing;
+  - in Program Mode the I0d input of the MUX is fixed HI thanks to the 1K resistor, so in this case too there is no writing.
 
-Una analisi successiva di questo schema, che "all'occhio" era molto bello, mi evidenziava che probabilmente avevo gestito correttamente il discorso del "bus interno" e che anche la fase di output poteva essere funzionale, mentre nella fase di input notavo ridondanze superflue: avrei potuto far lavorare il transceiver inferiore bidirezionalmente a seconda della necessità per far interagire RAM e BUS e avrei potuto anche eliminare i MUX e collegare il transceiver superiore direttamente al dip-switch, attivandolo solo al momento opportuno per la programmazione manuale della RAM. In pratica, sarei ritornato alla soluzione concepita da The8BitEnthusiast, senza tuttavia aver ancora acquisito capacità e autonomia sufficienti per progettare una soluzione di attivazione just-in-time dei transceiver come aveva fatto lui.
+A subsequent analysis of this schematic, which "to the eye" was very attractive, showed me that I had probably managed the "internal bus" concept correctly and that the output phase could also be functional, while in the input phase I noticed superfluous redundancies: I could have made the lower transceiver work bidirectionally depending on the need to allow RAM and BUS to interact and I could also have eliminated the MUXes and connected the upper transceiver directly to the dip-switch, activating it only at the right moment for manual RAM programming. In practice, I would have returned to the solution conceived by The8BitEnthusiast, without however having yet acquired sufficient capability and autonomy to design a just-in-time transceiver activation solution as he had done
 
-### Seconda versione del modulo RAM
+### Second version of the RAM module
 
-Stabilito che una soluzione just-in-time sarebbe stata prematura per le mie competenze, avevo dunque provato a ridisegnare lo schema con un solo transceiver mantenendo i MUX per gestire l'input della RAM, facendolo provenire dal bus o dal dip-switch a seconda della modalità Program o Run-Mode.
+Having established that a just-in-time solution would have been premature for my skill level, I had therefore tried to redraw the schematic with only one transceiver while keeping the MUXes to manage the RAM input, making it come from the bus or from the dip-switch depending on Program or Run Mode.
 
-[![Seconda versione del modulo RAM](../../assets/ram/20-ram-2nd.png "Seconda versione del modulo RAM"){:width="100%"}](../../assets/ram/20-ram-2nd.png)
+[![Second version of the BEAM memory (RAM) module](../../../assets/ram/20-ram-2nd.png "Second version of the BEAM memory (RAM) module"){:width="100%"}](../../../assets/ram/20-ram-2nd.png)
 
-*Seconda versione del Modulo di memoria (RAM) del BEAM.*
+*Second version of the BEAM memory (RAM) module.*
 
-A livello temporale questo è anche il momento ufficiale della nascita del nome BEAM 😁.
+In terms of timing this is also the official moment of the birth of the name BEAM 😁.
 
-Dopo aver realizzato il disegno, mi sembrava di aver aggiunto più chip (per la logica) rispetto a prima = maggior complessità. Tuttavia, l'idea continuava a piacermi ed era un interessante esercizio logico per provare a sfruttare l'unico transceiver invertendone la direzione a seconda dell'operazione da fare.
+After completing the drawing, it seemed to me that I had added more chips (for the logic) compared to before = greater complexity. However, the idea continued to appeal to me and it was an interesting logical exercise to try to exploit the single transceiver by reversing its direction depending on the operation to be performed.
 
-Avevo provato a chiedere un <a href="https://www.reddit.com/r/beneater/comments/10inkvs/8bit_computer_ram_module_would_this_work/" target="_blank">consiglio</a> su Reddit e il solito The8BitEnthusiast, instancabile, mi aveva dato alcune indicazioni e una risposta tutto sommato positiva.
+I had tried to ask for <a href="https://www.reddit.com/r/beneater/comments/10inkvs/8bit_computer_ram_module_would_this_work/" target="_blank">advice</a> on Reddit and the ever-tireless The8BitEnthusiast had given me some guidance and an overall positive response.
 
-Per analizzare tutti gli stati logici possibili avevo preparato una tabella di riepilogo con la quale verificare se il comportamento del modulo fosse in linea con le aspettative; la tabella mostrata in seguito è solo una parte di quella completa.
+To analyze all possible logic states I had prepared a summary table with which to verify whether the module's behavior was in line with expectations; the table shown below is only a part of the complete one.
 
-![Tabella analisi modulo RAM](../../assets/ram/20-ram-2nd-table.png "Tabella analisi modulo RAM"){:width="100%"}
+![Summary table of logic state analysis for the second version of the RAM module](../../../assets/ram/20-ram-2nd-table.png "Summary table of logic state analysis for the second version of the RAM module"){:width="100%"}
 
-*Tabella riepilogativa analisi stati logici seconda versione modulo RAM.*
+*Summary table of logic state analysis for the second version of the RAM module.*
 
-A un certo punto ho capito che nello schema c'era un problema piuttosto importante: i due MUX 157 proiettavano in continuazione i loro input verso il bus interno, causando un possibile short con la RAM quando questa si trovava in output mode. Ho dunque pensato di sostituire i 2x '157 con i '257, che sono tri-state.
+At a certain point I realized that there was a rather significant problem in the schematic: the two '157 MUXes were continuously projecting their inputs toward the internal bus, causing a possible short with the RAM when the latter was in output mode. I therefore thought of replacing the 2x '157s with the '257s, which are tri-state
 
-![Tabella analisi rivista modulo RAM](../../assets/ram/20-ram-2nd-table2.png){:width="100%"}
+![Revised summary table of logic state analysis for the second version of the RAM module](../../../assets/ram/20-ram-2nd-table2.png){:width="100%"}
 
-*Tabella riepilogativa rivista analisi stati logici seconda versione modulo RAM.*
+*Revised summary table of logic state analysis for the second version of the RAM module.*
 
-Quando sono arrivato a questo punto ho realizzato di aver lavorato inutilmente: a cosa servono due MUX e un '245? Sono sufficienti due '245, uno per gestire l'I/O sul bus e uno per gestire il dip-switch, che in effetti è quanto aveva fatto The8BitEnthusiast! Ero stato illuminato e in quel momento mi è sembrato tutto chiaro!
+When I reached this point I realized I had been working unnecessarily: what do two MUXes and a '245 serve? Two '245s are sufficient, one to manage the I/O on the bus and one to manage the dip-switch, which is in fact what The8BitEnthusiast had done! I had been enlightened and at that moment everything seemed clear to me!
 
-Nel frattempo avevo anche iniziato a rinominare i segnali logici prendendo come punto di vista il computer e non il modulo:
+In the meantime I had also started renaming the logic signals taking the computer rather than the module as the point of view:
 
-| Vecchio | Descrizione | Nuovo | Descrizione |
+| Old     | Description | New   | Description |
 |-        |-            |-      |-            |
 | RI      | RAM In      | WR    | Write RAM   |
 | RO      | RAM Out     | RR    | Read RAM    |
 
-e così via.
+and so on.
 
-### Terza versione del modulo RAM
+### Third version of the RAM module
 
-Avevo dunque infine riscritto la "truth table" del modulo RAM:
+I had therefore finally rewritten the "truth table" of the RAM module:
 
-![Tabella analisi modulo RAM - terza versione](../../assets/ram/20-ram-3rd-table.png "Tabella analisi modulo RAM - terza versione"){:width="100%"}
+![RAM module analysis table - third version](../../../assets/ram/20-ram-3rd-table.png "RAM module analysis table - third version"){:width="100%"}
 
-*Tabella analisi modulo RAM - terza versione.*
+*RAM module analysis table - third version.*
 
-I due asterischi in tabella \*\* mi servivano a ricordare che dovevo stare particolarmente attento alla preparazione del microcode e che non dovevo mai avere /WR e /RR attivi contemporaneamente, perché non avevo previsto un controllo hardware per prevenire un eventuale conflitto (per evitare conflitti avrei dovuto mettere su /WR una NAND a 3 ingressi che si attiva solo per CLK, RR e /WR, cioè /WE = CLK \* RR \* /WR, in altre parole: posso scrivere sulla RAM *solo* se non la sto leggendo).
+The two asterisks in the table \*\* served to remind me that I had to be particularly careful in the preparation of the microcode and that I must never have /WR and /RR active simultaneously, because I had not provided hardware control to prevent a possible conflict (to avoid conflicts I would have had to put a 3-input NAND on /WR that activates only for CLK, RR and /WR, i.e. /WE = CLK \* RR \* /WR, in other words: I can write to the RAM *only* if I am not reading from it).
 
-## Schema
+## Schematic
 
-[![Terza versione del Modulo di memoria (RAM) del computer BEAM](../../assets/ram/20-ram-3rd.png "Terza versione del Modulo di memoria (RAM) del computer BEAM"){:width="100%"}](../../assets/ram/20-ram-3rd.png)
+[![Third version of the BEAM computer memory (RAM) module](../../../assets/ram/20-ram-3rd.png "Third version of the BEAM computer memory (RAM) module"){:width="100%"}](../../../assets/ram/20-ram-3rd.png)
 
-*Terza versione del Modulo di memoria (RAM) del computer BEAM.*
+*Third version of the BEAM computer memory (RAM) module.*
 
-Riprendendo il datasheet del 62256, a pagina 6 troviamo entrambe le modalità di scrittura: quella indicata come "WRITE CYCLE 2 (CE# Controlled)" era stata utilizzata per le prime due revisioni del modulo RAM; l'altra, "WRITE CYCLE 1 (WE# Controlled)", è quella utilizzata per il disegno definitivo del modulo, perché mantenere /OE e /CE LO fissi sia per le letture sia per le scritture rappresentava una semplificazione importante.
+Returning to the 62256 datasheet, on page 6 we find both write modes: the one indicated as "WRITE CYCLE 2 (CE# Controlled)" had been used for the first two revisions of the RAM module; the other, "WRITE CYCLE 1 (WE# Controlled)", is the one used for the final module design, because keeping /OE and /CE fixed LO for both reads and writes represented an important simplification.
 
-[![Write Cycles](../../assets/ram/20-ram-write-cycles.png "Write Cycles"){:width="100%"}](../../assets/ram/20-ram-write-cycles.png)
+[![Write Cycles](../../../assets/ram/20-ram-write-cycles.png "Write Cycles"){:width="100%"}](../../../assets/ram/20-ram-write-cycles.png)
 
-La gestione dei segnali passa in maniera importante attraverso il MUX '157, così come avviene anche nello schema di The8BitEnthusiast, ma con qualche differenza.
+Signal management passes in an important way through the '157 MUX, as also happens in The8BitEnthusiast's schematic, but with some differences.
 
-Ecco un riassunto degli stati possibili:
+Here is a summary of the possible states:
 
-- **/PROG**: In Program Mode il MUX attiva gli ingressi I0a, I0b, I0c e I0d. In Run Mode sono attivi I1a, I1b, I1c e I1d.
-  - Za è normalmente HI attraverso la resistenza che lo collega a Vcc, ma passa a LO premendo il tasto di programmazione e attiva /WE, scrivendo sulla RAM.
-  - Zb è normalmente HI attraverso la resistenza che lo collega a Vcc, ma passa a LO premendo il tasto di programmazione e attiva il transceiver che interconnette RAM e dip-switch.
-  - Zc è fisso HI e disattiva il transceiver che interconnette RAM e bus.
-- **RR WR**: Read RAM e Write RAM non sono attivi.
-  - Za è fisso HI (perché la NAND su I1a ha un ingresso fisso LO) e la scrittura su RAM è inibita.
-  - Zb è fisso HI e inibisce il transceiver tra RAM e dip-switch.
-  - Zc è fisso HI e disattiva il transceiver che interconnette RAM e bus.
-- **RR /WR**: Read RAM non è attivo, Write RAM è attivo.
-  - Za è normalmente HI (perché la NAND su I1a ha un'ingresso LO), ma in corrispondenza dell'impulso di clock passa a LO e attiva /WE, scrivendo sulla RAM.
-  - Zb è fisso HI e inibisce il transceiver tra RAM e dip-switch.
-  - Zc è normalmente HI, dunque disattiva il transceiver che interconnette RAM e bus, ma in corrispondenza dell'impulso di clock passa a LO (perché Za passa a LO), attivando il transceiver.
-- **/RR WR**: Read RAM è attivo, Write RAM non è attivo.
-  - Za è fisso HI (perché la NAND su I1a ha un ingresso fisso LO) e la scrittura su RAM è inibita.
-  - Zb è fisso HI e inibisce il transceiver tra RAM e dip-switch.
-  - Zc è fisso LO e attiva il transceiver tra RAM e bus.
-- **/RR /WR**: Stato illegale.
+- **/PROG**: In Program Mode the MUX activates inputs I0a, I0b, I0c and I0d. In Run Mode I1a, I1b, I1c and I1d are active.
+  - Za is normally HI through the resistor connecting it to Vcc, but switches to LO when the programming button is pressed and activates /WE, writing to the RAM.
+  - Zb is normally HI through the resistor connecting it to Vcc, but switches to LO when the programming button is pressed and activates the transceiver that interconnects the RAM and dip-switch.
+  - Zc is fixed HI and deactivates the transceiver that interconnects the RAM and bus.
+- **RR WR**: Read RAM and Write RAM are not active.
+  - Za is fixed HI (because the NAND on I1a has a fixed LO input) and writing to the RAM is inhibited.
+  - Zb is fixed HI and inhibits the transceiver between the RAM and dip-switch.
+  - Zc is fixed HI and deactivates the transceiver that interconnects the RAM and bus.
+- **RR /WR**: Read RAM is not active, Write RAM is active.
+  - Za is normally HI (because the NAND on I1a has a LO input), but at the clock pulse it switches to LO and activates /WE, writing to the RAM.
+  - Zb is fixed HI and inhibits the transceiver between the RAM and dip-switch.
+  - Zc is normally HI, therefore deactivates the transceiver that interconnects the RAM and bus, but at the clock pulse it switches to LO (because Za switches to LO), activating the transceiver.
+- **/RR WR**: Read RAM is active, Write RAM is not active.
+  - Za is fixed HI (because the NAND on I1a has a fixed LO input) and writing to the RAM is inhibited.
+  - Zb is fixed HI and inhibits the transceiver between the RAM and dip-switch.
+  - Zc is fixed LO and activates the transceiver between the RAM and bus.
+- **/RR /WR**: Illegal state.
 
-## Note
+## Notes
 
-Invece dei più comuni dip-switch, ho utilizzato dei comodissimi Rocker Switch ("a bilanciere") come quelli in figura; si trovano facilmente presso i distributori di <a href="https://us.rs-online.com/product/te-connectivity/5435640-5/70156004/" target="_blank">materiale elettronico</a>. Notare che i pin originali sono piuttosto corti e non fissano correttamente lo switch alla breadboard, pertanto ho aggiunto uno zoccolo per circuiti integrati.
+Instead of the more common dip-switches, I used very convenient Rocker Switches ("a bilanciere") like those in the figure; they can easily be found at <a href="https://us.rs-online.com/product/te-connectivity/5435640-5/70156004/" target="_blank">electronics distributors</a>. Note that the original pins are quite short and do not correctly fix the switch to the breadboard, so I added an integrated circuit socket.
 
-[![Rocker Switch](../../assets/ram/20-ram-rocker.png "Rocker Switch"){:width="33%"}](../../assets/ram/20-ram-rocker.png)
+[![Rocker Switch](../../../assets/ram/20-ram-rocker.png "Rocker Switch"){:width="33%"}](../../../assets/ram/20-ram-rocker.png)
 
 *Rocker Switch.*
 
-## Link utili
+## Useful Links
 
-- La documentazione "Building the SAP-3 rev 3.3.pdf" scritta da rolf-electronics e disponibile su <a href="https://github.com/rolf-electronics/The-8-bit-SAP-3" target="_blank">GitHub</a>.
+- The documentation "Building the SAP-3 rev 3.3.pdf" written by rolf-electronics and available on <a href="https://github.com/rolf-electronics/The-8-bit-SAP-3" target="_blank">GitHub</a>.

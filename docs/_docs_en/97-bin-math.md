@@ -5,9 +5,9 @@ locale: en-US
 permalink: /docs/en/math/
 excerpt: "Aritmetica binaria"
 ---
-<small>[Concetti importanti](#concetti-importanti) - [Fonti](#fonti) - [Unsigned and Signed Numbers](#unsigned-and-signed-numbers) - [Overflow in depth](#overflow-in-depth) - [L'Overflow e l'hardware](#loverflow-e-lhardware) - [Metodi di identificazione dell'Overflow](#metodi-di-identificazione-delloverflow) - [Semplificazione con 74LS151](#semplificazione-con-74ls151) - [Verifica addizioni e sottrazioni con 74LS151](#verifica-addizioni-e-sottrazioni-con-74ls151) - [Gli Adder](#gli-adder) - [Le somme con gli Adder](#le-somme-con-gli-adder) - [Multiple Bit Adder](#multiple-bit-adder) - [Ripple Carry Adder](#ripple-carry-adder) - [Carry Look Ahead Adder](#carry-look-ahead-adder) - [Implementazione nel 74LS181](#implementazione-nel-74ls181) - [Le sottrazioni con gli Adder](#le-sottrazioni-con-gli-adder) - [Link utili](#link-utili)</small>
+<small>[Key concepts](#concetti-importanti) - [Sources](#sources) - [Unsigned and Signed Numbers](#unsigned-and-signed-numbers) - [Overflow in depth](#overflow-in-depth) - [L'Overflow e l'hardware](#loverflow-e-lhardware) - [Metodi di identificazione dell'Overflow](#metodi-di-identificazione-delloverflow) - [Semplificazione con 74LS151](#semplificazione-con-74ls151) - [Addition and subtraction verification with 74LS151](#verifica-addizioni-e-sottrazioni-con-74ls151) - [Adders](#adders) - [Le somme con gli Adder](#le-somme-con-gli-adder) - [Multiple Bit Adder](#multiple-bit-adder) - [Ripple Carry Adder](#ripple-carry-adder) - [Carry Look Ahead Adder](#carry-look-ahead-adder) - [Implementazione nel 74LS181](#implementazione-nel-74ls181) - [Le sottrazioni con gli Adder](#le-sottrazioni-con-gli-adder) - [Link utili](#link-utili)</small>
 
-## Concetti importanti
+## Key concepts
 
 Studiando il funzionamento dei moduli Flag e ALU, avevo scoperto diverse mie lacune nell'aritmetica binaria:
 
@@ -19,7 +19,7 @@ Studiando il funzionamento dei moduli Flag e ALU, avevo scoperto diverse mie lac
 3. Somma e sottrazione di numeri binari
 4. Overflow senza segno e Overflow con segno
 
-## Fonti
+## Sources
 
 Lungi dal voler (e poter) spiegare tutto in questo pagina, cerco di riassumere quanto avevo appreso per rimediare alle mie lacune e suggerisco una serie di fonti di approfondimento.
 
@@ -419,7 +419,7 @@ Riepilogando:
 
 - alcuni degli ingressi I0-I7 sono opportunamente connessi in modalità "Hardwired" all'Instruction Register per determinare l'operazione correntemente in esecuzione.
 
-### Verifica addizioni e sottrazioni con 74LS151
+### Addition and subtraction verification with 74LS151
 
 Testiamo alcuni casi di addizione e sottrazione tra A e B. Nella righe C e Q sono indicati rispettivamente il Carry, quando presente, e il risultato dell'operazione.
 
@@ -570,13 +570,13 @@ Questo corrisponde esattamente a quanto indicato nella sezione [Un esempio prati
 
 Per finire, da quanto visto fino ad ora possiamo dedurre un'altra regola: la somma di due Signed di segno opposto e la sottrazione di due Signed dello stesso segno non possono causare Overflow.
 
-## Gli Adder
+## Adders
 
 Abbiamo discusso di somme e sottrazioni, dando quasi per scontato che esistano dei circuiti che le implementano. Un accenno si trova in uno schema presente nella sezione [Metodi di identificazione dell’Overflow](#metodi-di-identificazione-delloverflow), ma non ci accontentiamo e vogliamo saperne di più. Come si effettuano le addizioni? E le sottrazioni?
 
 Un Adder è un unità logica basilare che permette di eseguire somme e, opportunamente configurata, sottrazioni.
 
-### Le somme con gli Adder
+### Addition with the Adders
 
 Quali sono i possibili casi di somme tra due bit A e B?
 

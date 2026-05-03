@@ -139,7 +139,7 @@ Tra i post più utili relativi alla comprensione dei segnali di gestione di RAM 
 
 *Modulo RAM dell'utente e moderatore Reddit The8BitEnthusiast.*
 
-Da un lato, lo schema appariva semplificato rispetto a quelli che avevo visto in precedenza; dall'altro, l'uso di un solo MUX '157, con segnali che uscivano per rientrare in altre porte, lo rendeva difficile da comprendere analizzare. Avevo pertanto provato a costruirmi i grafici temporali degli schemi dei segnali per questi tre possibili casi:
+Da un lato, lo schema appariva semplificato rispetto a quelli che avevo visto in precedenza; dall'altro, l'uso di un solo MUX '157, con segnali che uscivano per rientrare in altre porte, lo rendeva difficile da comprendere e analizzare. Avevo pertanto provato a costruirmi i grafici temporali degli schemi dei segnali per questi tre possibili casi:
 
 - Scrittura sulla RAM in Run Mode
 
