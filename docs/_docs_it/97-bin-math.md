@@ -424,7 +424,7 @@ Testiamo alcuni casi di addizione e sottrazione tra A e B. Nella righe C e Q son
 - Nella colonna **Hex** è esposta la rappresentazione esadecimale dei numeri che vogliamo sommare o sottrarre, con il simbolo dell'operazione alla sinistra del secondo numero; desideriamo eseguire l'operazione 0x70 - 0x30.
 - La colonna **Dec** mostra il valore decimale ricavato dalla tabella *Relazione tra numeri Hex, Bin, Signed e Unsigned a 8 bit*; 0x70 corrisponde a 112 decimale, mentre 0x30 corrisponde a 48: l'operazione è quindi 112 - 48 (che avrà come risultato 64).
 - La colonna **Bin** espone la rappresentazione binaria dei numeri (in complemento a 2 se negativi): 112 corrisponde a 0111.0000, mentre 48 corrisponde a 0011.0000.
-  - NB: se invece di una sottrazione 112 - 48 avessimo voluto eseguire ad esempio un'operazione di addizione 112 + (-48) tra un Signed positivo e un Signed negativo, il -48 sarebbe stato qui rappresentato colonna nella sua forma in complemento a 2, cioè 1101.000.
+  - NB: se invece di una sottrazione 112 - 48 avessimo voluto eseguire ad esempio un'operazione di addizione 112 + (-48) tra un Signed positivo e un Signed negativo, il -48 sarebbe stato qui rappresentato nella colonna nella sua forma in complemento a 2, cioè 1101.000.
 - La colonna **2C** è infine utilizzata per eseguire l'operazione di somma invertendo l'eventuale sottraendo positivo: il sottraendo 48 viene convertito in 2C 1101.0000 (che in decimale è -48) e sommato al minuendo.
 
 ~~~text
@@ -645,9 +645,9 @@ Utilizzando la proprietà distributiva dell'algebra booleana, è possibile sempl
 
 F = B\*C<sub>IN</sub> + A\*C<sub>IN</sub> + A\*B in
 
-F = C<sub>IN</sub>\*(A+B) + A*B, cioé
+F = C<sub>IN</sub>\*(A+B) + A\*B, cioé
 
-C<sub>OUT</sub> = C<sub>IN</sub>\*(A+B) + A*B
+C<sub>OUT</sub> = C<sub>IN</sub>\*(A+B) + A\*B
 
 Avendo a disposizione l'Adder a due bit visto in precedenza, ci si chiede ora se non sia possibile riutilizzarlo in scala per semplificare la costruzione di un Adder in grado di realizzare somme tra word di lunghezza ad esempio di 4 bit, 8 bit e così via.
 
@@ -667,7 +667,7 @@ C<sub>OUT</sub> = C<sub>IN</sub>\*(A+B) + A\*B, non realizzabile con le porte a 
 
 C<sub>OUT</sub> = C<sub>IN</sub>\*(A⊕B) + A\*B, realizzabile con le porte a disposizione (si noti la sostituzione della OR "+" con la XOR "⊕").
 
-| C<sub>IN</sub> | A | B | A\*B | A⊕B | A+B | Q | C<sub>IN</sub>\*(A+B) | C<sub>IN</sub>\*(A+B)<br><center>+ A*B |C<sub>IN</sub>\*(A⊕B) |C<sub>IN</sub>\*(A⊕B)<br><center>+ A*B |
+| C<sub>IN</sub> | A | B | A\*B | A⊕B | A+B | Q | C<sub>IN</sub>\*(A+B) | C<sub>IN</sub>\*(A+B)<br><center>+ A\*B |C<sub>IN</sub>\*(A⊕B) |C<sub>IN</sub>\*(A⊕B)<br><center>+ A\*B |
 | -              | - | - |  -   |  -   |  -  | - | -                     | -                                      | -                     | -                                      |
 | 0              | 0 | 0 |  0   |  0   |  0  | 0 | <center>0             |  <center>0                             | <center>0             | <center>0                              |
 | 0              | 0 | 1 |  0   |  1   |  1  | 1 | <center>0             |  <center>0                             | <center>0             | <center>0                              |
@@ -762,14 +762,14 @@ Unendo i puntini, per ogni posizione si crea un segnale **G**enerate se entrambi
 
 Detto diversamente, la circuiteria Look Ahead valuta se lo stadio precedente introduce un Carry Out analizzando le due condizioni precedenti. Dati gli ingressi A, B e C<sub>IN</sub>:
 
-- l'espressione Generate viene utilizzata da un Adder "i" per identificare quando, in assenza di un Carry agli ingressi dello stadio precedente "i-1", questi produrrà ("genererà") un Carry C<sub>OUT</sub> (condizione verificata solo se A*B = 1), Carry Out che l'Adder<sub>(i)</sub> ritroverà sul suo Carry In;
+- l'espressione Generate viene utilizzata da un Adder "i" per identificare quando, in assenza di un Carry agli ingressi dello stadio precedente "i-1", questi produrrà ("genererà") un Carry C<sub>OUT</sub> (condizione verificata solo se A\*B = 1), Carry Out che l'Adder<sub>(i)</sub> ritroverà sul suo Carry In;
 - l'espressione Propagate viene utilizzata da un Adder "i" per identificare quando, in presenza di un Carry agli ingressi dello stadio precedente "i-1", questi produrrà ("propagherà") un Carry C<sub>OUT</sub> (condizione verificata solo se C<sub>IN</sub> = 1 e A+B = 1), Carry Out che l'Adder<sub>(i)</sub> ritroverà sul suo Carry In.
 
 A questo punto, possiamo identificare l'eventuale presenza del Carry Out di ogni stadio con una generica espressione:
 
 C<sub>OUT</sub> = g + p\*C<sub>IN</sub>, cioè, effettuando le sostituzioni di **g** e **p**:
 
-C<sub>OUT</sub> = A*B + (A+B)\*C<sub>IN</sub>, con la quale abbiamo già familiarità, perché altri non è il C<sub>OUT</sub> di ogni Full Adder.
+C<sub>OUT</sub> = A\*B + (A+B)\*C<sub>IN</sub>, con la quale abbiamo già familiarità, perché altri non è il C<sub>OUT</sub> di ogni Full Adder.
 
 Utilizziamo ora **i** per identificare la posizione di ogni bit all'interno del Multiple Bit Adder, ad esempio 0-3 per un Adder a 4 bit, e scrivere le espressioni generali per **p** e **g**:
 
@@ -791,7 +791,7 @@ Andiamo ora a scrivere l'espressione per il Carry In del terzo Adder:
 
 C<sub>2</sub> = g<sub>1</sub> + p<sub>1</sub>\*C<sub>1</sub>
 
-Dobbiamo sbarazzarci di C1, perché stiamo cercando di rendere ogni Adder indipendente dal Carry Out dell'Adder precedente, dunque, sostituendo C<sub>1</sub>:
+Dobbiamo sbarazzarci di C<sub>1</sub>, perché stiamo cercando di rendere ogni Adder indipendente dal Carry Out dell'Adder precedente, dunque, sostituendo C<sub>1</sub>:
 
 C<sub>2</sub> = g<sub>1</sub> + p<sub>1</sub>\*(g<sub>0</sub> + p<sub>0</sub>\*C<sub>0</sub>), che significa che C<sub>2</sub> non dipende dal risultato dell'Adder precedente, ma solo dagli input A e B degli Adder precedenti e da C<sub>0</sub>. Applicando la proprietà distributiva, si ottiene:
 
@@ -820,7 +820,7 @@ Osservando le espressioni di ogni Adder, si deduce che tutte dipendono dai soli 
 
 Andiamo ora a realizzare un Carry Look Ahead Adder, ma prima, considerando quanto visto sopra, modifichiamo i Full Adder creando dei *Modified* Full Adder.
 
-La somma **Q**, come sempre, corrisponde ad A<sub>0</sub>⊕B<sub>0</sub>⊕C<sub>0</sub>. Aggiungiamo al Full Adder una porta OR e una porta AND con il solo scopo di ottenere i termini **p** (cioè A<sub>0</sub>+B<sub>0</sub> per il primo Adder) e **g** (cioé A<sub>0</sub>*B<sub>0</sub> per il primo Adder).
+La somma **Q**, come sempre, corrisponde ad A<sub>0</sub>⊕B<sub>0</sub>⊕C<sub>0</sub>. Aggiungiamo al Full Adder una porta OR e una porta AND con il solo scopo di ottenere i termini **p** (cioè A<sub>0</sub>+B<sub>0</sub> per il primo Adder) e **g** (cioé A<sub>0</sub>\*B<sub>0</sub> per il primo Adder).
 
 ![Logica della somma del Modified Full Adder](../../../assets/math/modified-full-adder-1.png){:width="20%"}
 
@@ -858,7 +858,7 @@ Il <a href="https://www.ti.com/lit/ds/symlink/sn54ls181.pdf" target="_blank">74L
 
 Il meccanismo di Carry Look Ahead (CLA) nel circuito ‘181 può risultare poco intuitivo, poiché strettamente legato ai segnali di selezione S3/S0 che governano le sue 32 funzioni logiche e aritmetiche. Una rappresentazione più semplice da analizzare si trova nel 4-Bit Binary Full Adders With Fast Carry <a href="https://www.ti.com/lit/ds/symlink/sn74ls283.pdf" target="_blank">74LS283</a>, progettato esclusivamente per eseguire somme. Qui, la logica CLA è notevolmente semplificata: per ogni coppia di bit in ingresso (A3/A0 e B3/B0), una porta NAND implementa la funzione di Generate, mentre una porta NOR realizza la funzione di Propagate.
 
-Quando la word è più lunga dei 4 bit gestiti da un singolo chip,  si possono utilizzare le modalità RCA e CLA per l'interconnessione di più ALU:
+Quando la word è più lunga dei 4 bit gestiti da un singolo chip, si possono utilizzare le modalità RCA e CLA per l'interconnessione di più ALU:
 
 - La modalità RCA è la più semplice da implementare e consiste nel mettere in cascata più ALU, connettendo il Carry Out di ognuna al Carry In della successiva, come mostrato nell'apposita sezione [Carry, addizioni e sottrazioni](../alu/#carry-addizioni-e-sottrazioni) della pagina ALU.
 

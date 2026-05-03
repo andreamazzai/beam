@@ -26,7 +26,7 @@ It is completely different from the simple Flag register of Ben Eater's SAP-1 co
 
 Tom's approach was instead based on a logical verification performed in hardware: the microcode did not vary depending on the state of the flags, which were no longer directly connected to the ROM addressing lines that in turn activate different output signals based on the address/flag presented at the input!
 
-Analyzing for example a conditional jump instruction linked to flag Z, I found that:
+Analyzing for example a conditional jump instruction linked to the Z flag, I found that:
 
 - the microcode of the jump instruction activated a generic "Jump Enable" signal connected to pin 7 of the <a href="https://www.ti.com/lit/ds/symlink/sn54s151.pdf" target="_blank">74LS151</a> Data Selector/Multiplexer visible in the lower right of the general schematic;
 - the selection of the flag to put at the output of the '151 depended on the encoding of the instruction being executed, since the 3 Select bits S2, S1 and S0 were directly connected to the Instruction Register, i.e. *hardwired*, in a similar manner to what was also done in the ALU module;
@@ -42,7 +42,7 @@ Analyzing for example a conditional jump instruction linked to flag Z, I found t
 If for example a generic *Jump on Zero* instruction were encoded as 010 on the 3 signals S2, S1 and S0 shared between the Instruction Register (IR) and the Flag register, the following sequence would occur:
 
 - input pin I2 of the '151 would be activated;
-- in the presence of flag Z, the output Q of the Flip-Flop connected to pin I2 would have logic value HI;
+- in the presence of the Z flag, the output Q of the Flip-Flop connected to pin I2 would have logic value HI;
 - the output of the '151 would enable the /PC-LOAD signal on the Program Counter (PC) to jump to the new address.
 
 ![74LS151 Selector/Multiplexer function table with highlight of the hypothetical Jump on Zero instruction](../../../assets/flags/30-flag-151-table.png){:width="33%"}
@@ -86,7 +86,7 @@ Each computer instruction, thanks to microcode customization, can set more than 
 
 - The FF outputs are connected to a '151 to manage conditional jumps.
 
-- Flag C is also exported toward the '181s and the H register of the ALU module; see the section [The Carry and the H and ALU registers](#the-carry-and-the-h-and-alu-registers) on this same page.
+- The C Flag is also exported toward the '181s and the H register of the ALU module; see the section [The Carry and the H and ALU registers](#the-carry-and-the-h-and-alu-registers) on this same page.
 
 A <a href="https://www.mouser.com/datasheet/2/308/74LS245-1190460.pdf" target="_blank">74LS245</a> bus transceiver finally allows exporting the 4 NVZC flags onto the bus to save them in memory, or more precisely in the Stack, similarly to what happens in the 6502 with the Push Processor Status (PHP) instruction.
 
@@ -225,7 +225,7 @@ The use of another '151 represents the most efficient system for selecting the C
 
 - \* this configuration is not used
 
-- \*\* As already discussed on the ALU page, the '181 Carry works in negative logic, therefore a signal C = LO indicates that the Carry is present; it goes without saying that to record the state of the Carry in positive logic on the Flag C register it is necessary to invert the input signal.
+- \*\* As already discussed on the ALU page, the '181 Carry works in negative logic, therefore a signal C = LO indicates that the Carry is present; it goes without saying that to record the state of the Carry in positive logic on the C Flag register it is necessary to invert the input signal.
 
 ## The Carry and the H and ALU registers
 
@@ -239,19 +239,19 @@ The appropriate programming of the **CC** (**C**arry **C**lear) and **CS** (**C*
 
 - a *hard-coded* value of 0
 - a *hard-coded* value of 1
-- the actual value present in the Flag C register
+- the actual value present in the C Flag register
 
-The need to send to the ALU module not only the actual value of flag C, but also predefined values of 0 or 1, depends on two factors:
+The need to send to the ALU module not only the actual value of the C flag, but also predefined values of 0 or 1, depends on two factors:
 
 - Some arithmetic operations of the '181 require a specific Carry state: for example the A Minus 1 and A Plus B operations require the absence of input Carry, while the A Plus 1 and A Minus B operations require its presence; the signal sent to the '181s is ALU-Cin.
 - The ASL and LSR instructions (Arithmetic Shift Left and Logical Shift Right) performed by the '194 require the insertion of a 0 respectively into the LSB and MSB of H; the signal sent to the '194s is H-Cin.
 
-| CS | CC | Carry presented to the ALU module   |
-| -  | -  | -                                   |
-| LO | LO | Value present in Flag C register    |
-| LO | HI | LO                                  |
-| HI | LO | HI                                  |
-| HI | HI | Not used                            |
+| CS | CC | Carry presented to the ALU module     |
+| -  | -  | -                                     |
+| LO | LO | Value present in the C Flag register  |
+| LO | HI | LO                                    |
+| HI | LO | HI                                    |
+| HI | HI | Not used                              |
 
 The negation of the signal sent to the Carry Input of the '181 derives from the fact that the configuration used by the ALU (active-high logic, "Active-High data") requires an [inverted](../alu/#logic-functions-and-arithmetic-operations) Carry In signal.
 
@@ -281,6 +281,6 @@ The Flag module of the BEAM computer is substantially a copy of the Flag module 
 
 - Tom notes that he took inspiration from the Reddit thread <a href="https://www.reddit.com/r/beneater/comments/jwxke0/how_to_add_a_decremental_and_incremental_circuit/" target="_blank">How to add a decremental and incremental circuit to the ALU ?</a> for the idea of driving the loading of the [Program Counter](../programcounter/) from the Flag register rather than managing them with multiple copies of the microcode as happened on Ben Eater's SAP-1.
 
-- Furthermore, the inspiration for the implementation of Flag V also derives from another Reddit thread, <a href="https://www.reddit.com/r/beneater/comments/kmuuex/question_for_all_74ls181_alu_people" target="_blank">Question for all 74ls181 alu people</a>; in particular, user <a href="https://www.reddit.com/user/SaltPeppah/" target="_blank">SaltPeppah</a> suggested the use of the 74LS151, indicating the link mentioned in the [Overflow](#overflow) section of this page and in the [Overflow in-depth](../math/#overflow-in-depth) section of the page dedicated to binary arithmetic, where the topic is covered extensively.
+- Furthermore, the inspiration for the implementation of the V Flag also derives from another Reddit thread, <a href="https://www.reddit.com/r/beneater/comments/kmuuex/question_for_all_74ls181_alu_people" target="_blank">Question for all 74ls181 alu people</a>; in particular, user <a href="https://www.reddit.com/user/SaltPeppah/" target="_blank">SaltPeppah</a> suggested the use of the 74LS151, indicating the link mentioned in the [Overflow](#overflow) section of this page and in the [Overflow in-depth](../math/#overflow-in-depth) section of the page dedicated to binary arithmetic, where the topic is covered extensively.
 
 - Tom also noted the approach of the thread <a href="https://www.reddit.com/r/beneater/comments/m76ijz/opcodes_and_flag_decoding_circuit/" target="_blank">Opcodes and Flag decoding circuit</a> for executing conditional jumps in hardware. Instead of driving the LOAD line of the Program Counter, the circuit of the thread's author is located between the IR and the EEPROM and conditionally forces a NOP or JMP instruction depending on the state of the flags. The opcodes of jump instructions are arranged so that the flag of interest can be determined by the bits output from the IR. An interesting concept, but Tom had already implemented a similar functionality with the ALU selection lines hardwired to the IR, a method also used in the management of [conditional jumps](#conditional-and-unconditional-jumps).
