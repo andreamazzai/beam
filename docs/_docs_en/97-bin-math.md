@@ -645,7 +645,7 @@ Using the distributive property of boolean algebra, it is possible to simplify t
 
 F = B\*C<sub>IN</sub> + A\*C<sub>IN</sub> + A\*B to
 
-F = C<sub>IN</sub>\*(A+B) + A\*B, that is
+F = C<sub>IN</sub>\*(A+B) + A\*B, i.e.
 
 C<sub>OUT</sub> = C<sub>IN</sub>\*(A+B) + A\*B
 
@@ -767,7 +767,7 @@ In other words, the Look Ahead circuitry evaluates whether the previous stage in
 
 At this point, we can identify the possible presence of the Carry Out of each stage with a generic expression:
 
-C<sub>OUT</sub> = g + p\*C<sub>IN</sub>, that is, by substituting **g** and **p**:
+C<sub>OUT</sub> = g + p\*C<sub>IN</sub>, i.e., by substituting **g** and **p**:
 
 C<sub>OUT</sub> = A\*B + (A+B)\*C<sub>IN</sub>, which we are already familiar with, as it is nothing other than C<sub>OUT</sub> of any Full Adder.
 
@@ -778,12 +778,12 @@ p<sub>i</sub> = A<sub>i</sub>+B<sub>i</sub> (e.g., p<sub>3</sub> = A<sub>3</sub>
 
 Let us now compute the Carry‑In "C" of a generic adder **i+1**, which corresponds to the Carry Out of the preceding Adder **i**, by analyzing the inputs of the latter:
 
-C<sub>i+1</sub> = g<sub>i</sub> + p<sub>i</sub>\*C<sub>i</sub>, that is\
+C<sub>i+1</sub> = g<sub>i</sub> + p<sub>i</sub>\*C<sub>i</sub>, i.e.\
 C<sub>i+1</sub> = A<sub>i</sub>\*B<sub>i</sub> + (A<sub>i</sub>+B<sub>i</sub>)\*C<sub>i</sub>
 
 We can now write the expressions for the Carry Ins of all stages. The expression for the Carry In of the second adder is:
 
-C<sub>1</sub> = g<sub>0</sub> + p<sub>0</sub>\*C<sub>0</sub>, that is,\
+C<sub>1</sub> = g<sub>0</sub> + p<sub>0</sub>\*C<sub>0</sub>, i.e.,\
 C<sub>1</sub> = A<sub>0</sub>\*B<sub>0</sub> + (A<sub>0</sub>+B<sub>0</sub>)\*C<sub>0</sub>
 
 Note that this expression depends only on the inputs A, B, and C<sub>0</sub>, which is exactly what we want to achieve: do not depend on the Carry Out of the preceding Adder.\
@@ -795,25 +795,25 @@ We need to eliminate C<sub>1</sub>, because we are trying to make each adder ind
 
 C<sub>2</sub> = g<sub>1</sub> + p<sub>1</sub>\*(g<sub>0</sub> + p<sub>0</sub>\*C<sub>0</sub>), which means that C<sub>2</sub> does not depend on the result of the previous Adder, but only on the A and B inputs of the previous Adders and on C<sub>0</sub>. Applying the distributive property, we obtain:
 
-C<sub>2</sub> = g<sub>1</sub> + p<sub>1</sub>\*g<sub>0</sub> + p<sub>1</sub>\*p<sub>0</sub>*C<sub>0</sub>, that is:\
+C<sub>2</sub> = g<sub>1</sub> + p<sub>1</sub>\*g<sub>0</sub> + p<sub>1</sub>\*p<sub>0</sub>*C<sub>0</sub>, i.e.:\
 C<sub>2</sub> = A<sub>1</sub>\*B<sub>1</sub> + (A<sub>1</sub>+B<sub>1</sub>)\*A<sub>0</sub>\*B<sub>0</sub> + (A<sub>1</sub>+B<sub>1</sub>)\*(A<sub>0</sub>+B<sub>0</sub>)\*C<sub>0</sub>
 
 This expression too depends, therefore, only on inputs A, B and C<sub>0</sub>.\
 Let us proceed by writing the expression for the Carry In of the fourth Adder
 
-C<sub>3</sub> = g<sub>2</sub> + p<sub>2</sub>\*C<sub>2</sub>,  i.e., substituting C<sub>2</sub>:\
+C<sub>3</sub> = g<sub>2</sub> + p<sub>2</sub>\*C<sub>2</sub>,  i.e., by substituting C<sub>2</sub>:\
 C<sub>3</sub> = g<sub>2</sub> + p<sub>2</sub>\*(g<sub>1</sub> + p<sub>1</sub>\*g<sub>0</sub> + p<sub>1</sub>\*p<sub>0</sub>\*C<sub>0</sub>), which means that C<sub>3</sub> does not depend on the result of the previous Adder, but only on the A and B inputs of the previous Adders and on C<sub>0</sub>. Applying the distributive property, we obtain:
 
-C<sub>3</sub> = g<sub>2</sub> + p<sub>2</sub>\*g<sub>1</sub> + p<sub>2</sub>\*p<sub>1</sub>\*g<sub>0</sub> + p<sub>2</sub>\*p<sub>1</sub>\*p<sub>0</sub>\*C<sub>0</sub>, that is:\
+C<sub>3</sub> = g<sub>2</sub> + p<sub>2</sub>\*g<sub>1</sub> + p<sub>2</sub>\*p<sub>1</sub>\*g<sub>0</sub> + p<sub>2</sub>\*p<sub>1</sub>\*p<sub>0</sub>\*C<sub>0</sub>, i.e.:\
 C<sub>3</sub> = A<sub>2</sub>\*B<sub>2</sub> + (A<sub>2</sub>+B<sub>2</sub>)\*A<sub>1</sub>\*B<sub>1</sub> + (A<sub>2</sub>+B<sub>2</sub>)\*(A<sub>1</sub>+B<sub>1</sub>)\*A<sub>0</sub>\*B<sub>0</sub> + (A<sub>2</sub>+B<sub>2</sub>)\*(A<sub>1</sub>+B<sub>1</sub>)\*(A<sub>0</sub>+B<sub>0</sub>)\*C<sub>0</sub>
 
 As in the previous cases, this expression too depends only on inputs A, B and C<sub>0</sub>.
 Let us finally write the expression for C<sub>4</sub>, which is the Carry Out of the fourth Adder:
 
-C<sub>4</sub> = g<sub>3</sub> + p<sub>3</sub>\*C<sub>3</sub>, cioè, sostituendo C<sub>3</sub>:\
+C<sub>4</sub> = g<sub>3</sub> + p<sub>3</sub>\*C<sub>3</sub>, i.e., by substituting C<sub>3</sub>:\
 C<sub>4</sub> = g<sub>3</sub> + p<sub>3</sub>\*(g<sub>2</sub> + p<sub>2</sub>\*g<sub>1</sub> + p<sub>2</sub>\*p<sub>1</sub>\*g<sub>0</sub> + p<sub>2</sub>\*p<sub>1</sub>\*p<sub>0</sub>\*C<sub>0</sub>), which means that C<sub>4</sub> does not depend on the result of the previous Adder, but only on the A and B inputs of the previous Adders and on C<sub>0</sub>. Applying the distributive property, we obtain:
 
-C<sub>4</sub> = g<sub>3</sub> + p<sub>3</sub>\*g<sub>2</sub> + p<sub>3</sub>\*p<sub>2</sub>\*g<sub>1</sub> + p<sub>3</sub>\*p<sub>2</sub>\*p<sub>1</sub>\*g<sub>0</sub> + p<sub>3</sub>\*p<sub>2</sub>\*p<sub>1</sub>\*p<sub>0</sub>\*C<sub>0</sub>, that is:\
+C<sub>4</sub> = g<sub>3</sub> + p<sub>3</sub>\*g<sub>2</sub> + p<sub>3</sub>\*p<sub>2</sub>\*g<sub>1</sub> + p<sub>3</sub>\*p<sub>2</sub>\*p<sub>1</sub>\*g<sub>0</sub> + p<sub>3</sub>\*p<sub>2</sub>\*p<sub>1</sub>\*p<sub>0</sub>\*C<sub>0</sub>, i.e.:\
 C<sub>4</sub> = A<sub>3</sub>\*B<sub>3</sub> + (A<sub>3</sub>+B<sub>3</sub>)\*A<sub>2</sub>\*B<sub>2</sub> + (A<sub>3</sub>+B<sub>3</sub>)\*(A<sub>2</sub>+B<sub>2</sub>)\*A<sub>1</sub>\*B<sub>1</sub> + (A<sub>3</sub>+B<sub>3</sub>)\*(A<sub>2</sub>+B<sub>2</sub>)\*(A<sub>1</sub>+B<sub>1</sub>)\*A<sub>0</sub>\*B<sub>0</sub> + (A<sub>3</sub>+B<sub>3</sub>)\*(A<sub>2</sub>+B<sub>2</sub>)\*(A<sub>1</sub>+B<sub>1</sub>)\*(A<sub>0</sub>+B<sub>0</sub>)*C<sub>0</sub>
 
 Observing the expressions of each Adder, it can be deduced that all depend only on inputs A, B and C<sub>0</sub>, which is exactly the goal to be pursued: each stage calculates its own Carry without having to wait for the Carry calculation performed by the previous stage.
@@ -831,8 +831,6 @@ Let us now add the logic of Carry C<sub>1</sub> = g<sub>0</sub> + p<sub>0</sub>\
 ![Logic of the Carry of the Modified Full Adder](../../../assets/math/modified-full-adder-2.png){:width="23%"}
 
 *Logic of the Carry of the Modified Full Adder.*
-
-Here is the English translation:
 
 Note that the Carry Out C<sub>1</sub> of the first Adder is at level 3, which means that the longest path is represented by an OR gate that has A<sub>0</sub> and B<sub>0</sub> as inputs, whose output p<sub>0</sub> enters an AND gate, whose output enters a final OR gate from which C<sub>1</sub> is obtained. In fact, at this point, we are in the same situation as the RCA, whose C<sub>1</sub> was generated at the 3rd level.
 
