@@ -1,4 +1,4 @@
-[🇮🇹 Italiano](README.md) | [🇬🇧 English](README.en.md)
+[**🇮🇹 Italiano**](README.md) | [**🇬🇧 English**](README.en.md)
 
 # BEAM
 
