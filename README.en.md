@@ -1,4 +1,4 @@
-[🇮🇹 Italiano](README.md) | [🇬🇧 English](README.en.md)
+[**🇮🇹 Italiano**](README.md) | [**🇬🇧 English**](README.en.md)
 
 # BEAM
 ## 8-bit TTL Breadboard Computer based on Ben Eater's design and Tom Nisbet's improvements
