@@ -21,6 +21,7 @@ This repository contains:
 * [KiCad](schematics/KiCad_BEAM_schematics.zip) schematics
 * Arduino sketch for the [EEPROM programmer](Beam-Microcode/Beam-Microcode.ino)
 * Arduino sketch for the [bootloader](Beam-Bootloader/Beam-Bootloader.ino)
+* [Instruction Set] Definition(https://github.com/andreamazzai/beam/raw/master/docs/assets/BEAM%20computer.xlsx)
 
 [![BEAM Breadboard Computer](/docs/assets/home/beam.png "BEAM breadboard computer")](docs/assets/home/beam.png)
 
