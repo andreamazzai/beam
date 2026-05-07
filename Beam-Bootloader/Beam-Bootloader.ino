@@ -541,13 +541,13 @@ void loop()
   // delay(120000);
 
   set_for_programming();
-  writeProgram(TestProgram1, sizeof(TestProgram1));
+  writeProgram(Fibonacci, sizeof(Fibonacci));
   writeKitt();
   post_programming();
   delay(120000);
 
   set_for_programming();
-  writeProgram(Fibonacci, sizeof(Fibonacci));
+  writeProgram(TestProgram1, sizeof(TestProgram1));
   writeKitt();
   post_programming();
   delay(120000);
