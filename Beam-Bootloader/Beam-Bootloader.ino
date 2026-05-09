@@ -35,7 +35,7 @@ void writeKitt();
 // ************************************************************
 // ********* PROGRAMMA BELLO LUNGO PER TESTARE TUTTO **********
 // ************************************************************
-  byte TestProgram1[] = {
+  byte TestProgram_1[] = {
     0x25, 0x00, // LDY #$00     4 - Z - check 2024-01-28
     0x25, 0x80, // LDY #$80     4 - N - check 2024-01-28
     0xCF,       // DEY          5 -   - check 2024-01-28
@@ -167,8 +167,8 @@ void writeKitt();
     ,
 };
 
-byte CounterUpDown[] = {
-// count 0-255 then back and restart
+byte CounterUpDown_2[] = {
+// count 255-0 then back and restart
 // branch count starts at operand address + 1; target @ $00
     0x28, 0xFF, // LDA #$FF
     0xE0,       // INA
@@ -186,12 +186,11 @@ byte CounterUpDown[] = {
     ,
 };
 
-byte Fibonacci[] = {
-
+byte Fibonacci_3[] = {
     0x28, 0x00, // LDA #$00
     0x10,       // OUT
-    0x4A, 0xC0, // STA $C0  1st
-    0x4A, 0xC1, // STA $C1  2nd
+    0x4A, 0xC0, // STA $C0  1st temp value
+    0x4A, 0xC1, // STA $C1  2nd temp value
     0x4A, 0xC2, // STA $C2  result
     0x28, 0x01, // LDA #$01
     0x4A, 0xC1, // STA $C1  2nd
@@ -205,11 +204,11 @@ byte Fibonacci[] = {
     0x48, 0xC2, // LDA $C2  result
     0x4A, 0xC1, // STA $C1  2nd
     0x48, 0xC0, // LDA $C0  1st
-    0x51, 0x0F  // JMP $0F // salta a ADC
+    0x51, 0x0F  // JMP $0F // jump to ADC
     ,
 };
 
-byte DownCounter[] = {
+byte DownCounter_4[] = {
 // byte PROGRAM_DOWN[] = {
     0x28, 0x00, // LDA #$00
     0x24, 0xF0, // LDX #$F0
@@ -217,7 +216,7 @@ byte DownCounter[] = {
     0xEF,       // DEA
     0x10,       // OUT
     0x01, 0x0A, // JMP ($0A)
-    0x06        // locazione che contiene l'indirizzo per l'indirect jump
+    0x06        // indirect jump value
     ,
 };
 
@@ -225,7 +224,7 @@ byte DownCounter[] = {
 // ***************** PROGRAMMI DA CONTROLLARE *****************
 // ************************************************************
 
-byte PROGRAM_SHIFT[] = {
+byte PROGRAM_SHIFT_5[] = {
 // byte PROGRAM[] = {
     0x03,       // SEC          3 -    C
     0x28, 0x41, // LDA #$41     4 -    C - $41 = b0100.0001
@@ -267,7 +266,8 @@ byte PROGRAM_SHIFT[] = {
     0x48, 0xC1, // LDA $C1      5 - N    -
     0x10,       // OUT          3 OUT 252 $FC
 };
-byte PROGRAM_4[] = {
+
+byte PROGRAM_6[] = {
     0x28, 0x10, // LDA #$10
     // 0x28, 0xFF, // LDA #$FF
     0x10,       // OUT
@@ -299,8 +299,54 @@ byte PROGRAM_4[] = {
     0x00        // HLT
     ,
 };
-byte PROGRAM_STACK[] = {
-// byte PROGRAM_STACK[] = {
+
+byte PROGRAM_STACK_7[] = {
+    // 0x25, 0x40, // LDY #$40
+    // 0x1C,       // TYA
+    // 0x0B,       // TAX
+    // 0x10,       // OUT
+    // 0x00,       // HLT
+    0x24, 0xFF, // LDX #$FF
+    0x1D,       // TXS
+    0x41, 0x07, // JSR $07   ==> attenti a dove si punta
+    0x51, 0x03, // JMP $03
+    0x28, 0x64, // LDA #$64
+    0x10,       // OUT
+    0xEF,       // DEA
+    0x72, 0xFC, // BNE $----
+    0x10,       // OUT
+    0x28, 0x9A, // LDA #$9A
+    0x10,       // OUT
+    0xE0,       // INA
+    0x72, 0xFC, // BNE $----
+    0x10,       // OUT
+    0x11,       // RTS
+    0x09,       // PHA
+    0x00,       // HLT
+    0x28, 0xC3, // LDA #$C3
+    0x09,       // PHA
+    0x00,       // HLT
+    0x28, 0x66, // LDA #$66
+    0x09,       // PHA
+    0x00,       // HLT
+    0x09,       // PHA
+    0x28, 0x01, // LDA #$01
+    0x08,       // PLA
+    0x10,       // OUT
+    0x00,       // HLT
+    0x08,       // PLA
+    0x10,       // OUT
+    0x00,       // HLT
+    0x08,       // PLA
+    0x10,       // OUT
+    0x00        // HLT
+    // 0x05        // locazione che contiene l'indirizzo per l'indirect jump
+    // 0x24, 0xCC, // LDX #$CC
+    // 0x25, 0x33, // LDY #$33
+    ,
+};
+
+byte PROGRAM_STACK_8[] = {
     // 0x25, 0x40, // LDY #$40
     // 0x1C,       // TYA
     // 0x0B,       // TAX
@@ -350,7 +396,7 @@ byte PROGRAM_STACK[] = {
 // *********                                         **********
 // ************************************************************
 // Sembra ok, non ho controllato i Flag
-byte PROGRAM_20[] = {
+byte PROGRAM_9[] = {
     0x28, 0xCC, // LDA #$CC = 16 * 12 + 12 = 204
     0x10,       // OUT
     0x4A, 0x40, // STA $40
@@ -372,7 +418,7 @@ byte PROGRAM_20[] = {
     ,
 };
 
-byte PROGRAM_plp[] = {
+byte PROGRAM_plp_10[] = {
 // byte PROGRAM_CHECK_CMP[] = {
     // 0x51, 0x20, // JMP CICLO
     // 0x0F, 0x0F, // NOP NOP
@@ -534,65 +580,66 @@ void setup()
 void loop()
 {
   
-  // set_for_programming();
-  // writeProgram(CounterUpDown, sizeof(CounterUpDown));
-  // writeKitt();
-  // post_programming();
-  // delay(120000);
-
   set_for_programming();
-  writeProgram(Fibonacci, sizeof(Fibonacci));
+  writeProgram(CounterUpDown_2, sizeof(CounterUpDown_2));
   writeKitt();
   post_programming();
   delay(120000);
 
   set_for_programming();
-  writeProgram(TestProgram1, sizeof(TestProgram1));
+  writeProgram(DownCounter_4, sizeof(DownCounter_4));
   writeKitt();
   post_programming();
   delay(120000);
 
   set_for_programming();
-  writeProgram(DownCounter, sizeof(DownCounter));
+  writeProgram(Fibonacci_3, sizeof(Fibonacci_3));
   writeKitt();
   post_programming();
   delay(120000);
 
-  // set_for_programming();
-  // writeProgram(PROGRAM_SHIFT, sizeof(PROGRAM_SHIFT));
-  // writeKitt();
-  // post_programming();
-  // delay(60000);
+  set_for_programming();
+  writeProgram(TestProgram_1, sizeof(TestProgram_1));
+  writeKitt();
+  post_programming();
+  delay(120000);
 
-  // set_for_programming();
-  // writeProgram(PROGRAM_STACK, sizeof(PROGRAM_STACK));
-  // writeKitt();
-  // post_programming();
-  // delay(1000000);
+  set_for_programming();
+  writeProgram(PROGRAM_SHIFT_5, sizeof(PROGRAM_SHIFT_5));
+  writeKitt();
+  post_programming();
+  delay(60000);
 
-  // set_for_programming();
-  // writeProgram(PROGRAM_4, sizeof(PROGRAM_4));
-  // writeKitt();
-  // post_programming();
-  // delay(1000000);
+  set_for_programming();
+  writeProgram(PROGRAM_STACK_7, sizeof(PROGRAM_STACK_7));
+  writeKitt();
+  post_programming();
+  delay(1000000);
 
-  // set_for_programming();
-  // writeProgram(PROGRAM_plp, sizeof(PROGRAM_plp));
-  // writeKitt();
-  // post_programming();
-  // delay(1000000);
+  set_for_programming();
+  writeProgram(PROGRAM_STACK_8, sizeof(PROGRAM_STACK_8));
+  writeKitt();
+  post_programming();
+  delay(1000000);
+
+  set_for_programming();
+  writeProgram(PROGRAM_6, sizeof(PROGRAM_6));
+  writeKitt();
+  post_programming();
+  delay(1000000);
+
+  set_for_programming();
+  writeProgram(PROGRAM_plp_10, sizeof(PROGRAM_plp_10));
+  writeKitt();
+  post_programming();
+  delay(1000000);
   
-  // set_for_programming();
-  // writeProgram(PROGRAM_20, sizeof(PROGRAM_20));
-  // writeKitt();
-  // post_programming();
-  // delay(1000000);
-  
   set_for_programming();
-  writeProgram(PROGRAM_STACK, sizeof(PROGRAM_STACK));
+  writeProgram(PROGRAM_9, sizeof(PROGRAM_9));
   writeKitt();
   post_programming();
-  delay(40000);
+  delay(1000000);
+ 
 
   // for (int i = 1; i <= 2; i++)
   // {
