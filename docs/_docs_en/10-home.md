@@ -96,7 +96,7 @@ Among the things I learned:
 6. Use of Visual Studio Code  
 7. The Markdown language  
 8. Use of GitHub and GitHub Pages  
-9. Schematic design with KiCad
+9. <a href="https://github.com/andreamazzai/beam/releases/" target="_blank">Schematics</a> design with KiCad
 
 ### Notes
 

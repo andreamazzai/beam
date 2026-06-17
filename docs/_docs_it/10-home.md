@@ -93,7 +93,7 @@ Tra le cose apprese:
 6. utilizzo di Visual Studio Code
 7. il linguaggio Markdown
 8. utilizzo di GitHub e GitHub Pages
-9. disegno degli <a href="https://github.com/andreamazzai/beam/raw/refs/heads/master/schematics/KiCad_BEAM_schematics.zip" target="_blank">schemi con KiCad</a>
+9. disegno degli <a href="https://github.com/andreamazzai/beam/releases/" target="_blank">schemi con KiCad</a>
 
 ### Note
 
