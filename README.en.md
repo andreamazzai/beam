@@ -18,7 +18,7 @@ Some interesting aspects of the project:
 This repository contains:
 
 * [Complete BEAM computer documentation](https://andreamazzai.github.io/beam/docs/en/home/)
-* [KiCad](schematics/KiCad_BEAM_schematics.zip) schematics
+* [KiCad](https://github.com/andreamazzai/beam/releases/tag/v1.1.0) schematics
 * Arduino sketch for the [EEPROM programmer](Beam-Microcode/Beam-Microcode.ino)
 * Arduino sketch for the [bootloader](Beam-Bootloader/Beam-Bootloader.ino)
 * [Instruction Set](https://github.com/andreamazzai/beam/raw/master/docs/assets/BEAM%20computer.xlsx) Definition
