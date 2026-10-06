@@ -11,39 +11,39 @@
   # - title: "Sitemap"
   #   url: /sitemap/
 
-  docs:
-  - title: "OVERVIEW"
+  docs_it:
+  - title: "PANORAMICA"
     children:
       - title: "> Il computer BEAM"
         url: /
       - title: "> Note costruttive"
-        url: /docs/beginning/
+        url: /docs/it/build-notes/
       # - title: "Why?"
       #   url: /docs/why/
   - title: "MODULI"
     children:
       - title: "> Clock"
-        url: /docs/clock/
+        url: /docs/it/clock/
       - title: "> RAM e MAR"
-        url: /docs/ram/
+        url: /docs/it/ram/
       - title: "> Flag"
-        url: /docs/flags/
+        url: /docs/it/flags/
       - title: "> Program Counter"
-        url: /docs/programcounter/
+        url: /docs/it/programcounter/
       - title: "> Control Logic"
-        url: /docs/control/
+        url: /docs/it/control/
       - title: "> ALU"
-        url: /docs/alu/
+        url: /docs/it/alu/
       - title: "> Registri DXY"
-        url: /docs/dxy/
+        url: /docs/it/dxy/
       - title: "> Output"
-        url: /docs/output/
+        url: /docs/it/output/
       - title: "> Stack Pointer"
-        url: /docs/stack/
+        url: /docs/it/stack/
       - title: "> Arduino Loader"
-        url: /docs/loader/
+        url: /docs/it/loader/
       - title: "> EEPROM Programmer"
-        url: /docs/eeprom-programmer/
+        url: /docs/it/eeprom-programmer/
   # - title: "Wrap-up"
   #   children:
   #     - title: "Tips"
@@ -53,7 +53,7 @@
   - title: "APPROFONDIMENTI"
     children:
       - title: "> Aritmetica Binaria"
-        url: /docs/math/
+        url: /docs/it/math/
       # - title: "> Instruction Summary"
       #   url: /docs/in-summary/
   #     - title: "Opcode Table"
@@ -76,3 +76,76 @@
         url: ""
       - title: <a href = "https://tomnisbet.github.io/nqsap-pcb/" target = "_blank">> NQSAP-PCB di Tom Nisbet</a>
         url: ""
+  - title: "SWITCH TO ENGLISH"
+    children:
+      - title: "> English documentation"
+        url: /docs/en/home/
+  docs_en:
+  - title: "OVERVIEW"
+    children:
+      - title: "> The BEAM computer"
+        url: /docs/en/home/
+      - title: "> Build notes"
+        url: /docs/en/build-notes/
+      # - title: "Why?"
+      #   url: /docs/why/
+  - title: "MODULES"
+    children:
+      - title: "> Clock"
+        url: /docs/en/clock/
+      - title: "> RAM and MAR"
+        url: /docs/en/ram/
+      - title: "> Flags"
+        url: /docs/en/flags/
+      - title: "> Program Counter"
+        url: /docs/en/programcounter/
+      - title: "> Control Logic"
+        url: /docs/en/control/
+      - title: "> ALU"
+        url: /docs/en/alu/
+      - title: "> DXY Registers"
+        url: /docs/en/dxy/
+      - title: "> Output"
+        url: /docs/en/output/
+      - title: "> Stack Pointer"
+        url: /docs/en/stack/
+      - title: "> Arduino Loader"
+        url: /docs/en/loader/
+      - title: "> EEPROM Programmer"
+        url: /docs/en/eeprom-programmer/
+  # - title: "Wrap-up"
+  #   children:
+  #     - title: "Tips"
+  #       url: /docs/tips/
+  #     - title: "Build History"
+  #       url: /docs/build-history/
+  - title: "DEEP DIVES"
+    children:
+      - title: "> Binary Arithmetic"
+        url: /docs/en/math/
+      # - title: "> Instruction Summary"
+      #   url: /docs/in-summary/
+  #     - title: "Opcode Table"
+  #       url: /docs/in-by-opcode/
+  #     - title: "Mode Group Table"
+  #       url: /docs/in-by-mode-group/
+  # - title: "References"
+  #   children:
+  #     - title: "74181 ALU Notes"
+  #       url: /docs/74181-alu-notes/
+  #     - title: "Further Reading"
+  #       url: /docs/further-reading/
+  - title: " REFERENCES"
+    children:
+      - title: "> BEAM on GitHub"
+        url: "https://github.com/andreamazzai/beam"
+      - title: <a href = "https://eater.net/8bit/" target = "_blank">> Ben Eater's SAP-1</a>
+        url: ""
+      - title: <a href = "https://github.com/TomNisbet/nqsap" target = "_blank">> Tom Nisbet's NQSAP</a>
+        url: ""
+      - title: <a href = "https://tomnisbet.github.io/nqsap-pcb/" target = "_blank">> Tom Nisbet's NQSAP-PCB</a>
+        url: ""
+  - title: "SWITCH TO ITALIAN"
+    children:
+      - title: "> Italian documentation"
+        url: /

@@ -221,18 +221,14 @@ kramdown:
 
 # Collections
 collections:
-  docs:
+  docs_it:
     output: true
-    permalink: /:collection/:path/
-  # recipes:
-  #   output: true
-  #   permalink: /:collection/:path/
-  # pets:
-  #   output: true
-  #   permalink: /:collection/:path/
-  # portfolio:
-  #   output: true
-  #   permalink: /:collection/:path/
+    # permalink: /:collection/:path/ # era quello precedente di default
+    permalink: /docs/it/:path/
+  docs_en:
+    output: true
+    # permalink: /:collection/:path/ # era quello precedente di default
+    permalink: /docs/en/:path/
 
 
 # Defaults
@@ -258,7 +254,7 @@ defaults:
   # _docs
   - scope:
       path: ""
-      type: docs
+      type: docs_it
     values:
       layout: single
       classes: wide
@@ -267,7 +263,19 @@ defaults:
       share: false
       comments: false
       sidebar:
-        nav: "docs"
+        nav: "docs_it"
+  - scope:
+      path: ""
+      type: docs_en
+    values:
+      layout: single
+      classes: wide
+      read_time: false
+      author_profile: false
+      share: false
+      comments: false
+      sidebar:
+        nav: "docs_en"
 
 # Sass/SCSS
 sass:
@@ -313,6 +321,7 @@ plugins:
   - jekyll-gist
   - jekyll-feed
   - jekyll-include-cache
+  - jekyll-remote-theme # 6501 suggerito da ChatGPT per evitare errori con remote_theme
 
 # mimic GitHub Pages with --safe
 whitelist:
