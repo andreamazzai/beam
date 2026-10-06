@@ -5,3 +5,4 @@ _site/
 vendor/
 docs/.bundle/
 @temp/navigation.yml
+.vscode/
