@@ -1,6 +1,7 @@
+# BEAM
+
 [**🇮🇹 Italiano**](README.md) | [**🇬🇧 English**](README.en.md)
 
-# BEAM
 ## 8-bit TTL Breadboard Computer based on Ben Eater's design and Tom Nisbet's improvements
 
 BEAM is a TTL breadboard computer inspired by [Ben Eater's SAP-1 8-bit computer](https://eater.net/8bit); it also includes the improvements and expansions found in [Tom Nisbet's NQSAP](https://github.com/tomnisbet/nqsap).
