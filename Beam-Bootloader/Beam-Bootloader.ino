@@ -21,7 +21,7 @@ const int LEDs = 8;
 
 #define DELAY 1 // ritardo nelle scritture di MAR e RAM
 
-void writeProgram();
+void writeProgram(byte program[], size_t size);
 void setAddress(byte address);
 void setRegister(byte registers);
 void writeRAM(byte data);
